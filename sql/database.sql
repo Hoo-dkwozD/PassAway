@@ -1,0 +1,9 @@
+DROP DATABASE IF EXISTS `record`;
+CREATE DATABASE `record`;
+
+USE `record`;
+
+CREATE TABLE `sample` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(30) NOT NULL
+);

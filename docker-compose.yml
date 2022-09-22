@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  record:
+    build: ./record
+    image: record:latest
+    restart: always
+    ports:
+      - "8000:8080"
+  record-ui:
+    build: ./record-ui
+    image: record-ui:latest
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - record
