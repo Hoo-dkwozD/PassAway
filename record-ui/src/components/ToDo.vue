@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { useListStore } from "@/stores/list";
-
-defineProps<{
-    question: string
-}>()
-</script>
-
 <template>
     <div class="to-do-wrapper">
         <div class="input-wrapper">
@@ -37,6 +29,9 @@ defineProps<{
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
+import { useListStore } from "@/stores/list";
+
 // Typings
 interface JSONResponse {
     code: number
@@ -53,17 +48,20 @@ interface RemoveTaskJSONResponse extends JSONResponse {
     data: {}
 }
 
-export default {
+export default defineComponent({
     data() {
         const list = useListStore();
         const entry: string = "";
         const localList: any[] = [];
 
         return {
-            list,
-            entry,
-            localList
+            list: list,
+            entry: entry,
+            localList: localList
         };
+    },
+    props: {
+        question: String
     },
     methods: {
         saveEntry() {
@@ -100,7 +98,7 @@ export default {
             };
         }
     }
-};
+});
 </script>
 
 <style scoped>

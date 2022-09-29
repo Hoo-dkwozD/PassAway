@@ -2,8 +2,20 @@ FROM node:18.9-alpine
 
 WORKDIR /var/www/html/app/
 
-COPY ./dist/. ./
+COPY package*.json ./
+
+COPY ./spa-server/. ./spa-server/
+COPY ./entry/. ./entry/
+COPY ./dist/. ./spa-server/public/
+COPY ./.env ./
+
+RUN rm ./spa-server/public/.keep
+RUN mkdir ./spa-server/logs/
+RUN touch ./spa-server/logs/access.log
+RUN touch ./spa-server/logs/error.log
 
 RUN npm install
+# If you are building your code for production
+# RUN npm ci --only=production
 
-CMD [ "npm", "run", "dev" ]
+CMD [ "npm", "run", "deploy-site" ]

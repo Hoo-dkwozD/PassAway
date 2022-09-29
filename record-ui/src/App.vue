@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-</script>
-
 <template>
   <div class="header">
     <img alt="Vue logo" class="logo header-logo" src="@/assets/logo.svg" width="25" height="25" />
@@ -19,13 +15,16 @@ import { RouterLink, RouterView } from 'vue-router'
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
+import { RouterLink, RouterView } from 'vue-router';
+
 // Typings
 interface Route {
   path: string,
   name: string
 }
 
-export default {
+export default defineComponent({
   data() {
     const routes: Route[] = [
       {
@@ -41,8 +40,12 @@ export default {
     return {
       routes
     };
+  },
+  components: {
+    RouterLink,
+    RouterView
   }
-}
+});
 </script>
 
 <style scoped>
