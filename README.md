@@ -37,6 +37,8 @@ Developed on:
 
 7.  The program should be up and running. To shut down the program and clean up any newly created files, images, etc., type `Ctrl-C` to exit the CLI program, and run the command `sh ./shutdown.sh` (Unix-like OS) or `.\shutdown.bat` (Windows OS). 
 
+The application can also be started without a Docker context by starting each part of the application manually, starting with the MySQL database server first when building and running the application. Refer to the README of each service for more information. 
+
 ## Results
 
 The app should be accessible at (http://localhost/)[http://localhost/] with the back-end itself accessible at (http://localhost:8000/)[http://localhost:8000/]. 

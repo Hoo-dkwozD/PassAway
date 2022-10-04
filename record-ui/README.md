@@ -1,6 +1,10 @@
 # record-ui
 
-This template should help get you started developing with Vue 3 in Vite.
+This service is an SPA that represents the front-end of the application. 
+
+It is built using VueJS v3 and uses ONLY the Options API in TypeScript. 
+
+For deployment, it is built into a single HTML file that is served statically by an ExpressJS server in a container.
 
 ## Recommended IDE Setup
 
