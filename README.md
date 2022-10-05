@@ -13,13 +13,13 @@ _Intro to be written here_
 Operating Systems: Windows 64-Bit, MacOS 64-Bit (X86_64, Arm64), Linux 64-Bit (X86_64, Arm64)
 
 Dependencies:
-.  Java/OpenJDK: >=18.0.0.0 recommended
-.  NodeJS: >=18.0.0 recommended
-.  NPM: >=8.11.0 recommended (Alternative: Yarn)
-.  Docker: >=20.10.0 recommended
+-  Java/OpenJDK: >=18.0.0.0 recommended
+-  NodeJS: >=18.0.0 recommended
+-  NPM: >=8.11.0 recommended (Alternative: Yarn)
+-  Docker: >=20.10.0 recommended
 
 Developed on:
-.  MacOS 12.4 (Arm64), OpenJDK v18.0.1.1, NodeJS v18.3.0, NPM v8.11.0, Docker v20.10.11
+-  MacOS 12.4 (Arm64), OpenJDK v18.0.1.1, NodeJS v18.3.0, NPM v8.11.0, Docker v20.10.11
 
 ## Instructions for Setup & Deployment
 
@@ -27,21 +27,23 @@ Developed on:
 
 2.  Return back to the repo's root directory and ensure that Docker Engine is installed and running. 
 
-3.  Configure the Environment Variable MYSQL_PASSWORD to the desired pre-deployment password (i.e. password just for compilation, not real deployment; should default to `root`; no change needed in development) and ensure that the `.env` file in `/record` matches that password. 
+3.  Obtain the `.env` files for both the front-end and back-end, and place them in the root folder of each component respectively. 
 
-4.  Run the command `sh ./prepare.sh` (Unix-like OS) or `.\prepare.bat` (Windows OS) and comply with the prompt's instructions. Use the appropriate SQL files from the SQL folder. 
+4.  Configure the Environment Variable MYSQL_PASSWORD to the desired pre-deployment password (i.e. password just for compilation, not real deployment; should default to `root`; no change needed in development) and ensure that the `.env` file in `/record` matches that password. 
 
-5.  Change the environment variable MYSQL_PASSWORD and the `.env` file in `/record` to the desired deployment password (no change needed for development). 
+5.  Run the command `sh ./prepare.sh` (Unix-like OS) or `.\prepare.bat` (Windows OS) and comply with the prompt's instructions. Use the appropriate SQL files from the SQL folder. 
 
-6.  Run the command `sh ./run.sh` (Unix-like OS) or `.\run.bat` (Windows OS) and comply with the prompt's instructions. Use the appropriate SQL files from the SQL folder. The SQL files used should be the same as before. 
+6.  Change the environment variable MYSQL_PASSWORD and the `.env` file in `/record` to the desired deployment password (no change needed for development). 
 
-7.  The program should be up and running. To shut down the program and clean up any newly created files, images, etc., type `Ctrl-C` to exit the CLI program, and run the command `sh ./shutdown.sh` (Unix-like OS) or `.\shutdown.bat` (Windows OS). 
+7.  Run the command `sh ./run.sh` (Unix-like OS) or `.\run.bat` (Windows OS) and comply with the prompt's instructions. Use the appropriate SQL files from the SQL folder. The SQL files used should be the same as before. 
+
+8.  The program should be up and running. To shut down the program and clean up any newly created files, images, etc., type `Ctrl-C` to exit the CLI program, and run the command `sh ./shutdown.sh` (Unix-like OS) or `.\shutdown.bat` (Windows OS). 
 
 The application can also be started without a Docker context by starting each part of the application manually, starting with the MySQL database server first when building and running the application. Refer to the README of each service for more information. 
 
 ## Results
 
-The app should be accessible at (http://localhost/)[http://localhost/] with the back-end itself accessible at (http://localhost:8000/)[http://localhost:8000/]. 
+The app should be accessible at [http://localhost/](http://localhost/) with the back-end itself accessible at [http://localhost:8000/](http://localhost:8000/). 
 
 ## Tested by
 
