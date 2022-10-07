@@ -11,6 +11,6 @@ services:
     image: record-ui:latest
     restart: always
     ports:
-      - "80:80"
+      - "80:5000"
     depends_on:
       - record

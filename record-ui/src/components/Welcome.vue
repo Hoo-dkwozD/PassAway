@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import router from '@/router/index';
-</script>
-
 <template>
     <div class="welcome-wrapper">
         <div class="welcome-card text-white">
@@ -12,7 +8,10 @@ import router from '@/router/index';
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from 'vue';
+import router from '@/router/index';
+
+export default defineComponent({
     data() {
         return {};
     },
@@ -21,7 +20,7 @@ export default {
             router.push("/sample");
         }
     }
-}
+});
 </script>
 
 <style scoped>

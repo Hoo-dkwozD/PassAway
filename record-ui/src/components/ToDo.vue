@@ -1,18 +1,10 @@
-<script setup lang="ts">
-import { useListStore } from "@/stores/list";
-
-defineProps<{
-    question: string
-}>()
-</script>
-
 <template>
     <div class="to-do-wrapper">
         <div class="input-wrapper">
             <div class="input-card text-white">
                 <h2>{{ question }}</h2>
                 <div class="input-group">
-                    <input v-model="entry" type="text" class="form-control" placeholder="Task name" aria-label="New task name" aria-describedby="save-entry-btn">
+                    <input v-model="entry" @keyup.enter="saveEntry()" type="text" class="form-control" placeholder="Task name" aria-label="New task name" aria-describedby="save-entry-btn">
                     <button @click="saveEntry()" class="btn btn-success" type="button" id="save-entry-btn">Save</button>
                 </div>
             </div>
@@ -37,6 +29,10 @@ defineProps<{
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
+import { useListStore } from "@/stores/list";
+import axios from 'axios';
+
 // Typings
 interface JSONResponse {
     code: number
@@ -50,57 +46,99 @@ interface AddTaskJSONResponse extends JSONResponse {
 }
 
 interface RemoveTaskJSONResponse extends JSONResponse {
-    data: {}
+    message: string
 }
 
-export default {
+export default defineComponent({
     data() {
         const list = useListStore();
         const entry: string = "";
         const localList: any[] = [];
 
         return {
-            list,
-            entry,
-            localList
+            list: list,
+            entry: entry,
+            localList: localList
         };
     },
-    methods: {
-        saveEntry() {
-            if (this.entry !== null || this.entry === '') {
-                const response: AddTaskJSONResponse = this.addTaskBackend(this.entry);
+    props: {
+        question: String
+    },
+    async created() {
+        try {
+            this.list.removeAll();
 
-                if (response.code === 200) {
+            const res = await axios.get(import.meta.env.VITE_API_URL + "api/task");
+
+            const data = res.data;
+
+            if (data.code === 200) {
+                for (let task of data.data) {
+                    this.list.add(task.id, task.name);
+                }
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    },
+    methods: {
+        async saveEntry() {
+            if (this.entry !== null || this.entry === '') {
+                const response: JSONResponse | AddTaskJSONResponse | any = await this.addTaskBackend(this.entry);
+
+                if (response.code === 201 && this.isAddTaskJSONResponse(response)) {
                     this.list.add(response.data.id, response.data.name);
                     this.entry = "";
                 }
             }
         },
-        addTaskBackend(name: string): AddTaskJSONResponse {
-            return {
-                code: 200,
-                data: {
-                    id: 123,
-                    name: name
-                }
-            };
+        async addTaskBackend(name: string): Promise<JSONResponse | AddTaskJSONResponse | any> {
+            try {
+                const res = await axios.post(
+                    import.meta.env.VITE_API_URL + "api/task",
+                    {
+                        name: name
+                    }
+                );
+
+                return res.data;
+            } catch (err) {
+                return {
+                    code: 500
+                };
+            }
         },
-        complete(e: Event, idx: number) {
-            const response: RemoveTaskJSONResponse = this.removeTaskBackend(this.list.items[idx]);
+        isAddTaskJSONResponse(obj: any): obj is AddTaskJSONResponse {
+            return "data" in obj;
+        },
+        isRemoveTaskJSONResponse(obj: any): obj is RemoveTaskJSONResponse {
+            return "message" in obj;
+        },
+        async complete(e: Event, idx: number) {
+            const response: JSONResponse | RemoveTaskJSONResponse | any = await this.removeTaskBackend(this.list.items[idx]);
             this.localList.pop();
 
-            if (response.code === 202) {
+            if (response.code === 200 && this.isRemoveTaskJSONResponse(response)) {
                 this.list.remove(idx);
             }
         },
-        removeTaskBackend(item: { name: string, id: number }): RemoveTaskJSONResponse {
-            return {
-                code: 202,
-                data: {}
-            };
+        async removeTaskBackend(item: { name: string, id: number }): Promise<JSONResponse | RemoveTaskJSONResponse | any> {
+            try {
+                const res = await axios.delete(
+                    import.meta.env.VITE_API_URL + `api/task/${item.id}`,
+                    {
+                        data: item
+                    }
+                );
+                return res.data;
+            } catch (err) {
+                return {
+                    code: 500
+                };
+            }
         }
     }
-};
+});
 </script>
 
 <style scoped>

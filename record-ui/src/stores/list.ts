@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { defineStore } from 'pinia';
 
 // Typings
@@ -12,9 +13,13 @@ export interface StoreState {
 
 export const useListStore = defineStore({
     id: 'list',
-    state: (): StoreState => ({
-        items: []
-    }),
+    state: (): StoreState => {
+        const items: ToDoTask[] = [];
+
+        return {
+            items: items
+        }
+    },
     actions: {
         add(id: number, name: string): void {
             this.items.push({
@@ -25,6 +30,9 @@ export const useListStore = defineStore({
         remove(idx: number): void {
             this.items.splice(idx, 1);
             console.log(this.items);
+        },
+        removeAll(): void {
+            this.items = [];
         }
     }
 });
