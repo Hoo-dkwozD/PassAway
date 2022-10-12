@@ -9,7 +9,7 @@ The app requires an instance of MySQL to function. You can use any MySQL server,
 After setting the environment variable MYSQL_PASSWORD to the desired password, run the following command: 
 
 ```
-docker run -dp 3306:3306 --name mysql -e MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD arm64v8/mysql:8-oracle
+docker run -dp 3306:3306 --name mysql -e MYSQL_ROOT_PASSWORD=%MYSQL_PASSWORD% arm64v8/mysql:8-oracle
 ```
 
 Ensure that the back-end's `.env` file uses the same password as the server's. 
