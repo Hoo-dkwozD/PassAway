@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # MySQL dependency for Spring Boot compilation
-docker run -dp 3306:3306 --name mysql -e MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD arm64v8/mysql:8-oracle
+docker run -dp 3306:3306 --name mysql -e MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD mysql:8-oracle
 
 # Ensure loading of mysql file
 read -p "MySQL file loaded? " yn
