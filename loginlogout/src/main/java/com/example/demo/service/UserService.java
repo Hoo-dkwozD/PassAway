@@ -84,7 +84,7 @@ public class UserService {
         // hash the password
 
         try {
-            if (!user.getPasswoprd().equals(hashPassword(signInDto.getPassword()))) {
+            if (!user.getPassword().equals(hashPassword(signInDto.getPassword()))) {
                 throw new AuthenticationFailException("wrong password");
             }
         } catch (NoSuchAlgorithmException e) {
