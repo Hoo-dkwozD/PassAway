@@ -54,12 +54,12 @@ public class User {
         this.email = email;
     }
 
-    public String getPasswoprd() {
+    public String getPassword() {
         return password;
     }
 
-    public void setPasswoprd(String passwoprd) {
-        this.password = passwoprd;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public User(String firstName, String lastName, String email, String password) {
