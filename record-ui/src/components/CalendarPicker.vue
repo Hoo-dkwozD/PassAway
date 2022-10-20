@@ -93,19 +93,4 @@ export default defineComponent({
 
 
 <style>
-
-  #calendar-details {
-    left: 0;
-    letter-spacing: 0;
-    line-height: 24px;
-    top: 0;
-    white-space: nowrap;
-    padding-left: 20px;
-    width: 180px;
-    padding-right: 30px;
-  }
-
-  .shadow {
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  }
 </style>
