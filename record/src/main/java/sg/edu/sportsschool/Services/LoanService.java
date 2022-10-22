@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +19,10 @@ import sg.edu.sportsschool.Entities.Attraction;
 import sg.edu.sportsschool.Entities.Loan;
 import sg.edu.sportsschool.Entities.Pass;
 import sg.edu.sportsschool.Entities.Staff;
+import sg.edu.sportsschool.Exceptions.InternalServerException;
 import sg.edu.sportsschool.Repositories.LoanRepository;
-import sg.edu.sportsschool.helper.CreateJSONResponse;
 import sg.edu.sportsschool.helper.JSONBody;
+import sg.edu.sportsschool.helper.JSONWithData;
 import sg.edu.sportsschool.helper.PassComparator;
 
 @Service
@@ -42,26 +44,24 @@ public class LoanService {
     private RuleService rService;
 
     public ResponseEntity<JSONBody> getAllLoans() {
-        CreateJSONResponse<List<Loan>> jsonResponse = new CreateJSONResponse<>();
         try {
             List<Loan> results = new ArrayList<>();
             lRepository.findAll().forEach(results::add);
-
-            return jsonResponse.create(results);
+            JSONWithData<List<Loan>> body = new JSONWithData<>(200, results);
+            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
 
         } catch (Exception e) {
-            return jsonResponse.create(500, "Server unable to retrieve all loans");
+            throw new InternalServerException("Server unable to retrieve all loans");
         }
     }
 
     public ResponseEntity<JSONBody> addLoan(LoanDTO loanDTO) {
-        CreateJSONResponse<List<Loan>> jsonResponse = new CreateJSONResponse<>();
         int numPassesRequested = loanDTO.getNumPasses();
         Integer aId = loanDTO.getAttractionId();
 
         Attraction a = aService.returnAttraction(aId);
         if (a == null) {
-            return jsonResponse.create(500, "Server unable to find attraction of id: " + aId + " from the database");
+            throw new InternalServerException("Server unable to find attraction of id: " + aId + " from the database");
         }
 
         String aName = a.getName();
@@ -70,8 +70,7 @@ public class LoanService {
         Integer staffId = loanDTO.getStaffId();
         Staff staff = staffService.returnStaffById(staffId);
         if (staff == null) {
-            return jsonResponse.create(500,
-                    "Server unable to find staff of staff id: " + staffId + " from the database");
+            throw new InternalServerException("Server unable to find staff of staff id: " + staffId + " from the database");
         }
 
         int yyyy = loanDTO.getyyyy();
@@ -88,7 +87,7 @@ public class LoanService {
         boolean newLoan = (numPassesLoanedOnDate > 0) ? false : true;
 
         if (numPassesLoanedOnDate + numPassesRequested > aMaxPassesPerLoan)
-            return jsonResponse.create(400, String.format(
+            throw new InternalServerException(String.format(
                     "Max. passes allowed per loan for %s is %d. You currently have %d passes booked for %s. You cannot book %d passes for %s on (yyyy-mm-ddd): %d-%d-%d.",
                     aName, aMaxPassesPerLoan, numPassesLoanedOnDate, aName, numPassesRequested, aName, yyyy, mm,
                     dd));
@@ -98,15 +97,15 @@ public class LoanService {
         int maxLoansPerMonth = rService.getMaxLoansPerMonth();
 
         if (newLoan && (loanCountInMonth + 1 > maxLoansPerMonth))
-            return jsonResponse.create(400, String.format(
-                    "Unable to make anymore loans. Max. loans per month for %s is %d. You have %d loans for (yyyy-mm): %d-%d currently. Cancel other loans if you wish to make new loans.",
-                    aName, maxLoansPerMonth, loanCountInMonth, yyyy, mm));
+            throw new InternalServerException(String.format(
+                    "Unable to make anymore loans. Max. loans per month is %d. You have %d loans for (yyyy-mm): %d-%d currently. Cancel other loans if you wish to make new loans.",
+                    maxLoansPerMonth, loanCountInMonth, yyyy, mm));
 
         // Check 3: Cannot book if # available pass for that
         // attraction for the date < # passes that user requested
         Set<Pass> availablePassesForLoan = getAvailablePassesForDate(aId, yyyyString, mmString, ddString);
         if (availablePassesForLoan.size() < numPassesRequested)
-            return jsonResponse.create(400, String.format(
+            throw new InternalServerException(String.format(
                     "Unable to book %d pass(es). There are insufficient available pass(es) for %s for loan on (yyyy-mm-dd): %s-%s-%s",
                     numPassesRequested, aName, yyyyString, mmString, ddString));
 
@@ -116,12 +115,12 @@ public class LoanService {
         TreeSet<Pass> sortedAvailablePasses = sortSetPasses(availablePassesForLoan);
         List<Loan> loansMade = assignPasses(sortedAvailablePasses, staff, yyyy, mm, dd, numPassesRequested);
 
-        return jsonResponse.create(loansMade);
+        JSONWithData<List<Loan>> body = new JSONWithData<>(200, loansMade);
+        return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
 
     }
 
     public ResponseEntity<JSONBody> getNumAvailablePassesForDate(Integer aId, int yyyy, int mm, int dd) {
-        CreateJSONResponse<Integer> response = new CreateJSONResponse<>();
         String yyyyString = yyyy + "";
         String mmString = (mm < 10) ? "0" + mm : mm + "";
         String ddString = (dd < 10) ? "0" + dd : dd + "";
@@ -129,10 +128,11 @@ public class LoanService {
         try {
             Set<Pass> allCurrentlyLoanedPassesByAttrId = getAvailablePassesForDate(aId, yyyyString, mmString, ddString);
             Integer numAvailablePassesForDate = allCurrentlyLoanedPassesByAttrId.size();
-            return response.create(numAvailablePassesForDate);
+            JSONWithData<Integer> body = new JSONWithData<>(200, numAvailablePassesForDate);
+            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
 
         } catch (Exception e) {
-            return response.create(500, String.format(
+            throw new InternalServerException(String.format(
                     "Server unable to get all currently booked passes of attraction ID %d for (yyyy-mm-dd) %s-%s-%s ",
                     aId, yyyyString, mmString, ddString));
         }
@@ -216,27 +216,7 @@ public class LoanService {
     }
 
     // -- Following codes are used for testing only
-    public ResponseEntity<JSONBody> test(Integer aId, int yyyy, int mm, int dd) {
-        CreateJSONResponse<TreeSet<Pass>> response = new CreateJSONResponse<>();
-        try {
-            Set<Pass> availPasses = getAvailablePassesForDate(aId,
-                    yyyy + "", (mm < 10) ? "0" + mm : mm + "", (dd < 10) ? "0" + dd : dd + "");
-
-            // Convert set into treeset
-            Iterator<Pass> availPassesIterator = availPasses.iterator();
-            TreeSet<Pass> sortedAvailPasses = new TreeSet<>(new PassComparator());
-            while (availPassesIterator.hasNext()) {
-                sortedAvailPasses.add(availPassesIterator.next());
-            }
-            return response.create(sortedAvailPasses);
-
-        } catch (Exception e) {
-            return response.create(500, String.format(
-                    "Server unable to get all currently booked passes of attraction ID %d for(yyyy-mm-dd) %s-%s-%s ",
-                    aId, yyyy,
-                    mm, dd));
-        }
-    }
+    
     //
     // ------------------------------------------------------------------------------------------------
 

@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import sg.edu.sportsschool.Entities.Staff;
+import sg.edu.sportsschool.DTO.SignInDto;
+import sg.edu.sportsschool.DTO.SignupDto;
 import sg.edu.sportsschool.Services.StaffService;
 import sg.edu.sportsschool.helper.JSONBody;
 
@@ -24,8 +25,14 @@ public class StaffController {
         return staffService.getAllStaff();
     }
 
-    @PostMapping(path = "/add")
-    public ResponseEntity<JSONBody> addStaff(@RequestBody Staff staff) {
-        return staffService.addStaff(staff);
+    @PostMapping("/signup")
+    public ResponseEntity<JSONBody> signup(@RequestBody SignupDto signupDto) {
+        return staffService.signUp(signupDto);
     }
+
+    @PostMapping("/signin")
+    public ResponseEntity<JSONBody> signIn(@RequestBody SignInDto signInDto) {
+        return staffService.signIn(signInDto);
+    }
+
 }

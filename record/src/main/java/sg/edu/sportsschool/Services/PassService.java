@@ -12,11 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import sg.edu.sportsschool.Entities.Attraction;
 import sg.edu.sportsschool.Entities.Pass;
+import sg.edu.sportsschool.Exceptions.BadRequestException;
+import sg.edu.sportsschool.Exceptions.InternalServerException;
 import sg.edu.sportsschool.Repositories.PassRepository;
-import sg.edu.sportsschool.helper.CreateJSONResponse;
 import sg.edu.sportsschool.helper.JSONBody;
 import sg.edu.sportsschool.helper.JSONWithData;
-import sg.edu.sportsschool.helper.JSONWithMessage;
 import sg.edu.sportsschool.helper.ReadCsv;
 
 @Service
@@ -37,29 +37,27 @@ public class PassService {
             return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
 
         } catch (Exception e) {
-            JSONWithMessage results = new JSONWithMessage(500, "Server unable to retrieve all passes");
-            return new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new InternalServerException("Server unable to retrieve all passes");
         }
     }
 
     public ResponseEntity<JSONBody> addPasses(Integer aId, MultipartFile cardNumbersCSVFile) {
-        CreateJSONResponse<List<Pass>> jsonResponse = new CreateJSONResponse<>();
         List<Pass> passesAdded = new ArrayList<>();
 
         if (cardNumbersCSVFile == null || cardNumbersCSVFile.isEmpty()) {
-            return jsonResponse.create(400, "Bad request. CSV file is null or CSV file is empty");
+            throw new BadRequestException("Bad request. CSV file is null or CSV file is empty");
         }
 
         Attraction a = aService.returnAttraction(aId);
         if (a == null) {
-            return jsonResponse.create(500, "Server unable to find attraction of id: " + aId + " from the database");
+            throw new InternalServerException("Server unable to find attraction of id: " + aId + " from the database");
         }
 
         // Get all passIds from csv file, add a new pass for each passId
         List<String[]> passesList = ReadCsv.read(cardNumbersCSVFile);
 
         if (passesList == null) {
-            return jsonResponse.create(500, "Exception occured when reading csv file");
+            throw new InternalServerException("Exception occured when reading csv file");
         }
 
         for (String[] line : passesList) {
@@ -72,7 +70,8 @@ public class PassService {
             }
         }
 
-        return jsonResponse.create(passesAdded);
+        JSONWithData<List<Pass>> body = new JSONWithData<>(200, passesAdded);
+        return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
     }
 
     // ------------------------------------------------------------------------------------------------
@@ -89,19 +88,6 @@ public class PassService {
     }
 
     // -- Following codes are used for testing only
-    // public ResponseEntity<JSONBody> getPassesByAttrId(Integer aId) {
-    // try {
-    // List<Pass> results = pRepository.findAllPassesByAttrId(aId);
-
-    // JSONWithData<List<Pass>> body = new JSONWithData<List<Pass>>(200, results);
-    // return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
-
-    // } catch (Exception e) {
-    // JSONWithMessage results = new JSONWithMessage(500, "Server unable to retrieve
-    // passes for attraction ID " + aId);
-    // return new ResponseEntity<JSONBody>(results,
-    // HttpStatus.INTERNAL_SERVER_ERROR);
-    // }
-    // }
+    
     // ------------------------------------------------------------------------------------------------
 }

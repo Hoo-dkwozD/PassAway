@@ -29,6 +29,4 @@ public class AttractionController {
         return aService.addAttraction(a);
     }
 
-
-
 }

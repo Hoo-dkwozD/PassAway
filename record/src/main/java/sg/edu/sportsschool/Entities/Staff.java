@@ -17,7 +17,9 @@ public class Staff {
     private Integer staffId;
 
     private String email;
-    private String name;
+    private String firstName;
+    private String lastName;
+
     private String contactNumber;
     private String role;
     private boolean hasQuit;
@@ -25,29 +27,33 @@ public class Staff {
 
     @OneToMany(mappedBy = "staff")
     private Set<Loan> loans;
-    
+
     public Staff() {
     }
-    
 
     /**
      * staffId will be auto generated
-     * @param email 
-     * @param name
+     * 
+     * @param email
+     * @param firstName
+     * @param lastName
      * @param contactNumber
      * @param role
      * @param hasQuit
-     * @param hashedPassword to be left as empty string "" for employees that are just added by the admin i.e. user will set their password from the email sent when they login
+     * @param hashedPassword to be left as empty string "" for employees that are
+     *                       just added by the admin i.e. user will set their
+     *                       password from the email sent when they login
      */
-    public Staff(String email, String name, String contactNumber, String role, boolean hasQuit, String hashedPassword) {
-      this.email = email;
-      this.name = name;
-      this.contactNumber = contactNumber;
-      this.role = role;
-      this.hasQuit = hasQuit;
-      this.hashedPassword = hashedPassword;
+    public Staff(String email, String firstName, String lastName, String contactNumber, String role, boolean hasQuit,
+            String hashedPassword) {
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.contactNumber = contactNumber;
+        this.role = role;
+        this.hasQuit = hasQuit;
+        this.hashedPassword = hashedPassword;
     }
-
 
     public Integer getStaffId() {
         return staffId;
@@ -61,12 +67,20 @@ public class Staff {
         this.email = email;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getContactNumber() {
