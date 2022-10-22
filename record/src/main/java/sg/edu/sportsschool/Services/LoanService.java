@@ -2,9 +2,12 @@ package sg.edu.sportsschool.Services;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,7 @@ import sg.edu.sportsschool.Entities.Staff;
 import sg.edu.sportsschool.Repositories.LoanRepository;
 import sg.edu.sportsschool.helper.CreateJSONResponse;
 import sg.edu.sportsschool.helper.JSONBody;
+import sg.edu.sportsschool.helper.PassComparator;
 
 @Service
 public class LoanService {
@@ -51,7 +55,7 @@ public class LoanService {
     }
 
     public ResponseEntity<JSONBody> addLoan(LoanDTO loanDTO) {
-        CreateJSONResponse<List<Loan>> jsonResponse = new CreateJSONResponse<>(); 
+        CreateJSONResponse<List<Loan>> jsonResponse = new CreateJSONResponse<>();
         int numPassesRequested = loanDTO.getNumPasses();
         Integer aId = loanDTO.getAttractionId();
 
@@ -76,11 +80,9 @@ public class LoanService {
         String mmString = (mm < 10) ? "0" + mm : mm + "";
         int dd = loanDTO.getdd();
         String ddString = (dd < 10) ? "0" + dd : dd + "";
-        Date startDate = Date.valueOf(String.format("%d-%d-%d", yyyy, mm, dd));
 
-        // Check 1: Disallow to book more passes for that loan if num passes that
-        // borrower has currently borrowed (will be 0 for new loans and >0 for current
-        // loans) + passes requested > aMaxPassesPerLoan
+        // Check 1: Cannot book if # passes borrower has + passes requested >
+        // aMaxPassesPerLoan
         Integer numPassesLoanedOnDate = lRepository.getNumPassesLoanedOnDate(staffId, yyyyString, mmString, ddString,
                 aId);
         boolean newLoan = (numPassesLoanedOnDate > 0) ? false : true;
@@ -91,9 +93,7 @@ public class LoanService {
                     aName, aMaxPassesPerLoan, numPassesLoanedOnDate, aName, numPassesRequested, aName, yyyy, mm,
                     dd));
 
-        // Check 2: Disallow to book a loan if borrower is making a new loan and his
-        // current loans for the attraction for selected month has reached the
-        // max_loans_per_month
+        // Check 2: Cannot book if new loan will exceed max loans per month
         int loanCountInMonth = lRepository.getLoanCountInMonth(staffId, yyyyString, mmString).size();
         int maxLoansPerMonth = rService.getMaxLoansPerMonth();
 
@@ -102,25 +102,19 @@ public class LoanService {
                     "Unable to make anymore loans. Max. loans per month for %s is %d. You have %d loans for (yyyy-mm): %d-%d currently. Cancel other loans if you wish to make new loans.",
                     aName, maxLoansPerMonth, loanCountInMonth, yyyy, mm));
 
-        // Check 3: Unable to loan if number of available pass for that
-        // attraction for the date is < number of passes that user requested
+        // Check 3: Cannot book if # available pass for that
+        // attraction for the date < # passes that user requested
         Set<Pass> availablePassesForLoan = getAvailablePassesForDate(aId, yyyyString, mmString, ddString);
         if (availablePassesForLoan.size() < numPassesRequested)
             return jsonResponse.create(400, String.format(
                     "Unable to book %d pass(es). There are insufficient available pass(es) for %s for loan on (yyyy-mm-dd): %s-%s-%s",
                     numPassesRequested, aName, yyyyString, mmString, ddString));
 
-        Iterator<Pass> availablePasses = availablePassesForLoan.iterator();
-        List<Loan> loansMade = new ArrayList<>();
-        int i = 0; // counter to add number of passes according to numPassesRequested
+        // TODO: Ask if staff want to be in waiting list, Put the staff into waiting
+        // list if selected yes
 
-        // Add loan according to the number of passes that borrower wants
-        while (availablePasses.hasNext() && (i < numPassesRequested)) {
-            Loan loan = new Loan(staff, availablePasses.next(), startDate, false, false);
-            lRepository.save(loan);
-            loansMade.add(loan);
-            i++;
-        }
+        TreeSet<Pass> sortedAvailablePasses = sortSetPasses(availablePassesForLoan);
+        List<Loan> loansMade = assignPasses(sortedAvailablePasses, staff, yyyy, mm, dd, numPassesRequested);
 
         return jsonResponse.create(loansMade);
 
@@ -178,26 +172,72 @@ public class LoanService {
         return lRepository.getLoanCountInMonth(staffId, yyyyString, mmString).size();
     }
 
-    // -- Following codes are used for testing only
-    // public ResponseEntity<JSONBody> findAllCurrentlyLoanedPassesByAttrId(Integer
-    // aId, int yyyy, int mm,
-    // int dd) {
-    // CreateJSONResponse<Set<Pass>> response = new CreateJSONResponse<>();
-    // try {
-    // Set<Pass> allCurrentlyLoanedPassesByAttrId =
-    // lRepository.findAllCurrentlyLoanedPassesByAttrId(aId, yyyy + "", (mm < 10) ?
-    // "0" + mm : mm + "", (dd < 10) ? "0" + dd : dd + "");
-    // return response.create(allCurrentlyLoanedPassesByAttrId);
+    public TreeSet<Pass> sortSetPasses(Set<Pass> setPasses) {
+        // Returns TreeSet of passes sorted by their pass IDs
+        Iterator<Pass> setPassesIterator = setPasses.iterator();
+        TreeSet<Pass> sortedPasses = new TreeSet<>(new PassComparator());
+        while (setPassesIterator.hasNext()) {
+            sortedPasses.add(setPassesIterator.next());
+        }
+        return sortedPasses;
+    }
 
-    // } catch (Exception e) {
-    // return response.create(500, String.format(
-    // "Server unable to get all currently booked passes of attraction ID %d for
-    // (yyyy-mm-dd) %s-%s-%s ",
-    // aId, yyyy,
-    // mm, dd));
-    // }
-    // }
-    // //
+    /*
+     * Returns a list of loans made to the staff on the date
+     * Assigns passes to the staff based on odd/even of the day of the year
+     * Allocate pass from the first of the TreeSet to the last if day is odd, else allocate from last to the first if day is even
+     * To allow for 1 day of buffer time for borrower to return before the pass is being borrowed again
+     * E.g. pass IDs: [1,2,3,4] Borrower borrow on 1 Jan (odd day of the year). Pass allocated is from id 1 to 4.
+     * If another borrower borrow on 2 Jan (Even day of the year), pass allocated is from id 4 to 1 (from last to first)
+     * to minimise id 1 being allocated to next borrower (to give time buffer for previous borrower to return)
+     * If another borrower borrow on 3 Jan (odd day of the year), pass allocated is back from id 1 to 4 (giving 1 day buffer for first borrower to return)
+     */
+    public List<Loan> assignPasses(TreeSet<Pass> sortedAvailablePasses, Staff staff, int yyyy, int mm, int dd, int numPassesRequested) {
+        List<Loan> loansMade = new ArrayList<>();
+        int i = 0; // counter to add number of passes according to numPassesRequested
+        Date startDate = Date.valueOf(String.format("%d-%d-%d", yyyy, mm, dd));
+        
+        Iterator<Pass> availablePasses = sortedAvailablePasses.iterator();
+
+        Calendar calendar = new GregorianCalendar(yyyy, mm, dd);
+        if (calendar.get(Calendar.DAY_OF_YEAR) % 2 == 0) {
+            availablePasses = sortedAvailablePasses.descendingIterator();
+        }
+
+        // Add loan according to the number of passes that borrower wants
+        while (availablePasses.hasNext() && (i < numPassesRequested)) {
+            Loan loan = new Loan(staff, availablePasses.next(), startDate, false, false);
+            lRepository.save(loan);
+            loansMade.add(loan);
+            i++;
+        }
+
+        return loansMade;
+    }
+
+    // -- Following codes are used for testing only
+    public ResponseEntity<JSONBody> test(Integer aId, int yyyy, int mm, int dd) {
+        CreateJSONResponse<TreeSet<Pass>> response = new CreateJSONResponse<>();
+        try {
+            Set<Pass> availPasses = getAvailablePassesForDate(aId,
+                    yyyy + "", (mm < 10) ? "0" + mm : mm + "", (dd < 10) ? "0" + dd : dd + "");
+
+            // Convert set into treeset
+            Iterator<Pass> availPassesIterator = availPasses.iterator();
+            TreeSet<Pass> sortedAvailPasses = new TreeSet<>(new PassComparator());
+            while (availPassesIterator.hasNext()) {
+                sortedAvailPasses.add(availPassesIterator.next());
+            }
+            return response.create(sortedAvailPasses);
+
+        } catch (Exception e) {
+            return response.create(500, String.format(
+                    "Server unable to get all currently booked passes of attraction ID %d for(yyyy-mm-dd) %s-%s-%s ",
+                    aId, yyyy,
+                    mm, dd));
+        }
+    }
+    //
     // ------------------------------------------------------------------------------------------------
 
 }

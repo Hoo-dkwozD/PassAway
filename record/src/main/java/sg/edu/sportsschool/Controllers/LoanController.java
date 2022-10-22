@@ -35,7 +35,11 @@ public class LoanController {
             @RequestParam int yyyy, @RequestParam int mm, @RequestParam int dd) {
         return lService.getNumAvailablePassesForDate(aId, yyyy, mm, dd);
     }
-    
+
+    @GetMapping(path = "/test")
+    public ResponseEntity<JSONBody> test(@RequestParam Integer aId,@RequestParam int yyyy,@RequestParam int mm,@RequestParam int dd) {
+        return lService.test(aId, yyyy, mm, dd);
+    }
     // // ------------------------------------------------------------------------------------------------
     // // -- Following codes are used for testing only
     // @GetMapping(path = "/findAllCurrentlyLoanedPassesByAttrId")

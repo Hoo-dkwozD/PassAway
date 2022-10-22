@@ -57,4 +57,16 @@ public class Pass {
     public void setAttraction(Attraction attraction) {
         this.attraction = attraction;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Pass) {
+            Pass pass = (Pass) obj;
+            return (passId.equals(pass.getPassId()))
+                    && (attraction.getAttractionId() == pass.attraction.getAttractionId());
+        }
+        return false;
+        
+    }
+    
 }
