@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -16,14 +15,9 @@ import sg.edu.sportsschool.Entities.Attraction;
 import sg.edu.sportsschool.Entities.Loan;
 import sg.edu.sportsschool.Entities.Pass;
 import sg.edu.sportsschool.Entities.Staff;
-import sg.edu.sportsschool.Repositories.AttractionRepository;
 import sg.edu.sportsschool.Repositories.LoanRepository;
-import sg.edu.sportsschool.Repositories.PassRepository;
-import sg.edu.sportsschool.Repositories.StaffRepository;
 import sg.edu.sportsschool.helper.CreateJSONResponse;
 import sg.edu.sportsschool.helper.JSONBody;
-import sg.edu.sportsschool.helper.JSONWithData;
-import sg.edu.sportsschool.helper.JSONWithMessage;
 
 @Service
 public class LoanService {
@@ -32,48 +26,49 @@ public class LoanService {
     private LoanRepository lRepository;
 
     @Autowired
-    private AttractionRepository aRepository;
+    private AttractionService aService;
 
     @Autowired
-    private PassRepository pRepository;
+    private PassService pService;
 
     @Autowired
-    private StaffRepository sRepository;
+    private StaffService staffService;
 
     @Autowired
     private RuleService rService;
 
     public ResponseEntity<JSONBody> getAllLoans() {
+        CreateJSONResponse<List<Loan>> jsonResponse = new CreateJSONResponse<>();
         try {
             List<Loan> results = new ArrayList<>();
             lRepository.findAll().forEach(results::add);
 
-            JSONWithData<List<Loan>> body = new JSONWithData<>(200, results);
-            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+            return jsonResponse.create(results);
 
         } catch (Exception e) {
-            JSONWithMessage errMessage = new JSONWithMessage(500, "Server unable to retrieve all loans");
-            return new ResponseEntity<JSONBody>(errMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+            return jsonResponse.create(500, "Server unable to retrieve all loans");
         }
     }
 
     public ResponseEntity<JSONBody> addLoan(LoanDTO loanDTO) {
+        CreateJSONResponse<List<Loan>> jsonResponse = new CreateJSONResponse<>(); 
         int numPassesRequested = loanDTO.getNumPasses();
         Integer aId = loanDTO.getAttractionId();
 
-        Attraction a = aRepository.findById(aId).get();
-
-        CreateJSONResponse<List<Loan>> jsonResponse = new CreateJSONResponse<>(); // json data response type
-                                                                                  // List<Loan> if status is 200
-
-        if (a == null)
-            return jsonResponse.create(400, "Server unable to get attraction using attractionId " + aId);
+        Attraction a = aService.returnAttraction(aId);
+        if (a == null) {
+            return jsonResponse.create(500, "Server unable to find attraction of id: " + aId + " from the database");
+        }
 
         String aName = a.getName();
         int aMaxPassesPerLoan = a.getMaxPassesPerLoan();
 
         Integer staffId = loanDTO.getStaffId();
-        Staff staff = sRepository.findById(staffId).get();
+        Staff staff = staffService.returnStaffById(staffId);
+        if (staff == null) {
+            return jsonResponse.create(500,
+                    "Server unable to find staff of staff id: " + staffId + " from the database");
+        }
 
         int yyyy = loanDTO.getyyyy();
         String yyyyString = yyyy + "";
@@ -131,54 +126,6 @@ public class LoanService {
 
     }
 
-    /*
-     * All passes are available for loan every day provided they are not lost
-     * Available passes = All passes for that attraction - Passes current booked for
-     * that attraction for that date
-     */
-    public Set<Pass> getAvailablePassesForDate(Integer aId, String yyyyString, String mmString, String ddString) {
-        Set<Pass> allAttractionPasses = pRepository.findAllPassesByAttractionId(aId); //
-
-        Set<Pass> currentLoansPasses = lRepository.findAllCurrentlyLoanedPassesByAttrId(aId, yyyyString, mmString,
-                ddString); // Get all the currently booked passes for that attraction on a particular date
-
-        allAttractionPasses.removeAll(currentLoansPasses); // Remove the passes that have been booked for this
-                                                           // attraction on date from all available
-                                                           // passes the attraction has, to get all the passes
-                                                           // available for user to book for this attraction on the
-                                                           // date
-        return allAttractionPasses;
-    }
-
-    /**
-     * Returns the number of loans i.e. loans to different place on different
-     * date of the month).
-     * 1 loan = 1 group of loan where the place is the same or 1 group of
-     * loans where the date is the same.
-     * I.e. groupby the loans by date, then further groupby place and count the
-     * number of groups,
-     * or groupby place, then further groupby date, and count the number of groups.
-     * Same result both ways.
-     * Ex 1. Staff ID 1 has pass IDs 4 (place A), 5 (place A), 6 (place B) on 1st,
-     * 1st and 2nd Jan respectively.
-     * Number of loans = 2 (initially 2 groups between 1st Jan and 2nd Jan. Within
-     * group 1 (1st Jan), only going place A (+1). Within group 2 (2nd Jan), only
-     * going place B (+1))
-     * Ex 2. Staff ID 1 has pass IDs 4 (place A), 5 (place A), 6 (place B) on 1st,
-     * 2nd and 2nd of the month respectively.
-     * Number of loans = 3 (initially 2 groups between 1st Jan and 2nd Jan. Within
-     * group 1 (1st Jan), only going place A (+1). Within group 2 (2nd Jan), going
-     * place A (+1) and place B (+1))
-     * 
-     * @param staffId
-     * @param yyyyString
-     * @param mmString
-     * @return
-     */
-    public int getLoanCountInMonth(Integer staffId, String yyyyString, String mmString) {
-        return lRepository.getLoanCountInMonth(staffId, yyyyString, mmString).size();
-    }
-
     public ResponseEntity<JSONBody> getNumAvailablePassesForDate(Integer aId, int yyyy, int mm, int dd) {
         CreateJSONResponse<Integer> response = new CreateJSONResponse<>();
         String yyyyString = yyyy + "";
@@ -198,6 +145,39 @@ public class LoanService {
     }
 
     // ------------------------------------------------------------------------------------------------
+    // -- Non-JSON response Methods
+    public Integer getNumPassesLoanedOnDate(Integer staffId, String yyyy, String mm, String dd, Integer aId) {
+        return lRepository.getNumPassesLoanedOnDate(staffId, yyyy, mm, dd, aId);
+    }
+
+    /*
+     * All passes are available for loan every day provided they are not lost
+     * Available passes = All passes for that attraction - Passes current booked for
+     * that attraction for that date
+     */
+    public Set<Pass> getAvailablePassesForDate(Integer aId, String yyyyString, String mmString, String ddString) {
+        Set<Pass> availableAttrPasses = pService.returnAllPassesByAttrId(aId);
+
+        Set<Pass> currentLoansPasses = lRepository.findAllCurrentlyLoanedPassesByAttrId(aId, yyyyString, mmString,
+                ddString); // Get all the currently booked passes for that attraction on a particular date
+
+        availableAttrPasses.removeAll(currentLoansPasses);
+        return availableAttrPasses;
+    }
+
+    /**
+     * Returns the number of loans i.e. loans to different place on different
+     * date of the month).
+     * 
+     * @param staffId
+     * @param yyyyString
+     * @param mmString
+     * @return
+     */
+    public int getLoanCountInMonth(Integer staffId, String yyyyString, String mmString) {
+        return lRepository.getLoanCountInMonth(staffId, yyyyString, mmString).size();
+    }
+
     // -- Following codes are used for testing only
     // public ResponseEntity<JSONBody> findAllCurrentlyLoanedPassesByAttrId(Integer
     // aId, int yyyy, int mm,

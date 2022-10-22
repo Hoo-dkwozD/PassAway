@@ -77,6 +77,8 @@ public class RuleService {
         }
     }
 
+    // ------------------------------------------------------------------------------------------------
+    // -- Non-JSON response Methods
     public int getMaxLoansPerMonth() {
         try {
             Rule r = ruleRepository.findById("maxLoansPerMonth").get();

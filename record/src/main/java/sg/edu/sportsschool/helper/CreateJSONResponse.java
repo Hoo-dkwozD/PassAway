@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 /*
- * Helper class with static method to return JSON as Response and HttpStatus
+ * Helper class with static overloaded methods to return JSON Response and HttpStatus depending on error or no error
  */
 public class CreateJSONResponse<T> {
 

@@ -1,7 +1,6 @@
 package sg.edu.sportsschool.Repositories;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.jpa.repository.Query;
@@ -32,10 +31,27 @@ public interface LoanRepository extends CrudRepository<Loan, Integer> {
     /**
      * Purpose of this query is to know how many loans a staff has made in a particular month
      * as there is a rule that a staff can only borrow x e.g. 2 number of loans per month
+     * 1 loan = 1 group of loan where the place is the same or 1 group of
+     * loans where the date is the same.
+     * I.e. groupby the loans by date, then further groupby place and count the
+     * number of groups,
+     * or groupby place, then further groupby date, and count the number of groups.
+     * Same result both ways.
+     * Ex 1. Staff ID 1 has pass IDs 4 (place A), 5 (place A), 6 (place B) on 1st,
+     * 1st and 2nd Jan respectively.
+     * Number of loans = 2 (initially 2 groups between 1st Jan and 2nd Jan. Within
+     * group 1 (1st Jan), only going place A (+1). Within group 2 (2nd Jan), only
+     * going place B (+1))
+     * Ex 2. Staff ID 1 has pass IDs 4 (place A), 5 (place A), 6 (place B) on 1st,
+     * 2nd and 2nd of the month respectively.
+     * Number of loans = 3 (initially 2 groups between 1st Jan and 2nd Jan. Within
+     * group 1 (1st Jan), only going place A (+1). Within group 2 (2nd Jan), going
+     * place A (+1) and place B (+1))
      * Returns a list of array of objects where each object is a row returned from the SELECT statement
      * Example of response [{attractionId1, startDate1, loanId1}, {attractionId2, startDate2, loanId2}]
-     * e.g. [{1, "2022-09-21", 1}, {1, "2022-09-23", 2}] => There are two loans in month of september as the size of array is 2
+     * e.g. [{1, "2022-09-21", 1}, {1, "2022-09-23", 2}] => There are two loans in month of september by this staff as the size of array is 2
      */
+    
     @Async
     @Query(value = """
             SELECT loans.pass.attraction.attractionId, loans.startDate, COUNT(loans.loanId) FROM

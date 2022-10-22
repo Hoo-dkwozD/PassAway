@@ -11,5 +11,5 @@ import sg.edu.sportsschool.Entities.Pass;
 public interface PassRepository extends CrudRepository<Pass, String> {
     @Async
     @Query("select p from Pass p where p.attraction.attractionId = :aId")
-    Set<Pass> findAllPassesByAttractionId(Integer aId);
+    Set<Pass> findAllPassesByAttrId(Integer aId);
 }
