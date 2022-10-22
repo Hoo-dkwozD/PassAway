@@ -81,6 +81,7 @@ public class LoanService {
         String mmString = (mm < 10) ? "0" + mm : mm + "";
         int dd = loanDTO.getdd();
         String ddString = (dd < 10) ? "0" + dd : dd + "";
+        System.out.println(String.format("%d-%d-%d", yyyy, mm, dd));
         Date startDate = Date.valueOf(String.format("%d-%d-%d", yyyy, mm, dd));
 
         // Check 1: Disallow to book more passes for that loan if num passes that

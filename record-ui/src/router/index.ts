@@ -1,21 +1,27 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import MainView from '../views/MainView.vue'
-import SampleView from '../views/SampleView.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import MainView from "../views/MainView.vue";
+import SampleView from "../views/SampleView.vue";
+import AboutView from "../views/AboutView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: MainView
+      path: "/Admin",
+      name: "Admin",
+      component: MainView,
     },
     {
-      path: '/sample',
-      name: 'sample',
-      component: SampleView
+      path: "/Analytics",
+      name: "Analytics",
+      component: SampleView,
+    },
+    {
+      path: "/signin",
+      name: "Sign In",
+      component: AboutView,
     }
-  ]
+  ],
 });
 
-export default router
+export default router;
