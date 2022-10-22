@@ -35,10 +35,15 @@ public class StaffService {
     private AuthenticationService authenticationService;
 
     public ResponseEntity<JSONBody> getAllStaff() {
-        List<Staff> allStaff = new ArrayList<>();
-        sRepository.findAll().forEach(allStaff::add);
-        JSONWithData<List<Staff>> body = new JSONWithData<List<Staff>>(200, allStaff);
-        return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+        try {
+            List<Staff> allStaff = new ArrayList<>();
+            sRepository.findAll().forEach(allStaff::add);
+            JSONWithData<List<Staff>> body = new JSONWithData<List<Staff>>(200, allStaff);
+            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+            
+        } catch (Exception e) {
+            throw new InternalServerException("Server unable to get all staff from database");
+        }
     }
 
     @Transactional
@@ -64,7 +69,7 @@ public class StaffService {
 
         authenticationService.saveConfirmationToken(authenticationToken);
 
-        JSONWithMessage body = new JSONWithMessage(200, "Staff created succesfully");
+        JSONWithMessage body = new JSONWithMessage(200, "Staff created successfully");
         return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
     }
 
@@ -74,7 +79,7 @@ public class StaffService {
         Staff staff = sRepository.findByEmail(staffEmail);
 
         if (staff == null) {
-            throw new BadRequestException("Staff of email: " + staffEmail + "not found");
+            throw new BadRequestException("Staff of email: " + staffEmail + " not found");
         }
 
         if (!staff.getHashedPassword().equals(hashPassword(signInDto.getPassword()))) {

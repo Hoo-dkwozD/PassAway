@@ -39,11 +39,7 @@ public class LoanController {
     
     // // ------------------------------------------------------------------------------------------------
     // // -- Following codes are used for testing only
-    // @GetMapping(path = "/findAllCurrentlyLoanedPassesByAttrId")
-    // public ResponseEntity<JSONBody> findAllCurrentlyLoanedPassesByAttrId(@RequestParam Integer aId,
-    //         @RequestParam int yyyy, @RequestParam int mm, @RequestParam int dd) {
-    //     return lService.findAllCurrentlyLoanedPassesByAttrId(aId, yyyy, mm, dd);
-    // }
+   
     // // ------------------------------------------------------------------------------------------------
 
 }
