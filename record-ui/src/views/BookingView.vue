@@ -19,7 +19,6 @@
             id="location-details"
             type="button"
             data-bs-toggle="dropdown"
-            
           >
             Location
           </button>
@@ -36,11 +35,11 @@
             id="calendar-details"
             type="button"
             data-bs-toggle="dropdown"
-            @click="showCalendar = !showCalendar" 
+            @click="showCalendar = !showCalendar"
           >
             Calendar
           </button>
-          <Calendar class="calendarStyle" v-if="showCalendar" ref="calendar" />
+          <Calendar class="calendarStyle" v-if="showCalendar" />
         </div>
 
         <div class="dropdown" id="group-date">
@@ -75,7 +74,7 @@
 import type { ComponentPublicInstance } from "vue";
 import { defineComponent } from "vue";
 import Calendar from "../components/Calendar.vue";
-
+import { useCounterStore } from "../stores/counter";
 
 // Typings
 interface Data {
@@ -83,8 +82,9 @@ interface Data {
   dateSelected: String;
   numberofPasses: Number[];
   type: boolean;
-  showCalendar:boolean;
-  currentBackground:String;
+  showCalendar: boolean;
+  currentBackground: String;
+  store: any;
 }
 
 export default defineComponent({
@@ -95,9 +95,8 @@ export default defineComponent({
       dateSelected: "",
       numberofPasses: [],
       showCalendar: false,
-      currentBackground: "/assets/header.png"
-
-
+      currentBackground: "/assets/header.png",
+      store: useCounterStore(),
     };
   },
   async created() {
@@ -107,14 +106,12 @@ export default defineComponent({
       this.numberofPasses.push(i);
     }
   },
-  methods: {
 
-  },
+  methods: {},
   props: {},
   components: {
     Calendar,
   },
-
 });
 </script>
 
@@ -149,9 +146,9 @@ export default defineComponent({
   width: 405px;
 }
 
-.calendarStyle{
-  position:absolute;
-  margin-top:25px;
+.calendarStyle {
+  position: absolute;
+  margin-top: 50px;
 }
 .bookingdetails {
   align-items: center;
@@ -178,7 +175,7 @@ export default defineComponent({
 }
 
 #group-calendar {
-  position:relative;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
