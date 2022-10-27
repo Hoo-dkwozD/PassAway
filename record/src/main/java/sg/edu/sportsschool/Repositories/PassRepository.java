@@ -2,14 +2,18 @@ package sg.edu.sportsschool.Repositories;
 
 import java.util.Set;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.scheduling.annotation.Async;
 
 import sg.edu.sportsschool.Entities.Pass;
 
-public interface PassRepository extends CrudRepository<Pass, String> {
-    @Async
-    @Query("select p from Pass p where p.attraction.attractionId = :aId")
+public interface PassRepository extends JpaRepository<Pass, String> {
+    
+    @Query("SELECT p FROM Pass p WHERE p.attraction.attractionId = :aId")
     Set<Pass> findAllPassesByAttrId(Integer aId);
+    
+    @Query(value = """
+            SELECT p.barcode.image FROM Pass p WHERE p.passId = :passId
+            """)
+    byte[] getBarcodeImage(String passId);
 }

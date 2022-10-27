@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import sg.edu.sportsschool.DTO.SignInDto;
 import sg.edu.sportsschool.DTO.SignInReponseDto;
 import sg.edu.sportsschool.DTO.SignupDto;
+import sg.edu.sportsschool.DTO.UpdatePasswordDto;
+import sg.edu.sportsschool.DTO.UpdateProfileDto;
 import sg.edu.sportsschool.Entities.AuthenticationToken;
 import sg.edu.sportsschool.Entities.Staff;
 import sg.edu.sportsschool.Exceptions.BadRequestException;
@@ -40,9 +42,31 @@ public class StaffService {
             sRepository.findAll().forEach(allStaff::add);
             JSONWithData<List<Staff>> body = new JSONWithData<List<Staff>>(200, allStaff);
             return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
-            
+
         } catch (Exception e) {
             throw new InternalServerException("Server unable to get all staff from database");
+        }
+    }
+    
+    public ResponseEntity<JSONBody> getStaff(String token) {
+        try {
+            Staff s = authenticationService.getStaff(token);
+            JSONWithData<Staff> body = new JSONWithData<>(200, s);
+            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+
+        } catch (Exception e) {
+            throw new InternalServerException("Server unable to get staff from database");
+        }
+    }
+    
+    public ResponseEntity<JSONBody> getStaff(Integer staffId) {
+        try {
+            Staff s = sRepository.findById(staffId).get();
+            JSONWithData<Staff> body = new JSONWithData<>(200, s);
+            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+    
+        } catch (Exception e) {
+            throw new InternalServerException("Server unable to get staff from database");
         }
     }
 
@@ -60,7 +84,7 @@ public class StaffService {
         encryptedpassword = hashPassword(signupDto.getPassword());
 
         staff = new Staff(signupDto.getEmail(), signupDto.getFirstName(), signupDto.getLastName(),
-                signupDto.getContactNumber(), signupDto.getRole(), false, encryptedpassword);
+                signupDto.getContactNumber(), signupDto.getRole(), encryptedpassword, false);
 
         sRepository.save(staff);
 
@@ -124,5 +148,17 @@ public class StaffService {
         }
 
     }
+
+    public ResponseEntity<JSONBody> updateStaffProfile(UpdateProfileDto dto) {
+        // TO DO
+        return null;
+    }
+
+    public ResponseEntity<JSONBody> updateStaffPassword(UpdatePasswordDto dto) {
+        // TO DO
+      return null;
+    }
+
+    
 
 }

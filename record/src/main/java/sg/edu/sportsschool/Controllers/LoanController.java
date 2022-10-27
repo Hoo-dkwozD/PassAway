@@ -1,9 +1,12 @@
 package sg.edu.sportsschool.Controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,9 +23,14 @@ public class LoanController {
     @Autowired
     private LoanService lService;
 
-    @GetMapping(path = "/list")
+    @GetMapping(path = "/list-all")
     public ResponseEntity<JSONBody> getAllLoans() {
         return lService.getAllLoans();
+    }
+
+    @GetMapping(path = "/list")
+    public ResponseEntity<JSONBody> getLoansByEmail(@RequestParam String email) {
+        return lService.getLoansByEmail(email);
     }
 
     @PostMapping(path = "/add")
@@ -30,16 +38,24 @@ public class LoanController {
         return lService.addLoan(loanDTO);
     }
 
-    @GetMapping(path = "/getNumAvailablePassesForDate")
+    @GetMapping(path = "/available-passes")
     public ResponseEntity<JSONBody> getNumAvailablePassesForDate(@RequestParam Integer aId,
             @RequestParam int yyyy, @RequestParam int mm, @RequestParam int dd) {
         return lService.getNumAvailablePassesForDate(aId, yyyy, mm, dd);
     }
 
-    
-    // // ------------------------------------------------------------------------------------------------
+    @PutMapping(path = "/collect")
+    public ResponseEntity<JSONBody> collectPasses(@RequestParam String emailTo, @RequestParam List<Integer> loanIds) {
+        return lService.collectPasses(emailTo, loanIds);
+    }
+
+    // TODO Cancellation of loans
+
+    // ------------------------------------------------------------------------------------------------
     // // -- Following codes are used for testing only
-   
-    // // ------------------------------------------------------------------------------------------------
+
+
+    // //
+    // ------------------------------------------------------------------------------------------------
 
 }

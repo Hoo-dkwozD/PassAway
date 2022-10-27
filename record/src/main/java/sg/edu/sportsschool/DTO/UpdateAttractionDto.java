@@ -1,21 +1,7 @@
-package sg.edu.sportsschool.Entities;
+package sg.edu.sportsschool.DTO;
 
-import java.util.Set;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "attraction")
-public class Attraction {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UpdateAttractionDto {
     private Integer attractionId;
-
     private String name;
     private String description;
     private char passType;
@@ -26,14 +12,10 @@ public class Attraction {
     private String address;
     private boolean cannotBook;
 
-    @OneToMany(mappedBy = "attraction")
-    private Set<Pass> passes;
-
-    public Attraction() {
-    }
-
-    public Attraction(String name, String description, char passType, float replacementFee, int numAccompanyingGuests,
-            int maxPassesPerLoan, int maxLoansPerMonth, String address, boolean cannotBook) {
+    public UpdateAttractionDto(Integer attractionId, String name, String description, char passType,
+            float replacementFee, int numAccompanyingGuests, int maxPassesPerLoan, int maxLoansPerMonth, String address,
+            boolean cannotBook) {
+        this.attractionId = attractionId;
         this.name = name;
         this.description = description;
         this.passType = passType;
@@ -47,6 +29,10 @@ public class Attraction {
 
     public Integer getAttractionId() {
         return attractionId;
+    }
+
+    public void setAttractionId(Integer attractionId) {
+        this.attractionId = attractionId;
     }
 
     public String getName() {
@@ -120,15 +106,4 @@ public class Attraction {
     public void setCannotBook(boolean cannotBook) {
         this.cannotBook = cannotBook;
     }
-
-    @Override
-    public String toString() {
-      return "Attraction [attractionId=" + attractionId + ", name=" + name + ", description=" + description
-          + ", passType=" + passType + ", replacementFee=" + replacementFee + ", numAccompanyingGuests="
-          + numAccompanyingGuests + ", maxPassesPerLoan=" + maxPassesPerLoan + ", maxLoansPerMonth=" + maxLoansPerMonth
-          + ", address=" + address + ", cannotBook=" + cannotBook + "]";
-    }
-
-
-
 }

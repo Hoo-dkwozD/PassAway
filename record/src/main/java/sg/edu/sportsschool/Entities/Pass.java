@@ -22,6 +22,10 @@ public class Pass {
     @JoinColumn(name = "attraction_id")
     private Attraction attraction;
 
+    @ManyToOne
+    @JoinColumn(name = "barcode_id")
+    private Barcode barcode;
+
     @OneToMany(mappedBy = "pass")
     private Set<Loan> loans;
 
@@ -58,6 +62,14 @@ public class Pass {
         this.attraction = attraction;
     }
 
+    public Barcode getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(Barcode barcode) {
+        this.barcode = barcode;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Pass) {
@@ -66,7 +78,7 @@ public class Pass {
                     && (attraction.getAttractionId() == pass.attraction.getAttractionId());
         }
         return false;
-        
+
     }
-    
+
 }

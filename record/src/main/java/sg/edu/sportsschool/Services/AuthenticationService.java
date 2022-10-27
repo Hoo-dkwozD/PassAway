@@ -34,4 +34,10 @@ public class AuthenticationService {
     public AuthenticationToken getToken(Staff staff) {
         return tokenRepository.findByStaff(staff);
     }
+
+    public Staff getStaff(String token) {
+        AuthenticationToken aToken = tokenRepository.findByToken(token);
+        return aToken.getStaff();
+
+    }
 }

@@ -1,44 +1,15 @@
-package sg.edu.sportsschool.Entities;
+package sg.edu.sportsschool.DTO;
 
-import java.util.Set;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "staff")
-public class Staff {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UpdateProfileDto {
     private Integer staffId;
-
     private String email;
     private String firstName;
     private String lastName;
     private String contactNumber;
     private String role;
-    private String hashedPassword;
     private boolean cannotBook;
 
-    @OneToMany(mappedBy = "staff")
-    private Set<Loan> loans;
-
-    public Staff() {
-    }
-
-    public Staff(String email, String firstName, String lastName, String contactNumber, String role,
-            String hashedPassword, boolean cannotBook) {
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.contactNumber = contactNumber;
-        this.role = role;
-        this.hashedPassword = hashedPassword;
-        this.cannotBook = cannotBook;
+    public UpdateProfileDto() {
     }
 
     public Integer getStaffId() {
@@ -85,14 +56,6 @@ public class Staff {
         this.role = role;
     }
 
-    public String getHashedPassword() {
-        return hashedPassword;
-    }
-
-    public void setHashedPassword(String hashedPassword) {
-        this.hashedPassword = hashedPassword;
-    }
-
     public boolean isCannotBook() {
         return cannotBook;
     }
@@ -100,4 +63,5 @@ public class Staff {
     public void setCannotBook(boolean cannotBook) {
         this.cannotBook = cannotBook;
     }
+
 }
