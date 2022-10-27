@@ -2,6 +2,7 @@ package sg.edu.sportsschool.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,6 +15,7 @@ import sg.edu.sportsschool.DTO.UpdateAttractionDto;
 import sg.edu.sportsschool.Services.AttractionService;
 import sg.edu.sportsschool.helper.JSONBody;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/attraction")
 public class AttractionController {
@@ -36,10 +38,5 @@ public class AttractionController {
         return aService.updateAttraction(dto);
     }
     
-    // @PostMapping(path = "/add-barcode")
-    // public ResponseEntity<JSONBody> addBarcodeToAttr(@RequestParam Integer aId,
-    //         @RequestParam MultipartFile barcodeImage) {
-    //     return aService.addBarcodeToAttr(aId, barcodeImage);
-    // }
 
 }

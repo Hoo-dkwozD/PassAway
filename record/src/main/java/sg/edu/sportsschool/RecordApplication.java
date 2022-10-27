@@ -6,13 +6,10 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
 @SpringBootApplication
 @ConfigurationPropertiesScan("sg.edu.sportsschool.helper")
 @EnableAsync
 @EnableScheduling
-@EnableSwagger2
 public class RecordApplication {
 
 	public static void main(String[] args) {

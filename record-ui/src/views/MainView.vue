@@ -1,14 +1,14 @@
 <template>
-    <Welcome></Welcome>
+  <Welcome></Welcome>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import Welcome from '@/components/Welcome.vue';
+import { defineComponent } from "vue";
+import Welcome from "../components/Welcome.vue";
 
 export default defineComponent({
-    components: {
-        Welcome
-    }
+  components: {
+    Welcome,
+  },
 });
 </script>
