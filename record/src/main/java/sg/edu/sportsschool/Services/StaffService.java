@@ -14,11 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import sg.edu.sportsschool.DTO.SignInDto;
-import sg.edu.sportsschool.DTO.SignInReponseDto;
-import sg.edu.sportsschool.DTO.SignupDto;
-import sg.edu.sportsschool.DTO.UpdatePasswordDto;
-import sg.edu.sportsschool.DTO.UpdateProfileDto;
+import sg.edu.sportsschool.DTO.Request.SignInDto;
+import sg.edu.sportsschool.DTO.Request.SignupDto;
+import sg.edu.sportsschool.DTO.Request.UpdatePasswordDto;
+import sg.edu.sportsschool.DTO.Request.UpdateProfileDto;
+import sg.edu.sportsschool.DTO.Response.SignInReponseDto;
 import sg.edu.sportsschool.Entities.AuthenticationToken;
 import sg.edu.sportsschool.Entities.Staff;
 import sg.edu.sportsschool.Exceptions.BadRequestException;

@@ -1,4 +1,4 @@
-package sg.edu.sportsschool.DTO;
+package sg.edu.sportsschool.DTO.Response;
 
 public class SignInReponseDto {
 

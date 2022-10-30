@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import sg.edu.sportsschool.helper.JSONBody;
+import sg.edu.sportsschool.DTO.Request.LoanDTO;
 import sg.edu.sportsschool.Services.LoanService;
-import sg.edu.sportsschool.DTO.LoanDTO;
 
 @RestController
 @CrossOrigin(origins = "*")

@@ -48,7 +48,6 @@ public class PassService {
     }
 
     public ResponseEntity<JSONBody> addPassesByCsv(Integer aId, MultipartFile cardNumbersCSVFile) {
-        List<Pass> passesAdded = new ArrayList<>();
 
         if (cardNumbersCSVFile == null || cardNumbersCSVFile.isEmpty()) {
             throw new BadRequestException("Bad request. CSV file is null or CSV file is empty");
@@ -71,12 +70,11 @@ public class PassService {
                 if (!passId.equals("")) {
                     Pass pass = new Pass(passId, false, a);
                     pRepository.save(pass); // Add each passId for that attraction into passes table
-                    passesAdded.add(pass);
                 }
             }
         }
 
-        JSONWithData<List<Pass>> body = new JSONWithData<>(200, passesAdded);
+        JSONWithMessage body = new JSONWithMessage(200, "Passes added successfully");
         return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
     }
 

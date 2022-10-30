@@ -13,8 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import sg.edu.sportsschool.DTO.CreateAttractionDto;
-import sg.edu.sportsschool.DTO.UpdateAttractionDto;
+import sg.edu.sportsschool.DTO.Request.CreateAttractionDto;
+import sg.edu.sportsschool.DTO.Request.UpdateAttractionDto;
+import sg.edu.sportsschool.DTO.Response.LoanResponseDto;
 import sg.edu.sportsschool.Entities.Attraction;
 import sg.edu.sportsschool.Exceptions.BadRequestException;
 import sg.edu.sportsschool.Exceptions.InternalServerException;

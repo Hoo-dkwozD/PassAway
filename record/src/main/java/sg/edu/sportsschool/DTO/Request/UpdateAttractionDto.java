@@ -1,6 +1,7 @@
-package sg.edu.sportsschool.DTO;
+package sg.edu.sportsschool.DTO.Request;
 
-public class CreateAttractionDto {
+public class UpdateAttractionDto {
+    private Integer attractionId;
     private String name;
     private String description;
     private char passType;
@@ -15,10 +16,19 @@ public class CreateAttractionDto {
     private int expiryDateDD;
     private String benefits;
     private String termsConditions;
+    private boolean cannotBook;
 
-    public CreateAttractionDto() {
+    public UpdateAttractionDto() {
     }
-    
+
+    public Integer getAttractionId() {
+        return attractionId;
+    }
+
+    public void setAttractionId(Integer attractionId) {
+        this.attractionId = attractionId;
+    }
+
     public String getName() {
         return name;
     }
@@ -130,5 +140,13 @@ public class CreateAttractionDto {
     public void setTermsConditions(String termsConditions) {
         this.termsConditions = termsConditions;
     }
-    
+
+    public boolean isCannotBook() {
+        return cannotBook;
+    }
+
+    public void setCannotBook(boolean cannotBook) {
+        this.cannotBook = cannotBook;
+    }
+
 }

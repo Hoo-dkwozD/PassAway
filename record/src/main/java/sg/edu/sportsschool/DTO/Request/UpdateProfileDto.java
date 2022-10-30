@@ -1,4 +1,4 @@
-package sg.edu.sportsschool.DTO;
+package sg.edu.sportsschool.DTO.Request;
 
 public class UpdateProfileDto {
     private Integer staffId;

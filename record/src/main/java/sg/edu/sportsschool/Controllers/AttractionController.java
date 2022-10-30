@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import sg.edu.sportsschool.DTO.CreateAttractionDto;
-import sg.edu.sportsschool.DTO.UpdateAttractionDto;
+import sg.edu.sportsschool.DTO.Request.CreateAttractionDto;
+import sg.edu.sportsschool.DTO.Request.UpdateAttractionDto;
 import sg.edu.sportsschool.Services.AttractionService;
 import sg.edu.sportsschool.helper.JSONBody;
 
@@ -50,19 +50,5 @@ public class AttractionController {
         return aService.addBarcodeToAttr(aId, barcodeImage);
     }
 
-    // @GetMapping(path = "/test")
-    // public String test(@RequestParam MultipartFile file) throws MessagingException{
-    //     Attraction a = new Attraction("Zoo", "Corporate pass zoo firends", 'd', 53.15F, 2, 2, 2, false,
-    //             "champions court", "234563125", new Date(System.currentTimeMillis()), "Lots of benefits",
-    //             "Terms and conditions...........");
-    //     try {
-    //         byte[] data = file.getBytes();
-    //         emailService.sendEmailWithCorpLetter("zwthean.2021@scis.smu.edu.sg", "Zhi wei", "2022-10-10", "2022-10-20",a, file.getBytes());
-            
-    //     } catch (Exception e) {
-    //         System.out.println(e.getMessage());
-    //     }
-                
-    //     return null;
-    // }
+    
 }

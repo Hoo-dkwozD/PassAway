@@ -18,7 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import sg.edu.sportsschool.DTO.LoanDTO;
+import sg.edu.sportsschool.DTO.Request.LoanDTO;
+import sg.edu.sportsschool.DTO.Response.LoanResponseDto;
 import sg.edu.sportsschool.Entities.Attraction;
 import sg.edu.sportsschool.Entities.Loan;
 import sg.edu.sportsschool.Entities.Pass;
@@ -52,9 +53,19 @@ public class LoanService {
 
     public ResponseEntity<JSONBody> getAllLoans() {
         try {
-            List<Loan> results = new ArrayList<>();
-            lRepository.findAll().forEach(results::add);
-            JSONWithData<List<Loan>> body = new JSONWithData<>(200, results);
+            List<LoanResponseDto> response = new ArrayList<>();
+            List<Loan> loans = lRepository.findAll();
+            
+            // TODO insert code to get previous borrower from kaiwei
+
+            for (Loan l : loans) {
+                Staff s = l.getStaff();
+                Pass p = l.getPass();
+                response.add(new LoanResponseDto(l.getLoanId(), s.getFirstName(), s.getEmail(), l.getStartDate(),
+                        p.getAttraction().getName(), l.isHasCollected(), l.isHasReturned(), p.getPassId(), p.isLost(),
+                        "prevBorrowerName", "prevBorrowerContact"));
+            }
+            JSONWithData<List<LoanResponseDto>> body = new JSONWithData<>(200, response);
             return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
 
         } catch (Exception e) {
@@ -116,9 +127,7 @@ public class LoanService {
 
         // assign passes if can book
         TreeSet<Pass> sortedAvailablePasses = sortSetPasses(availablePassesForLoan);
-        List<Loan> loansMade = assignPasses(sortedAvailablePasses, staff, yyyy, mm, dd, numPassesRequested);
-
-        JSONWithData<List<Loan>> body = new JSONWithData<>(200, loansMade);
+        assignPasses(sortedAvailablePasses, staff, yyyy, mm, dd, numPassesRequested);
 
         // Send confirmation email
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, d MMM YYYY"); // e.g. Wednesday, 2 Oct 2022
@@ -149,7 +158,7 @@ public class LoanService {
         }
 
         System.out.println("Returning body in loan service");
-        return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+        return new ResponseEntity<JSONBody>(new JSONWithMessage(200, "Loans added successfully"), HttpStatus.OK);
 
     }
 
@@ -173,8 +182,19 @@ public class LoanService {
 
     public ResponseEntity<JSONBody> getLoansByEmail(String email) {
         try {
+            List<LoanResponseDto> response = new ArrayList<>();
             List<Loan> loans = lRepository.getLoanedPassByEmail(email);
-            JSONWithData<List<Loan>> body = new JSONWithData<>(200, loans);
+            
+            // TODO insert code to get previous borrower from kaiwei
+
+            for (Loan l : loans) {
+                Staff s = l.getStaff();
+                Pass p = l.getPass();
+                response.add(new LoanResponseDto(l.getLoanId(), s.getFirstName(), s.getEmail(), l.getStartDate(),
+                        p.getAttraction().getName(), l.isHasCollected(), l.isHasReturned(), p.getPassId(), p.isLost(),
+                        "prevBorrowerName", "prevBorrowerContact"));
+            }
+            JSONWithData<List<LoanResponseDto>> body = new JSONWithData<>(200, response);
             return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
 
         } catch (Exception e) {
@@ -279,9 +299,8 @@ public class LoanService {
         return sortedPasses;
     }
 
-    public List<Loan> assignPasses(TreeSet<Pass> sortedAvailablePasses, Staff staff, int yyyy, int mm, int dd,
+    public void assignPasses(TreeSet<Pass> sortedAvailablePasses, Staff staff, int yyyy, int mm, int dd,
             int numPassesRequested) {
-        List<Loan> loansMade = new ArrayList<>();
         int i = 0; // counter to add number of passes according to numPassesRequested
         Date startDate = Date.valueOf(String.format("%d-%d-%d", yyyy, mm, dd));
 
@@ -300,11 +319,9 @@ public class LoanService {
                                                                                                      // pass
             Loan loan = new Loan(staff, pass, startDate, hasCollectedReturned, hasCollectedReturned);
             lRepository.save(loan);
-            loansMade.add(loan);
             i++;
         }
 
-        return loansMade;
     }
 
     // -- Following codes are used for testing only

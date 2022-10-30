@@ -1,4 +1,4 @@
-package sg.edu.sportsschool.DTO;
+package sg.edu.sportsschool.DTO.Request;
 
 public class LoanDTO { // Loan Data Transmission Object sent by front end as an object to ease the
                           // transfer of loan details (since a loan has staff and pass entities as

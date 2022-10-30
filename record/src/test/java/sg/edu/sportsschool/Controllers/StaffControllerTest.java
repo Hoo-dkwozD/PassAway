@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import sg.edu.sportsschool.DTO.SignupDto;
+import sg.edu.sportsschool.DTO.Request.SignupDto;
 import sg.edu.sportsschool.Repositories.StaffRepository;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;

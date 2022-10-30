@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import sg.edu.sportsschool.DTO.SignInDto;
-import sg.edu.sportsschool.DTO.SignupDto;
-import sg.edu.sportsschool.DTO.UpdatePasswordDto;
-import sg.edu.sportsschool.DTO.UpdateProfileDto;
+import sg.edu.sportsschool.DTO.Request.SignInDto;
+import sg.edu.sportsschool.DTO.Request.SignupDto;
+import sg.edu.sportsschool.DTO.Request.UpdatePasswordDto;
+import sg.edu.sportsschool.DTO.Request.UpdateProfileDto;
 import sg.edu.sportsschool.Services.StaffService;
 import sg.edu.sportsschool.helper.JSONBody;
 
