@@ -9,10 +9,16 @@ public class CreateAttractionDto {
     private int maxPassesPerLoan;
     private int maxLoansPerMonth;
     private String address;
+    private String membershipId;
+    private int expiryDateYYYY;
+    private int expiryDateMM;
+    private int expiryDateDD;
+    private String benefits;
+    private String termsConditions;
 
     public CreateAttractionDto() {
     }
-
+    
     public String getName() {
         return name;
     }
@@ -76,4 +82,53 @@ public class CreateAttractionDto {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    public String getMembershipId() {
+        return membershipId;
+    }
+
+    public void setMembershipId(String membershipId) {
+        this.membershipId = membershipId;
+    }
+
+    public int getExpiryDateYYYY() {
+        return expiryDateYYYY;
+    }
+
+    public void setExpiryDateYYYY(int expiryDateYYYY) {
+        this.expiryDateYYYY = expiryDateYYYY;
+    }
+
+    public int getExpiryDateMM() {
+        return expiryDateMM;
+    }
+
+    public void setExpiryDateMM(int expiryDateMM) {
+        this.expiryDateMM = expiryDateMM;
+    }
+
+    public int getExpiryDateDD() {
+        return expiryDateDD;
+    }
+
+    public void setExpiryDateDD(int expiryDateDD) {
+        this.expiryDateDD = expiryDateDD;
+    }
+
+    public String getBenefits() {
+        return benefits;
+    }
+
+    public void setBenefits(String benefits) {
+        this.benefits = benefits;
+    }
+
+    public String getTermsConditions() {
+        return termsConditions;
+    }
+
+    public void setTermsConditions(String termsConditions) {
+        this.termsConditions = termsConditions;
+    }
+    
 }

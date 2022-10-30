@@ -12,8 +12,4 @@ public interface PassRepository extends JpaRepository<Pass, String> {
     @Query("SELECT p FROM Pass p WHERE p.attraction.attractionId = :aId")
     Set<Pass> findAllPassesByAttrId(Integer aId);
     
-    @Query(value = """
-            SELECT p.barcode.image FROM Pass p WHERE p.passId = :passId
-            """)
-    byte[] getBarcodeImage(String passId);
 }

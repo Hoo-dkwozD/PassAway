@@ -19,18 +19,22 @@ import sg.edu.sportsschool.DTO.LoanDTO;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/loan")
+@RequestMapping("/api/loan")
 public class LoanController {
 
-    @Autowired
     private LoanService lService;
+
+    @Autowired
+    public LoanController(LoanService lService) {
+        this.lService = lService;
+    }
 
     @GetMapping(path = "/list-all")
     public ResponseEntity<JSONBody> getAllLoans() {
         return lService.getAllLoans();
     }
 
-    @GetMapping(path = "/list")
+    @GetMapping(path = "/list-by-email")
     public ResponseEntity<JSONBody> getLoansByEmail(@RequestParam String email) {
         return lService.getLoansByEmail(email);
     }

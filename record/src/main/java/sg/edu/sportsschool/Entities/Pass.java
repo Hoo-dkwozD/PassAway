@@ -13,18 +13,13 @@ import javax.persistence.Table;
 @Table(name = "pass")
 public class Pass {
     @Id
-    private String passId; // primary key, may contain alphabets, to be set based on csv file provided by
-                           // admin, not auto generated
+    private String passId;
 
     private boolean isLost;
 
     @ManyToOne
     @JoinColumn(name = "attraction_id")
     private Attraction attraction;
-
-    @ManyToOne
-    @JoinColumn(name = "barcode_id")
-    private Barcode barcode;
 
     @OneToMany(mappedBy = "pass")
     private Set<Loan> loans;
@@ -33,17 +28,15 @@ public class Pass {
     }
 
     public Pass(String passId, boolean isLost, Attraction attraction) {
-        this.passId = passId;
-        this.isLost = isLost;
-        this.attraction = attraction;
+      this.passId = passId;
+      this.isLost = isLost;
+      this.attraction = attraction;
     }
+
+
 
     public String getPassId() {
         return passId;
-    }
-
-    public void setPassId(String passId) {
-        this.passId = passId;
     }
 
     public boolean isLost() {
@@ -60,14 +53,6 @@ public class Pass {
 
     public void setAttraction(Attraction attraction) {
         this.attraction = attraction;
-    }
-
-    public Barcode getBarcode() {
-        return barcode;
-    }
-
-    public void setBarcode(Barcode barcode) {
-        this.barcode = barcode;
     }
 
     @Override

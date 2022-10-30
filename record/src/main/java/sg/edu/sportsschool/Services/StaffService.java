@@ -4,6 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.xml.bind.DatatypeConverter;
 
@@ -30,11 +31,14 @@ import sg.edu.sportsschool.helper.JSONWithMessage;
 @Service
 public class StaffService {
 
-    @Autowired
     private StaffRepository sRepository;
+    private AuthenticationService authenticationService;
 
     @Autowired
-    private AuthenticationService authenticationService;
+    public StaffService(StaffRepository sRepository, AuthenticationService authenticationService) {
+        this.sRepository = sRepository;
+        this.authenticationService = authenticationService;
+    }
 
     public ResponseEntity<JSONBody> getAllStaff() {
         try {
@@ -47,7 +51,7 @@ public class StaffService {
             throw new InternalServerException("Server unable to get all staff from database");
         }
     }
-    
+
     public ResponseEntity<JSONBody> getStaff(String token) {
         try {
             Staff s = authenticationService.getStaff(token);
@@ -58,13 +62,13 @@ public class StaffService {
             throw new InternalServerException("Server unable to get staff from database");
         }
     }
-    
+
     public ResponseEntity<JSONBody> getStaff(Integer staffId) {
         try {
             Staff s = sRepository.findById(staffId).get();
             JSONWithData<Staff> body = new JSONWithData<>(200, s);
             return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
-    
+
         } catch (Exception e) {
             throw new InternalServerException("Server unable to get staff from database");
         }
@@ -125,12 +129,11 @@ public class StaffService {
     // ------------------------------------------------------------------------------------------------
     // -- Non-JSON response Methods
     public Staff returnStaffById(Integer staffId) {
-        try {
-            return sRepository.findById(staffId).get();
-
-        } catch (Exception e) {
+        Optional<Staff> optS = sRepository.findById(staffId);
+        if (optS.isEmpty()) {
             return null;
         }
+        return optS.get();
     }
 
     private String hashPassword(String password) {
@@ -156,9 +159,7 @@ public class StaffService {
 
     public ResponseEntity<JSONBody> updateStaffPassword(UpdatePasswordDto dto) {
         // TO DO
-      return null;
+        return null;
     }
-
-    
 
 }

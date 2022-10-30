@@ -19,11 +19,15 @@ import sg.edu.sportsschool.helper.JSONBody;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/staff")
+@RequestMapping("/api/staff")
 public class StaffController {
 
-    @Autowired
     private StaffService staffService;
+
+    @Autowired
+    public StaffController(StaffService staffService) {
+        this.staffService = staffService;
+    }
 
     @GetMapping(path = "/list")
     public ResponseEntity<JSONBody> getAllStaff() {
@@ -54,5 +58,6 @@ public class StaffController {
     public ResponseEntity<JSONBody> updateStaffPassword(@RequestBody UpdatePasswordDto dto) {
         return staffService.updateStaffPassword(dto);
     }
+
 
 }

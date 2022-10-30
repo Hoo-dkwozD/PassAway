@@ -5,9 +5,7 @@ public class SignInDto {
     private String email;
     private String password;
 
-    public SignInDto(String email, String password) {
-        this.email = email;
-        this.password = password;
+    public SignInDto() {
     }
 
     public String getEmail() {
@@ -25,4 +23,5 @@ public class SignInDto {
     public void setPassword(String password) {
         this.password = password;
     }
+    
 }

@@ -1,9 +1,6 @@
 package sg.edu.sportsschool.Controllers;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,11 +15,15 @@ import sg.edu.sportsschool.helper.JSONBody;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/pass")
+@RequestMapping("/api/pass")
 public class PassController {
 
-    @Autowired
     private PassService pService;
+
+    @Autowired
+    public PassController(PassService pService) {
+        this.pService = pService;
+    }
 
     @GetMapping(path = "/list")
     public ResponseEntity<JSONBody> getAllPasses() {
@@ -35,9 +36,9 @@ public class PassController {
     }
 
     @PostMapping(path = "/add-csv")
-    public ResponseEntity<JSONBody> addPasses(@RequestParam Integer attractionId,
+    public ResponseEntity<JSONBody> addPassesByCsv(@RequestParam Integer attractionId,
             @RequestParam("file") MultipartFile cardNumbersCSVFile) {
-        return pService.addPasses(attractionId, cardNumbersCSVFile);
+        return pService.addPassesByCsv(attractionId, cardNumbersCSVFile);
     }
 
     @GetMapping(path = "/list-by-attraction")
@@ -45,11 +46,11 @@ public class PassController {
         return pService.getPassesByAttraction(attractionId);
     }
 
-    @PostMapping(path="/add-barcode", consumes={MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<JSONBody> addBarcodeToPasses(@RequestParam List<String> passIds,
-            @RequestParam(name = "file") MultipartFile barcodeImageFile) {
-        return pService.addBarcodeToPasses(passIds, barcodeImageFile);
-    }
+    // @PostMapping(path="/add-barcode", consumes={MediaType.MULTIPART_FORM_DATA_VALUE})
+    // public ResponseEntity<JSONBody> addBarcodeToPasses(@RequestParam List<String> passIds,
+    //         @RequestParam(name = "file") MultipartFile barcodeImageFile) {
+    //     return pService.addBarcodeToPasses(passIds, barcodeImageFile);
+    // }
 
     // TODO Generic Put request to Update pass given a Pass object in request body
     // e.g. for lost passes

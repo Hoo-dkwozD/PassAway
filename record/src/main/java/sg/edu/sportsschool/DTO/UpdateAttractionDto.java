@@ -10,21 +10,15 @@ public class UpdateAttractionDto {
     private int maxPassesPerLoan;
     private int maxLoansPerMonth;
     private String address;
+    private String membershipId;
+    private int expiryDateYYYY;
+    private int expiryDateMM;
+    private int expiryDateDD;
+    private String benefits;
+    private String termsConditions;
     private boolean cannotBook;
 
-    public UpdateAttractionDto(Integer attractionId, String name, String description, char passType,
-            float replacementFee, int numAccompanyingGuests, int maxPassesPerLoan, int maxLoansPerMonth, String address,
-            boolean cannotBook) {
-        this.attractionId = attractionId;
-        this.name = name;
-        this.description = description;
-        this.passType = passType;
-        this.replacementFee = replacementFee;
-        this.numAccompanyingGuests = numAccompanyingGuests;
-        this.maxPassesPerLoan = maxPassesPerLoan;
-        this.maxLoansPerMonth = maxLoansPerMonth;
-        this.address = address;
-        this.cannotBook = cannotBook;
+    public UpdateAttractionDto() {
     }
 
     public Integer getAttractionId() {
@@ -99,6 +93,54 @@ public class UpdateAttractionDto {
         this.address = address;
     }
 
+    public String getMembershipId() {
+        return membershipId;
+    }
+
+    public void setMembershipId(String membershipId) {
+        this.membershipId = membershipId;
+    }
+
+    public int getExpiryDateYYYY() {
+        return expiryDateYYYY;
+    }
+
+    public void setExpiryDateYYYY(int expiryDateYYYY) {
+        this.expiryDateYYYY = expiryDateYYYY;
+    }
+
+    public int getExpiryDateMM() {
+        return expiryDateMM;
+    }
+
+    public void setExpiryDateMM(int expiryDateMM) {
+        this.expiryDateMM = expiryDateMM;
+    }
+
+    public int getExpiryDateDD() {
+        return expiryDateDD;
+    }
+
+    public void setExpiryDateDD(int expiryDateDD) {
+        this.expiryDateDD = expiryDateDD;
+    }
+
+    public String getBenefits() {
+        return benefits;
+    }
+
+    public void setBenefits(String benefits) {
+        this.benefits = benefits;
+    }
+
+    public String getTermsConditions() {
+        return termsConditions;
+    }
+
+    public void setTermsConditions(String termsConditions) {
+        this.termsConditions = termsConditions;
+    }
+
     public boolean isCannotBook() {
         return cannotBook;
     }
@@ -106,4 +148,5 @@ public class UpdateAttractionDto {
     public void setCannotBook(boolean cannotBook) {
         this.cannotBook = cannotBook;
     }
+
 }

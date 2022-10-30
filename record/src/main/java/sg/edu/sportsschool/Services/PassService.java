@@ -1,6 +1,5 @@
 package sg.edu.sportsschool.Services;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -14,11 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import sg.edu.sportsschool.Entities.Attraction;
-import sg.edu.sportsschool.Entities.Barcode;
 import sg.edu.sportsschool.Entities.Pass;
 import sg.edu.sportsschool.Exceptions.BadRequestException;
 import sg.edu.sportsschool.Exceptions.InternalServerException;
-import sg.edu.sportsschool.Repositories.BarcodeRepository;
 import sg.edu.sportsschool.Repositories.PassRepository;
 import sg.edu.sportsschool.helper.JSONBody;
 import sg.edu.sportsschool.helper.JSONWithData;
@@ -28,14 +25,14 @@ import sg.edu.sportsschool.helper.ReadCsv;
 @Service
 public class PassService {
 
-    @Autowired
     private PassRepository pRepository;
-
-    @Autowired
     private AttractionService aService;
 
     @Autowired
-    private BarcodeRepository bRepository;
+    public PassService(PassRepository pRepository, AttractionService aService) {
+        this.pRepository = pRepository;
+        this.aService = aService;
+    }
 
     public ResponseEntity<JSONBody> getAllPasses() {
         try {
@@ -50,7 +47,7 @@ public class PassService {
         }
     }
 
-    public ResponseEntity<JSONBody> addPasses(Integer aId, MultipartFile cardNumbersCSVFile) {
+    public ResponseEntity<JSONBody> addPassesByCsv(Integer aId, MultipartFile cardNumbersCSVFile) {
         List<Pass> passesAdded = new ArrayList<>();
 
         if (cardNumbersCSVFile == null || cardNumbersCSVFile.isEmpty()) {
@@ -95,6 +92,7 @@ public class PassService {
         }
 
         Pass pass = new Pass(passId, false, a);
+
         pRepository.save(pass); // Add each passId for that attraction into passes table
 
         JSONWithMessage body = new JSONWithMessage(200, "Pass added successfully");
@@ -112,48 +110,6 @@ public class PassService {
         }
     }
 
-    public ResponseEntity<JSONBody> addBarcodeToPasses(List<String> passIds, MultipartFile barcodeImageFile) {
-        // check if image file is jpeg or png
-        String contentType = barcodeImageFile.getContentType();
-        if ((contentType == null) ||
-                !(contentType.equals(MediaType.IMAGE_JPEG_VALUE)) &&
-                !(contentType.equals(MediaType.IMAGE_PNG_VALUE))) {
-            throw new BadRequestException(
-                    "Server unable to read barcode image file. Barcode image file uploaded must only be .jpeg or .png format.");
-        }
-
-        Barcode barcode = null;
-        // serialise the image file into bytes
-        try {
-            byte[] imageData = barcodeImageFile.getBytes();
-            // save the bytes into barcode table
-            barcode = bRepository.save(new Barcode(imageData));
-            
-        } catch (IOException e) {
-            throw new InternalServerException("Server unable to serialise the barcode image file.");
-        }
-
-        if (barcode == null) {
-            throw new InternalServerException("Server unable to save barcode image into database");
-        }
-
-        // Get all passes in the passIds list, set barcode, save back into db
-        Iterator<Pass> passes = pRepository.findAllById(passIds).iterator();
-        List<Pass> passesSaved = new ArrayList<>();
-        while (passes.hasNext()) {
-            Pass pass = passes.next();
-            pass.setBarcode(barcode);
-            passesSaved.add(pass);
-        }
-        
-        // save the passes
-        pRepository.saveAll(passesSaved);
-        
-        JSONWithMessage body = new JSONWithMessage(200, "Barcode updated for passes.");
-        return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
-    }
-
-
     // ------------------------------------------------------------------------------------------------
     // -- Non-JSON response Methods
 
@@ -167,9 +123,7 @@ public class PassService {
         }
     }
 
-    public byte[] returnBarcodeImage(String passId) {
-        return pRepository.getBarcodeImage(passId);
-    }
+
     
 
     // -- Following codes are used for testing only

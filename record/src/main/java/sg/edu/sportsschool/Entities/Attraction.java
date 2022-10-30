@@ -1,11 +1,14 @@
 package sg.edu.sportsschool.Entities;
 
+import java.sql.Date;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -23,8 +26,21 @@ public class Attraction {
     private int numAccompanyingGuests;
     private int maxPassesPerLoan;
     private int maxLoansPerMonth;
-    private String address;
     private boolean cannotBook;
+    private String address;
+    private String membershipId;
+
+    @Lob
+    @Column(columnDefinition = "BLOB")
+    private byte[] barcodeImage;
+
+    private Date expiryDate;
+
+    @Column(columnDefinition = "TEXT")
+    private String benefits;
+
+    @Column(columnDefinition = "TEXT")
+    private String termsConditions;
 
     @OneToMany(mappedBy = "attraction")
     private Set<Pass> passes;
@@ -33,7 +49,8 @@ public class Attraction {
     }
 
     public Attraction(String name, String description, char passType, float replacementFee, int numAccompanyingGuests,
-            int maxPassesPerLoan, int maxLoansPerMonth, String address, boolean cannotBook) {
+            int maxPassesPerLoan, int maxLoansPerMonth, boolean cannotBook, String address, String membershipId,
+            Date expiryDate, String benefits, String termsConditions) {
         this.name = name;
         this.description = description;
         this.passType = passType;
@@ -41,8 +58,12 @@ public class Attraction {
         this.numAccompanyingGuests = numAccompanyingGuests;
         this.maxPassesPerLoan = maxPassesPerLoan;
         this.maxLoansPerMonth = maxLoansPerMonth;
-        this.address = address;
         this.cannotBook = cannotBook;
+        this.address = address;
+        this.membershipId = membershipId;
+        this.expiryDate = expiryDate;
+        this.benefits = benefits;
+        this.termsConditions = termsConditions;
     }
 
     public Integer getAttractionId() {
@@ -105,14 +126,6 @@ public class Attraction {
         this.maxLoansPerMonth = maxLoansPerMonth;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public boolean isCannotBook() {
         return cannotBook;
     }
@@ -121,14 +134,57 @@ public class Attraction {
         this.cannotBook = cannotBook;
     }
 
-    @Override
-    public String toString() {
-      return "Attraction [attractionId=" + attractionId + ", name=" + name + ", description=" + description
-          + ", passType=" + passType + ", replacementFee=" + replacementFee + ", numAccompanyingGuests="
-          + numAccompanyingGuests + ", maxPassesPerLoan=" + maxPassesPerLoan + ", maxLoansPerMonth=" + maxLoansPerMonth
-          + ", address=" + address + ", cannotBook=" + cannotBook + "]";
+    public String getAddress() {
+        return address;
     }
 
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
+    public String getMembershipId() {
+        return membershipId;
+    }
+
+    public void setMembershipId(String membershipId) {
+        this.membershipId = membershipId;
+    }
+
+    public byte[] getBarcodeImage() {
+        return barcodeImage;
+    }
+
+    public void setBarcodeImage(byte[] barcodeImage) {
+        this.barcodeImage = barcodeImage;
+    }
+
+    public Date getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(Date expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    public String getBenefits() {
+        return benefits;
+    }
+
+    public void setBenefits(String benefits) {
+        this.benefits = benefits;
+    }
+
+    public String getTermsConditions() {
+        return termsConditions;
+    }
+
+    public void setTermsConditions(String termsConditions) {
+        this.termsConditions = termsConditions;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 
 }

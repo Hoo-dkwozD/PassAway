@@ -1,5 +1,6 @@
 package sg.edu.sportsschool.Services;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.sql.Date;
 import java.util.List;
@@ -8,6 +9,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -16,57 +18,79 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import sg.edu.sportsschool.Entities.Attraction;
 import sg.edu.sportsschool.Entities.Loan;
-import sg.edu.sportsschool.Exceptions.InternalServerException;
 import sg.edu.sportsschool.Repositories.LoanRepository;
 
 @Service
 public class EmailService {
 
-    @Autowired
     private JavaMailSender javaMailSender;
-
-    @Autowired
     private TemplateEngine templateEngine;
-
-    @Autowired
     private LoanRepository loanRepository;
+    private PdfService pdfService;
+    private final String LOGO_FILE_PATH = "src/main/static/sportsSchLogo.jpg";
 
     @Autowired
-    private PdfService pdfService;
+    public EmailService(JavaMailSender javaMailSender, TemplateEngine templateEngine, LoanRepository loanRepository,
+            PdfService pdfService) {
+        this.javaMailSender = javaMailSender;
+        this.templateEngine = templateEngine;
+        this.loanRepository = loanRepository;
+        this.pdfService = pdfService;
+    }
 
     @Async
-    public void sendConfirmationMail(String emailTo, String staffName, String attrName, String visitDate, String passId,
-            String address, String membershipDescription, char passType) throws MessagingException {
+    public void sendEmailWithCorpLetter(String emailTo, String staffName, String ballotDate, String visitDate,
+            Attraction a, byte[] barcodeImage) throws MessagingException {
         Context context = new Context();
         context.setVariable("staffName", staffName);
-        context.setVariable("attrName", attrName);
+        context.setVariable("attrName", a.getName());
         context.setVariable("visitDate", visitDate);
-        context.setVariable("passId", passId);
-        context.setVariable("passType", passType);
-        String process = templateEngine.process("EmailTemplate.html", context);
+        context.setVariable("membershipId", a.getMembershipId());
+        String process = templateEngine.process("DigitalPassEmailTemplate.html", context);
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-        helper.setSubject("Booking Confirmation for " + attrName + " on " + visitDate);
+        helper.setSubject("Booking Confirmation for " + a.getName() + " on " + visitDate);
+        helper.setText(process, true);
+        helper.setTo(emailTo);
+        
+        ByteArrayOutputStream os = pdfService.generateCorpLetter(a.getAddress(), ballotDate, a.getName(), barcodeImage,
+                a.getExpiryDate().toString(), a.getMembershipId(), staffName, visitDate, a.getBenefits(),
+                a.getTermsConditions(), a.getDescription());
+
+        // Attach the corporate letter pdf
+        helper.addAttachment("CorpLetter.pdf", new ByteArrayResource(os.toByteArray()));
+        System.out.println("Corp letter attached");
+
+        javaMailSender.send(mimeMessage);
+        System.out.println("Email sent.");
+
+    }
+    
+    @Async
+    public void sendEmailWithAuthLetter(String emailTo, String staffName, String ballotDate, String visitDate,
+            Attraction a) throws MessagingException {
+        Context context = new Context();
+        context.setVariable("staffName", staffName);
+        context.setVariable("attrName", a.getName());
+        context.setVariable("visitDate", visitDate);
+        context.setVariable("membershipId", a.getMembershipId());
+        String process = templateEngine.process("PhysicalPassEmailTemplate.html", context);
+
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+        helper.setSubject("Booking Confirmation for " + a.getName() + " on " + visitDate);
         helper.setText(process, true);
         helper.setTo(emailTo);
 
         // Generate the auth letter
-        pdfService.generateAuthLetter(address, membershipDescription, visitDate, staffName, passId, passType);
+        ByteArrayOutputStream os = pdfService.generateAuthLetter(a.getAddress(), ballotDate, a.getDescription(), visitDate, staffName, LOGO_FILE_PATH);
         System.out.println("Auth letter generated");
 
-        // Look for the auth letter pdf
-        String storageFolder = "src/main/static/";
-        String fileName = "AuthLetter.pdf";
-        File authLetter = getAuthLetter(storageFolder, fileName);
-        if (authLetter == null) {
-            throw new InternalServerException(
-                    "Server unable to get authentication letter at: " + storageFolder + fileName);
-        }
-
         // Attach the auth letter pdf
-        helper.addAttachment(authLetter.getName(), authLetter);
+        helper.addAttachment("AuthLetter.pdf", new ByteArrayResource(os.toByteArray()));
         System.out.println("auth letter attached");
 
         javaMailSender.send(mimeMessage);
@@ -92,7 +116,8 @@ public class EmailService {
     }
 
     @Async
-    // @Scheduled(fixedRate = 8000) // uncomment to test (cron = "0 0 9 * * *") 9am everyday
+    // @Scheduled(fixedRate = 8000) // uncomment to test (cron = "0 0 9 * * *") 9am
+    // everyday
     public void sendCollectionReminderEmail() {
         // Send reminder email for loans whose visit date is tomorrow
         Date reminderDate = new Date(System.currentTimeMillis());
@@ -126,7 +151,8 @@ public class EmailService {
     }
 
     @Async
-    // @Scheduled(fixedRate = 8000) // uncomment to test (cron = "0 0 9 * * *") 9am everyday
+    // @Scheduled(fixedRate = 8000) // uncomment to test (cron = "0 0 9 * * *") 9am
+    // everyday
     public void sendLoanOverdueReminderEmail() {
         // Send reminder email for loans whose visit date is tomorrow
         Date overdueDate = new Date(System.currentTimeMillis());
@@ -158,9 +184,8 @@ public class EmailService {
         }
     }
 
-
-    public File getAuthLetter(String storageFolder, String fileName) {
-        File f = new File(storageFolder + fileName);
+    public File getAuthLetter(String STORAGE_FOLDER, String fileName) {
+        File f = new File(STORAGE_FOLDER + fileName);
         if (f.exists()) {
             return f;
         } else {
@@ -169,4 +194,3 @@ public class EmailService {
 
     }
 }
- 

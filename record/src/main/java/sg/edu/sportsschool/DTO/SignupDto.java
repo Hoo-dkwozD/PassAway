@@ -9,6 +9,9 @@ public class SignupDto {
     private String role;
     private String password;
 
+    public SignupDto() {
+    }
+
     public String getFirstName() {
         return firstName;
     }
