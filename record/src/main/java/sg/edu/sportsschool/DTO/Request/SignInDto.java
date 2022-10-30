@@ -8,6 +8,11 @@ public class SignInDto {
     public SignInDto() {
     }
 
+    public SignInDto(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -23,5 +28,5 @@ public class SignInDto {
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
 }

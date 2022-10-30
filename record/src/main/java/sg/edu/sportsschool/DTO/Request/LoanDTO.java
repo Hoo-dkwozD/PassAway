@@ -1,8 +1,8 @@
 package sg.edu.sportsschool.DTO.Request;
 
 public class LoanDTO { // Loan Data Transmission Object sent by front end as an object to ease the
-                          // transfer of loan details (since a loan has staff and pass entities as
-                          // FKs) to be recorded in loan table in database
+                       // transfer of loan details (since a loan has staff and pass entities as
+                       // FKs) to be recorded in loan table in database
     private Integer staffId;
     private Integer attractionId;
 
@@ -10,11 +10,21 @@ public class LoanDTO { // Loan Data Transmission Object sent by front end as an 
     private int yyyy;
     private int mm;
     private int dd;
+
     // hasCollected and hasReturned not required to be passed in in the JSON from
     // front end as their value will be false (fixed) for each new loan
-
+    
     public LoanDTO() {
 
+    }
+
+    public LoanDTO(Integer staffId, Integer attractionId, int numPasses, int yyyy, int mm, int dd) {
+        this.staffId = staffId;
+        this.attractionId = attractionId;
+        this.numPasses = numPasses;
+        this.yyyy = yyyy;
+        this.mm = mm;
+        this.dd = dd;
     }
 
     public Integer getStaffId() {

@@ -49,6 +49,5 @@ public class AttractionController {
             @RequestParam MultipartFile barcodeImage) {
         return aService.addBarcodeToAttr(aId, barcodeImage);
     }
-
     
 }

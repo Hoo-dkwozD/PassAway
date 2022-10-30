@@ -12,6 +12,16 @@ public class SignupDto {
     public SignupDto() {
     }
 
+    public SignupDto(String firstName, String lastName, String email, String contactNumber, String role,
+            String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.contactNumber = contactNumber;
+        this.role = role;
+        this.password = password;
+    }
+
     public String getFirstName() {
         return firstName;
     }

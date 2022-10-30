@@ -12,6 +12,17 @@ public class UpdateProfileDto {
     public UpdateProfileDto() {
     }
 
+    public UpdateProfileDto(Integer staffId, String email, String firstName, String lastName, String contactNumber,
+            String role, boolean cannotBook) {
+        this.staffId = staffId;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.contactNumber = contactNumber;
+        this.role = role;
+        this.cannotBook = cannotBook;
+    }
+
     public Integer getStaffId() {
         return staffId;
     }

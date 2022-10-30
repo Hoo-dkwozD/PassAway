@@ -18,7 +18,26 @@ public class CreateAttractionDto {
 
     public CreateAttractionDto() {
     }
-    
+
+    public CreateAttractionDto(String name, String description, char passType, float replacementFee,
+            int numAccompanyingGuests, int maxPassesPerLoan, int maxLoansPerMonth, String address, String membershipId,
+            int expiryDateYYYY, int expiryDateMM, int expiryDateDD, String benefits, String termsConditions) {
+        this.name = name;
+        this.description = description;
+        this.passType = passType;
+        this.replacementFee = replacementFee;
+        this.numAccompanyingGuests = numAccompanyingGuests;
+        this.maxPassesPerLoan = maxPassesPerLoan;
+        this.maxLoansPerMonth = maxLoansPerMonth;
+        this.address = address;
+        this.membershipId = membershipId;
+        this.expiryDateYYYY = expiryDateYYYY;
+        this.expiryDateMM = expiryDateMM;
+        this.expiryDateDD = expiryDateDD;
+        this.benefits = benefits;
+        this.termsConditions = termsConditions;
+    }
+
     public String getName() {
         return name;
     }
@@ -130,5 +149,5 @@ public class CreateAttractionDto {
     public void setTermsConditions(String termsConditions) {
         this.termsConditions = termsConditions;
     }
-    
+
 }
