@@ -29,9 +29,8 @@
 
   </div>
 
-  <div class="main-content">
     <RouterView />
-  </div>
+  
 </template>
 
 <script lang="ts">
