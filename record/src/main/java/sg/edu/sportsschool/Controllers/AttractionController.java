@@ -5,21 +5,29 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import sg.edu.sportsschool.Entities.Attraction;
+import sg.edu.sportsschool.DTO.Request.CreateAttractionDto;
+import sg.edu.sportsschool.DTO.Request.UpdateAttractionDto;
 import sg.edu.sportsschool.Services.AttractionService;
 import sg.edu.sportsschool.helper.JSONBody;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/attraction")
+@RequestMapping("/api/attraction")
 public class AttractionController {
 
-    @Autowired
     private AttractionService aService;
+
+    @Autowired
+    public AttractionController(AttractionService aService) {
+        this.aService = aService;
+    }
 
     @GetMapping(path = "/list")
     public ResponseEntity<JSONBody> getAllAttractions() {
@@ -27,8 +35,19 @@ public class AttractionController {
     }
 
     @PostMapping(path = "/add")
-    public ResponseEntity<JSONBody> addAttraction(@RequestBody Attraction a) {
-        return aService.addAttraction(a);
+    public ResponseEntity<JSONBody> addAttraction(@RequestBody CreateAttractionDto dto) {
+        return aService.addAttraction(dto);
     }
 
+    @PutMapping(path = "/update")
+    public ResponseEntity<JSONBody> updateAttraction(@RequestBody UpdateAttractionDto dto) {
+        return aService.updateAttraction(dto);
+    }
+
+    @PostMapping(path = "/add-barcode")
+    public ResponseEntity<JSONBody> addBarcodeToAttraction(@RequestParam Integer aId,
+            @RequestParam MultipartFile barcodeImage) {
+        return aService.addBarcodeToAttr(aId, barcodeImage);
+    }
+    
 }

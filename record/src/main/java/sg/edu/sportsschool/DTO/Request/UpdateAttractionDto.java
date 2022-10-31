@@ -1,27 +1,7 @@
-package sg.edu.sportsschool.Entities;
+package sg.edu.sportsschool.DTO.Request;
 
-import java.sql.Date;
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-@Entity
-@Table(name = "attraction")
-@JsonIgnoreProperties({ "barcodeImage" })
-public class Attraction {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UpdateAttractionDto {
     private Integer attractionId;
-
     private String name;
     private String description;
     private char passType;
@@ -29,31 +9,23 @@ public class Attraction {
     private int numAccompanyingGuests;
     private int maxPassesPerLoan;
     private int maxLoansPerMonth;
-    private boolean cannotBook;
     private String address;
     private String membershipId;
-
-    @Lob
-    @Column(columnDefinition = "BLOB")
-    private byte[] barcodeImage;
-
-    private Date expiryDate;
-
-    @Column(columnDefinition = "TEXT")
+    private int expiryDateYYYY;
+    private int expiryDateMM;
+    private int expiryDateDD;
     private String benefits;
-
-    @Column(columnDefinition = "TEXT")
     private String termsConditions;
+    private boolean cannotBook;
 
-    @OneToMany(mappedBy = "attraction")
-    private Set<Pass> passes;
-
-    public Attraction() {
+    public UpdateAttractionDto() {
     }
 
-    public Attraction(String name, String description, char passType, float replacementFee, int numAccompanyingGuests,
-            int maxPassesPerLoan, int maxLoansPerMonth, boolean cannotBook, String address, String membershipId,
-            Date expiryDate, String benefits, String termsConditions) {
+    public UpdateAttractionDto(Integer attractionId, String name, String description, char passType,
+            float replacementFee, int numAccompanyingGuests, int maxPassesPerLoan, int maxLoansPerMonth, String address,
+            String membershipId, int expiryDateYYYY, int expiryDateMM, int expiryDateDD, String benefits,
+            String termsConditions, boolean cannotBook) {
+        this.attractionId = attractionId;
         this.name = name;
         this.description = description;
         this.passType = passType;
@@ -61,16 +33,22 @@ public class Attraction {
         this.numAccompanyingGuests = numAccompanyingGuests;
         this.maxPassesPerLoan = maxPassesPerLoan;
         this.maxLoansPerMonth = maxLoansPerMonth;
-        this.cannotBook = cannotBook;
         this.address = address;
         this.membershipId = membershipId;
-        this.expiryDate = expiryDate;
+        this.expiryDateYYYY = expiryDateYYYY;
+        this.expiryDateMM = expiryDateMM;
+        this.expiryDateDD = expiryDateDD;
         this.benefits = benefits;
         this.termsConditions = termsConditions;
+        this.cannotBook = cannotBook;
     }
 
     public Integer getAttractionId() {
         return attractionId;
+    }
+
+    public void setAttractionId(Integer attractionId) {
+        this.attractionId = attractionId;
     }
 
     public String getName() {
@@ -129,14 +107,6 @@ public class Attraction {
         this.maxLoansPerMonth = maxLoansPerMonth;
     }
 
-    public boolean isCannotBook() {
-        return cannotBook;
-    }
-
-    public void setCannotBook(boolean cannotBook) {
-        this.cannotBook = cannotBook;
-    }
-
     public String getAddress() {
         return address;
     }
@@ -153,20 +123,28 @@ public class Attraction {
         this.membershipId = membershipId;
     }
 
-    public byte[] getBarcodeImage() {
-        return barcodeImage;
+    public int getExpiryDateYYYY() {
+        return expiryDateYYYY;
     }
 
-    public void setBarcodeImage(byte[] barcodeImage) {
-        this.barcodeImage = barcodeImage;
+    public void setExpiryDateYYYY(int expiryDateYYYY) {
+        this.expiryDateYYYY = expiryDateYYYY;
     }
 
-    public Date getExpiryDate() {
-        return expiryDate;
+    public int getExpiryDateMM() {
+        return expiryDateMM;
     }
 
-    public void setExpiryDate(Date expiryDate) {
-        this.expiryDate = expiryDate;
+    public void setExpiryDateMM(int expiryDateMM) {
+        this.expiryDateMM = expiryDateMM;
+    }
+
+    public int getExpiryDateDD() {
+        return expiryDateDD;
+    }
+
+    public void setExpiryDateDD(int expiryDateDD) {
+        this.expiryDateDD = expiryDateDD;
     }
 
     public String getBenefits() {
@@ -185,9 +163,12 @@ public class Attraction {
         this.termsConditions = termsConditions;
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public boolean isCannotBook() {
+        return cannotBook;
+    }
+
+    public void setCannotBook(boolean cannotBook) {
+        this.cannotBook = cannotBook;
     }
 
 }

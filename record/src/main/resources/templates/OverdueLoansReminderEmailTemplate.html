@@ -1,0 +1,25 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Email</title>
+</head>
+
+<body>
+  <p>Dear <span th:text="${staffName}">, </span></p>
+  <p>This is a reminder that you have not returned your pass(es) for <span th:text="${attrName}"> on <span
+        th:text="${visitDate}"></span> </p>
+
+  <p>
+    Please return the pass as soon as possible.
+  </p>
+
+  <p>Warm regards</p>
+  <p>HR Department</p>
+
+</body>
+
+</html>

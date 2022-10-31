@@ -1,18 +1,16 @@
 package sg.edu.sportsschool;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-
-import sg.edu.sportsschool.Sample.SampleRepository;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @ConfigurationPropertiesScan("sg.edu.sportsschool.helper")
+@EnableAsync
+@EnableScheduling
 public class RecordApplication {
-
-	@Autowired
-	SampleRepository sampleRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(RecordApplication.class, args);

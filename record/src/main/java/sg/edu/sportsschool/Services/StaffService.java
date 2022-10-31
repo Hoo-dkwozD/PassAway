@@ -4,6 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.xml.bind.DatatypeConverter;
 
@@ -13,9 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import sg.edu.sportsschool.DTO.SignInDto;
-import sg.edu.sportsschool.DTO.SignInReponseDto;
-import sg.edu.sportsschool.DTO.SignupDto;
+import sg.edu.sportsschool.DTO.Request.SignInDto;
+import sg.edu.sportsschool.DTO.Request.SignupDto;
+import sg.edu.sportsschool.DTO.Request.UpdatePasswordDto;
+import sg.edu.sportsschool.DTO.Request.UpdateProfileDto;
+import sg.edu.sportsschool.DTO.Response.SignInReponseDto;
 import sg.edu.sportsschool.Entities.AuthenticationToken;
 import sg.edu.sportsschool.Entities.Staff;
 import sg.edu.sportsschool.Exceptions.BadRequestException;
@@ -28,11 +31,14 @@ import sg.edu.sportsschool.helper.JSONWithMessage;
 @Service
 public class StaffService {
 
-    @Autowired
     private StaffRepository sRepository;
+    private AuthenticationService authenticationService;
 
     @Autowired
-    private AuthenticationService authenticationService;
+    public StaffService(StaffRepository sRepository, AuthenticationService authenticationService) {
+        this.sRepository = sRepository;
+        this.authenticationService = authenticationService;
+    }
 
     public ResponseEntity<JSONBody> getAllStaff() {
         try {
@@ -40,9 +46,31 @@ public class StaffService {
             sRepository.findAll().forEach(allStaff::add);
             JSONWithData<List<Staff>> body = new JSONWithData<List<Staff>>(200, allStaff);
             return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
-            
+
         } catch (Exception e) {
             throw new InternalServerException("Server unable to get all staff from database");
+        }
+    }
+
+    public ResponseEntity<JSONBody> getStaff(String token) {
+        try {
+            Staff s = authenticationService.getStaff(token);
+            JSONWithData<Staff> body = new JSONWithData<>(200, s);
+            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+
+        } catch (Exception e) {
+            throw new InternalServerException("Server unable to get staff from database");
+        }
+    }
+
+    public ResponseEntity<JSONBody> getStaff(Integer staffId) {
+        try {
+            Staff s = sRepository.findById(staffId).get();
+            JSONWithData<Staff> body = new JSONWithData<>(200, s);
+            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+
+        } catch (Exception e) {
+            throw new InternalServerException("Server unable to get staff from database");
         }
     }
 
@@ -60,7 +88,7 @@ public class StaffService {
         encryptedpassword = hashPassword(signupDto.getPassword());
 
         staff = new Staff(signupDto.getEmail(), signupDto.getFirstName(), signupDto.getLastName(),
-                signupDto.getContactNumber(), signupDto.getRole(), false, encryptedpassword);
+                signupDto.getContactNumber(), signupDto.getRole(), encryptedpassword, false);
 
         sRepository.save(staff);
 
@@ -101,12 +129,11 @@ public class StaffService {
     // ------------------------------------------------------------------------------------------------
     // -- Non-JSON response Methods
     public Staff returnStaffById(Integer staffId) {
-        try {
-            return sRepository.findById(staffId).get();
-
-        } catch (Exception e) {
+        Optional<Staff> optS = sRepository.findById(staffId);
+        if (optS.isEmpty()) {
             return null;
         }
+        return optS.get();
     }
 
     private String hashPassword(String password) {
@@ -123,6 +150,16 @@ public class StaffService {
                     "Exception occurred when hashing password. No such algorithm exists: " + hashingAlgorithm);
         }
 
+    }
+
+    public ResponseEntity<JSONBody> updateStaffProfile(UpdateProfileDto dto) {
+        // TO DO
+        return null;
+    }
+
+    public ResponseEntity<JSONBody> updateStaffPassword(UpdatePasswordDto dto) {
+        // TO DO
+        return null;
     }
 
 }

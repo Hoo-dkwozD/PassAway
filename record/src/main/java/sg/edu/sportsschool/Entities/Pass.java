@@ -9,12 +9,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "pass")
+@JsonIgnoreProperties({ "attraction" })
 public class Pass {
     @Id
-    private String passId; // primary key, may contain alphabets, to be set based on csv file provided by
-                           // admin, not auto generated
+    private String passId;
 
     private boolean isLost;
 
@@ -29,17 +31,15 @@ public class Pass {
     }
 
     public Pass(String passId, boolean isLost, Attraction attraction) {
-        this.passId = passId;
-        this.isLost = isLost;
-        this.attraction = attraction;
+      this.passId = passId;
+      this.isLost = isLost;
+      this.attraction = attraction;
     }
+
+
 
     public String getPassId() {
         return passId;
-    }
-
-    public void setPassId(String passId) {
-        this.passId = passId;
     }
 
     public boolean isLost() {
@@ -66,7 +66,7 @@ public class Pass {
                     && (attraction.getAttractionId() == pass.attraction.getAttractionId());
         }
         return false;
-        
+
     }
-    
+
 }
