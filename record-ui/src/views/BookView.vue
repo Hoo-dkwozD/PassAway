@@ -1,17 +1,15 @@
 <template>
-  <ToDo question="To-dos:"></ToDo>
-  <BookAttraction></BookAttraction>
+  <Test></Test>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import ToDo from "../components/ToDo.vue";
-import ToDo from "../components/BookAttraction.vue";
+import Test from "../components/Test.vue";
 
 export default defineComponent({
   components: {
-    ToDo,
-    BookAttraction,
+    Test,
   },
 });
 </script>
