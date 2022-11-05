@@ -6,8 +6,7 @@ public class UpdatePasswordDto {
     private String newPassword;
     private String confirmPassword;
 
-    public UpdatePasswordDto() {
-    }
+    public UpdatePasswordDto() {}
 
     public UpdatePasswordDto(Integer staffId, String oldPassword, String newPassword, String confirmPassword) {
         this.staffId = staffId;
@@ -43,5 +42,4 @@ public class UpdatePasswordDto {
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
     }
-
 }

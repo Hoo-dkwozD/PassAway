@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import sg.edu.sportsschool.Helper.JSONBody;
 import sg.edu.sportsschool.Services.PassService;
-import sg.edu.sportsschool.helper.JSONBody;
 
 @CrossOrigin
 @RestController
@@ -41,10 +41,10 @@ public class PassController {
         return pService.addPassesByCsv(attractionId, cardNumbersCSVFile);
     }
 
-    @GetMapping(path = "/list-by-attraction")
-    public ResponseEntity<JSONBody> getPassesByAttraction(@RequestParam Integer attractionId) {
-        return pService.getPassesByAttraction(attractionId);
-    }
+    // @GetMapping(path = "/list-by-attraction")
+    // public ResponseEntity<JSONBody> getPassesByAttraction(@RequestParam Integer attractionId) {
+    //     return pService.getPassesByAttraction(attractionId);
+    // }
 
     // @PostMapping(path="/add-barcode", consumes={MediaType.MULTIPART_FORM_DATA_VALUE})
     // public ResponseEntity<JSONBody> addBarcodeToPasses(@RequestParam List<String> passIds,

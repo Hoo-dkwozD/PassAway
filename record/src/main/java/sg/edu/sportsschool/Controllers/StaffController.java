@@ -14,8 +14,8 @@ import sg.edu.sportsschool.DTO.Request.SignInDto;
 import sg.edu.sportsschool.DTO.Request.SignupDto;
 import sg.edu.sportsschool.DTO.Request.UpdatePasswordDto;
 import sg.edu.sportsschool.DTO.Request.UpdateProfileDto;
+import sg.edu.sportsschool.Helper.JSONBody;
 import sg.edu.sportsschool.Services.StaffService;
-import sg.edu.sportsschool.helper.JSONBody;
 
 @CrossOrigin
 @RestController

@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "pass")
-@JsonIgnoreProperties({ "attraction" })
+@JsonIgnoreProperties({"attraction"})
 public class Pass {
     @Id
     private String passId;
@@ -27,16 +27,13 @@ public class Pass {
     @OneToMany(mappedBy = "pass")
     private Set<Loan> loans;
 
-    public Pass() {
-    }
+    public Pass() {}
 
     public Pass(String passId, boolean isLost, Attraction attraction) {
-      this.passId = passId;
-      this.isLost = isLost;
-      this.attraction = attraction;
+        this.passId = passId;
+        this.isLost = isLost;
+        this.attraction = attraction;
     }
-
-
 
     public String getPassId() {
         return passId;
@@ -61,12 +58,14 @@ public class Pass {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Pass) {
-            Pass pass = (Pass) obj;
-            return (passId.equals(pass.getPassId()))
-                    && (attraction.getAttractionId() == pass.attraction.getAttractionId());
+            Pass pass = (Pass)obj;
+
+            return (
+                passId.equals(pass.getPassId())
+            ) && (
+                attraction.getAttractionId() == pass.attraction.getAttractionId()
+            );
         }
         return false;
-
     }
-
 }

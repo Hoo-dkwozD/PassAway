@@ -13,10 +13,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "loan")
 public class Loan {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer loanId;
+
+    private Date startDate;
+    private boolean hasCollected;
+    private boolean hasReturned;
 
     @ManyToOne
     @JoinColumn(name = "staff_id")
@@ -26,12 +29,7 @@ public class Loan {
     @JoinColumn(name = "pass_id")
     private Pass pass;
 
-    private Date startDate;
-    private boolean hasCollected;
-    private boolean hasReturned;
-
-    public Loan() {
-    }
+    public Loan() {}
 
     public Loan(Staff staff, Pass pass, Date startDate, boolean hasCollected, boolean hasReturned) {
         this.staff = staff;
@@ -84,5 +82,4 @@ public class Loan {
     public void setHasReturned(boolean hasReturned) {
         this.hasReturned = hasReturned;
     }
-
 }

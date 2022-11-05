@@ -15,14 +15,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import sg.edu.sportsschool.DTO.Request.CreateAttractionDto;
 import sg.edu.sportsschool.DTO.Request.UpdateAttractionDto;
-import sg.edu.sportsschool.DTO.Response.LoanResponseDto;
 import sg.edu.sportsschool.Entities.Attraction;
 import sg.edu.sportsschool.Exceptions.BadRequestException;
 import sg.edu.sportsschool.Exceptions.InternalServerException;
+import sg.edu.sportsschool.Helper.JSONBody;
+import sg.edu.sportsschool.Helper.JSONWithData;
+import sg.edu.sportsschool.Helper.JSONWithMessage;
 import sg.edu.sportsschool.Repositories.AttractionRepository;
-import sg.edu.sportsschool.helper.JSONBody;
-import sg.edu.sportsschool.helper.JSONWithData;
-import sg.edu.sportsschool.helper.JSONWithMessage;
 
 @Service
 public class AttractionService {

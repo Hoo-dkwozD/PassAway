@@ -15,8 +15,7 @@ public class LoanResponseDto {
     private String prevBorrowerName;
     private String prevBorrowerContact;
 
-    public LoanResponseDto() {
-    }
+    public LoanResponseDto() {}
 
     public LoanResponseDto(Integer loanId, String staffName, String staffEmail, Date visitDate, String attractionName,
             boolean hasCollected, boolean hasReturned, String passId, boolean isLost, String prevBorrowerName,
@@ -121,5 +120,4 @@ public class LoanResponseDto {
     public void setPrevBorrowerContact(String prevBorrowerContact) {
         this.prevBorrowerContact = prevBorrowerContact;
     }
-
 }

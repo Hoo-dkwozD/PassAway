@@ -14,8 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import sg.edu.sportsschool.DTO.Request.CreateAttractionDto;
 import sg.edu.sportsschool.DTO.Request.UpdateAttractionDto;
+import sg.edu.sportsschool.Helper.JSONBody;
 import sg.edu.sportsschool.Services.AttractionService;
-import sg.edu.sportsschool.helper.JSONBody;
 
 @CrossOrigin
 @RestController
@@ -45,9 +45,11 @@ public class AttractionController {
     }
 
     @PostMapping(path = "/add-barcode")
-    public ResponseEntity<JSONBody> addBarcodeToAttraction(@RequestParam Integer aId,
+    public ResponseEntity<JSONBody> addBarcodeToAttraction(@RequestParam String aId,
             @RequestParam MultipartFile barcodeImage) {
-        return aService.addBarcodeToAttr(aId, barcodeImage);
+        return aService.addBarcodeToAttr(Integer.parseInt(aId), barcodeImage);
     }
+
+    
     
 }

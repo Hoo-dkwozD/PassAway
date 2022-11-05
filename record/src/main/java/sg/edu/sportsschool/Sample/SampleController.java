@@ -1,11 +1,11 @@
 package sg.edu.sportsschool.Sample;
 
-import sg.edu.sportsschool.helper.JSONBody;
-import sg.edu.sportsschool.helper.Sample.Task;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import sg.edu.sportsschool.Helper.JSONBody;
+import sg.edu.sportsschool.Helper.Sample.Task;
 
 @CrossOrigin
 @RestController
