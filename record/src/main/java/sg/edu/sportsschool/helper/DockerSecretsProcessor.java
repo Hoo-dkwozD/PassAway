@@ -1,4 +1,4 @@
-package sg.edu.sportsschool.helper;
+package sg.edu.sportsschool.Helper;
 
 import java.io.IOException;
 import java.nio.charset.Charset;

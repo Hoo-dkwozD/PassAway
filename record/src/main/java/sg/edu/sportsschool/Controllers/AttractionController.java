@@ -14,8 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import sg.edu.sportsschool.DTO.Request.CreateAttractionDto;
 import sg.edu.sportsschool.DTO.Request.UpdateAttractionDto;
+import sg.edu.sportsschool.Helper.JSONBody;
 import sg.edu.sportsschool.Services.AttractionService;
-import sg.edu.sportsschool.helper.JSONBody;
 
 @CrossOrigin
 @RestController

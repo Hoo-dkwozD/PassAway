@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import sg.edu.sportsschool.Helper.JSONBody;
 import sg.edu.sportsschool.Services.PassService;
-import sg.edu.sportsschool.helper.JSONBody;
 
 @CrossOrigin
 @RestController

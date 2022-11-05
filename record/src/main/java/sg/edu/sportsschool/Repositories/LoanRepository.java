@@ -12,7 +12,6 @@ import sg.edu.sportsschool.Entities.Loan;
 import sg.edu.sportsschool.Entities.Pass;
 
 public interface LoanRepository extends JpaRepository<Loan, Integer> {
-
     @Query("""
             SELECT l.pass FROM Loan l
             WHERE l.pass.attraction.attractionId =:aId
@@ -57,5 +56,4 @@ public interface LoanRepository extends JpaRepository<Loan, Integer> {
             SELECT * FROM Loan WHERE start_date < :overdueDate AND has_returned = FALSE
             """, nativeQuery = true)
     List<Loan> getOverdueLoans(Date overdueDate);
-    
 }

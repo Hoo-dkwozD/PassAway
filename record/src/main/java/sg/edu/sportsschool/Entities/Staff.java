@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "staff")
-@JsonIgnoreProperties({ "hashedPassword" })
+@JsonIgnoreProperties({"hashedPassword"})
 public class Staff {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,11 +30,10 @@ public class Staff {
     @OneToMany(mappedBy = "staff")
     private Set<Loan> loans;
 
-    public Staff() {
-    }
+    public Staff() {}
 
     public Staff(String email, String firstName, String lastName, String contactNumber, String role,
-            String hashedPassword, boolean cannotBook) {
+                String hashedPassword, boolean cannotBook) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
