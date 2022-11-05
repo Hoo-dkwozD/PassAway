@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "v-calendar": "^3.0.0-alpha.8"
+    "bootstrap": "^5.2.2",
+    "bootstrap-vue": "^2.23.1",
+    "v-calendar": "^3.0.0-alpha.8",
+    "vue": "^3.2.41"
   }
 }

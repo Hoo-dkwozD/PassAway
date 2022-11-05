@@ -31,16 +31,9 @@
           >
             {{ dateSelected }}
           </button>
-          <!-- <Calendar
-            class="calendarStyle"
-            v-if="showCalendar"
-            @click="showCalendar = !showCalendar"
-          /> -->
-          <DatePicker
-            placeholder="Calendar"
+          <Calendar
             v-model="dateSelected"
             class="calendarStyle"
-            mode="date"
             v-if="showCalendar"
             @click="showCalendar = !showCalendar"
           />
@@ -56,7 +49,9 @@
         </div>
 
         <div id="group-submit">
-          <router-link to="/bookingconfirmation">
+          <router-link
+            to="{name: 'BookingConfirmation', params: { id: {{loanID}} }}"
+          >
             <button type="button" class="btn btn-submit btn-lg">
               Book Now
             </button>
@@ -72,7 +67,6 @@ import axios from "axios";
 import { DatePicker } from "v-calendar";
 import { defineComponent } from "vue";
 import Calendar from "../components/Calendar.vue";
-import { useCounterStore } from "../stores/counter";
 
 // Typings
 interface Data {
@@ -84,7 +78,7 @@ interface Data {
   type: boolean;
   showCalendar: boolean;
   currentBackground: string;
-  store: any;
+  loanID: number;
 }
 
 export default defineComponent({
@@ -93,12 +87,12 @@ export default defineComponent({
       type: true,
       attraction: "",
       locations: ["Singapore Zoo", "Gardens By the Bay", "USS"],
-      dateSelected: new Date().toLocaleDateString(),
+      dateSelected: new Date(),
       numPassesSelected: "",
       numberofPasses: [],
       showCalendar: false,
       currentBackground: "/assets/header.png",
-      store: useCounterStore(),
+      loanID: 0,
     };
   },
   async created() {
@@ -108,7 +102,11 @@ export default defineComponent({
       this.numberofPasses.push(i);
     }
   },
-
+  computed: {
+    displayedDate(): string {
+      return this.dateSelected.toLocaleDateString();
+    },
+  },
   methods: {
     getAttractionId(attractionName: string) {
       return axios.get(
@@ -138,6 +136,7 @@ export default defineComponent({
             dd: date,
           }
         );
+        this.loanID = res.data.loanId;
         console.log(res.data);
         console.log("200");
         return res.data;
@@ -151,7 +150,6 @@ export default defineComponent({
   props: {},
   components: {
     Calendar,
-    DatePicker,
   },
 });
 </script>
