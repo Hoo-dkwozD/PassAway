@@ -1,5 +1,7 @@
 package sg.edu.sportsschool.Controllers;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<JSONBody> signin(@RequestBody SignInDto dto) {
-        return this.authService.signin(dto);
+    public ResponseEntity<JSONBody> signin(@RequestBody SignInDto dto, HttpServletResponse response) {
+        return this.authService.signin(dto, response);
     }
 }

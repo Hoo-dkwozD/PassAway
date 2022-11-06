@@ -18,6 +18,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.StreamUtils;
 
+// TODO Deprecation
+
 @Service
 public class AuthenticationService {
 

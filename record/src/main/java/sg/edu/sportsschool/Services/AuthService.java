@@ -23,6 +23,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,7 +50,7 @@ public class AuthService {
         this.staffService = staffService;
     }
 
-    public ResponseEntity<JSONBody> signin(SignInDto dto) {
+    public ResponseEntity<JSONBody> signin(SignInDto dto, HttpServletResponse servletResponse) {
         try {
             Staff targetStaff = staffRepository.findByEmail(dto.getEmail());
 
@@ -69,11 +72,17 @@ public class AuthService {
                     .withClaim("staff-id", targetStaff.getStaffId())
                     .sign(algorithm);
 
-                Map<String, String> data = new HashMap<>();
-                data.put("token", token);
+                Map<String, Boolean> data = new HashMap<>();
+                data.put("token", true);
 
-                JSONWithData<Map<String, String>> results = new JSONWithData<>(200, data);
+                JSONWithData<Map<String, Boolean>> results = new JSONWithData<>(200, data);
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.OK);
+
+                Cookie tokenCookie = new Cookie("token", token);
+                tokenCookie.setMaxAge(((int)loginHours) * 60 * 60);
+                tokenCookie.setHttpOnly(true);
+                tokenCookie.setPath("/");
+                servletResponse.addCookie(tokenCookie);
 
                 return response;
             }
