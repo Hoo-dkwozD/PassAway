@@ -7,10 +7,16 @@ import sg.edu.sportsschool.Helper.JSONBody;
 import sg.edu.sportsschool.Helper.JSONWithData;
 import sg.edu.sportsschool.Repositories.TokenRepository;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.util.StreamUtils;
 
 @Service
 public class AuthenticationService {
@@ -42,6 +48,24 @@ public class AuthenticationService {
     public Staff getStaff(String token) {
         AuthenticationToken aToken = tokenRepository.findByToken(token);
         return aToken.getStaff();
+    }
 
+    public String getPrivateKey() throws RuntimeException {
+        return getResourceFile("private.key");
+    }
+
+    public String getPublicKey() throws RuntimeException {
+        return getResourceFile("public.key");
+    }
+
+    public String getResourceFile(String fileName) throws RuntimeException {
+        String keyPath = getClass().getClassLoader().getResource(fileName).getPath();
+        Resource key = new FileSystemResource(keyPath);
+
+        try {
+            return StreamUtils.copyToString(key.getInputStream(), Charset.defaultCharset());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

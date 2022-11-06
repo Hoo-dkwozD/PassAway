@@ -2,8 +2,14 @@ package sg.edu.sportsschool.Services;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.xml.bind.DatatypeConverter;
@@ -13,6 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
 
 import sg.edu.sportsschool.DTO.Request.SignInDto;
 import sg.edu.sportsschool.DTO.Request.SignupDto;
@@ -46,7 +55,6 @@ public class StaffService {
             sRepository.findAll().forEach(allStaff::add);
             JSONWithData<List<Staff>> body = new JSONWithData<List<Staff>>(200, allStaff);
             return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
-
         } catch (Exception e) {
             throw new InternalServerException("Server unable to get all staff from database");
         }
@@ -57,7 +65,6 @@ public class StaffService {
             Staff s = authenticationService.getStaff(token);
             JSONWithData<Staff> body = new JSONWithData<>(200, s);
             return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
-
         } catch (Exception e) {
             throw new InternalServerException("Server unable to get staff from database");
         }
@@ -136,7 +143,7 @@ public class StaffService {
         return optS.get();
     }
 
-    private String hashPassword(String password) {
+    public String hashPassword(String password) {
         String hashingAlgorithm = "SHA-256";
         try {
             MessageDigest md = MessageDigest.getInstance(hashingAlgorithm);
@@ -147,9 +154,9 @@ public class StaffService {
             return hash;
         } catch (NoSuchAlgorithmException e) {
             throw new InternalServerException(
-                    "Exception occurred when hashing password. No such algorithm exists: " + hashingAlgorithm);
+                "Exception occurred when hashing password. No such algorithm exists: " + hashingAlgorithm
+            );
         }
-
     }
 
     public ResponseEntity<JSONBody> updateStaffProfile(UpdateProfileDto dto) {
