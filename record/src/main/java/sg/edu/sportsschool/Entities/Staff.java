@@ -3,6 +3,8 @@ package sg.edu.sportsschool.Entities;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -10,6 +12,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import sg.edu.sportsschool.Helper.StaffRole;
 
 @Entity
 @Table(name = "staff")
@@ -23,7 +27,8 @@ public class Staff {
     private String firstName;
     private String lastName;
     private String contactNumber;
-    private String role;
+    @Enumerated(EnumType.ORDINAL)
+    private StaffRole role;
     private String hashedPassword;
     private boolean cannotBook;
 
@@ -32,7 +37,7 @@ public class Staff {
 
     public Staff() {}
 
-    public Staff(String email, String firstName, String lastName, String contactNumber, String role,
+    public Staff(String email, String firstName, String lastName, String contactNumber, StaffRole role,
                 String hashedPassword, boolean cannotBook) {
         this.email = email;
         this.firstName = firstName;
@@ -41,6 +46,16 @@ public class Staff {
         this.role = role;
         this.hashedPassword = hashedPassword;
         this.cannotBook = cannotBook;
+    }
+
+    public Staff(String email, String firstName, String lastName, StaffRole role) {
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.contactNumber = null;
+        this.role = StaffRole.ADMINISTRATOR;
+        this.hashedPassword = null;
+        this.cannotBook = true;
     }
 
     public Integer getStaffId() {
@@ -79,11 +94,11 @@ public class Staff {
         this.contactNumber = contactNumber;
     }
 
-    public String getRole() {
+    public StaffRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(StaffRole role) {
         this.role = role;
     }
 

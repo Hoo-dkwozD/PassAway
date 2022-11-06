@@ -44,10 +44,10 @@ public class StaffController {
         return staffService.signUp(signupDto);
     }
 
-    @PostMapping("/signin")
-    public ResponseEntity<JSONBody> signIn(@RequestBody SignInDto signInDto) {
-        return staffService.signIn(signInDto);
-    }
+    // @PostMapping("/signin")
+    // public ResponseEntity<JSONBody> signIn(@RequestBody SignInDto signInDto) {
+    //     return staffService.signIn(signInDto);
+    // }
 
     @PutMapping("/update-profile")
     public ResponseEntity<JSONBody> updateStaffProfile(@RequestBody UpdateProfileDto dto) {

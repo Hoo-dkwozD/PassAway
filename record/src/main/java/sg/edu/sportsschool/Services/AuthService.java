@@ -73,7 +73,7 @@ public class AuthService {
                     .sign(algorithm);
 
                 Map<String, Boolean> data = new HashMap<>();
-                data.put("token", true);
+                data.put("signIn", true);
 
                 JSONWithData<Map<String, Boolean>> results = new JSONWithData<>(200, data);
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.OK);
