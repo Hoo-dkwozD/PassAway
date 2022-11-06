@@ -33,6 +33,8 @@ type ticketInformation = {
   dates: Date;
   color: string;
 };
+
+
 // type date = {
 //   weekdays: number
 // }
