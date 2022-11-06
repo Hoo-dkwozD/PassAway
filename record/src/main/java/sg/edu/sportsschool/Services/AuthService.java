@@ -31,6 +31,8 @@ import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.JWTVerifier;
 
 @Service
 public class AuthService {
@@ -82,6 +84,28 @@ public class AuthService {
             return response;
         }
     }
+
+    // Non-REST main functionalities
+
+    public Staff authenticate(String jwtToken)  throws NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeySpecException {
+        Map<String, Object> keys = getKeys();
+        RSAPrivateKey privateKey = (RSAPrivateKey)keys.get("private");
+        RSAPublicKey publicKey = (RSAPublicKey)keys.get("public");
+
+        Algorithm algorithm = Algorithm.RSA256(publicKey, privateKey);
+        JWTVerifier verifier = JWT
+                                .require(algorithm)
+                                .withIssuer("sss")
+                                .withClaimPresence("staff-id")
+                                .acceptLeeway(10L)
+                                .build();
+        DecodedJWT jwt = verifier.verify(jwtToken);
+
+        Integer staffId = jwt.getClaim("staff-id").asInt();
+        return staffRepository.findByStaffId(staffId);
+    }
+
+    // Helper functions
 
     public boolean checkPassword(String hashedPassword, String password) {
         String candidateHash = staffService.hashPassword(password);

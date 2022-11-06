@@ -2,14 +2,8 @@ package sg.edu.sportsschool.Services;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.xml.bind.DatatypeConverter;
@@ -19,9 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
 
 import sg.edu.sportsschool.DTO.Request.SignInDto;
 import sg.edu.sportsschool.DTO.Request.SignupDto;
