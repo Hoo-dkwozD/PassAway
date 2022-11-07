@@ -19,7 +19,7 @@ public interface LoanRepository extends JpaRepository<Loan, Integer> {
             AND SUBSTRING(l.startDate, 1, 4) = :yyyy AND SUBSTRING(l.startDate, 6, 2) = :mm
             AND SUBSTRING(l.startDate, 9, 2) = :dd
             """)
-    Set<Pass> findAllCurrentlyLoanedPassesByAttrId(Integer aId, String yyyy, String mm, String dd);
+    Set<Pass> getLoanedPassesByDate(Integer aId, String yyyy, String mm, String dd); // returns empty set of length 0 if no passes are loaned for the date
 
     @Query(value = """
             SELECT loans.pass.attraction.attractionId, loans.startDate, COUNT(loans.loanId) FROM
