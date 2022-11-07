@@ -31,6 +31,7 @@ public class Staff {
     private StaffRole role;
     private String hashedPassword;
     private boolean cannotBook;
+    private boolean isDisabled;
 
     @OneToMany(mappedBy = "staff")
     private Set<Loan> loans;
@@ -38,7 +39,7 @@ public class Staff {
     public Staff() {}
 
     public Staff(String email, String firstName, String lastName, String contactNumber, StaffRole role,
-                String hashedPassword, boolean cannotBook) {
+                String hashedPassword, boolean cannotBook, boolean isDisabled) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -46,6 +47,7 @@ public class Staff {
         this.role = role;
         this.hashedPassword = hashedPassword;
         this.cannotBook = cannotBook;
+        this.isDisabled = isDisabled;
     }
 
     public Staff(String email, String firstName, String lastName, StaffRole role) {
@@ -56,6 +58,7 @@ public class Staff {
         this.role = StaffRole.ADMINISTRATOR;
         this.hashedPassword = null;
         this.cannotBook = true;
+        this.isDisabled = false;
     }
 
     public Integer getStaffId() {
@@ -116,5 +119,13 @@ public class Staff {
 
     public void setCannotBook(boolean cannotBook) {
         this.cannotBook = cannotBook;
+    }
+
+    public boolean isDisabled() {
+        return isDisabled;
+    }
+
+    public void setDisabled(boolean isDisabled) {
+        this.isDisabled = isDisabled;
     }
 }

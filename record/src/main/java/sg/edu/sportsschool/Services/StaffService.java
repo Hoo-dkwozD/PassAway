@@ -138,7 +138,7 @@ public class StaffService {
         // Check if user is already present
         Staff staff = sRepository.findByEmail(signupDto.getEmail());
         if (staff.getHashedPassword() != null) {
-            throw new BadRequestException("Staff already exists in database. ");
+            throw new BadRequestException("Staff account already exists. ");
         }
 
         // Hash the password
