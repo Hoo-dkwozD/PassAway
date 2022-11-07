@@ -72,10 +72,10 @@ public class AuthService {
                     .withClaim("staff-id", targetStaff.getStaffId())
                     .sign(algorithm);
 
-                Map<String, Boolean> data = new HashMap<>();
-                data.put("signIn", true);
+                Map<String, Integer> data = new HashMap<>();
+                data.put("staffId", targetStaff.getStaffId());
 
-                JSONWithData<Map<String, Boolean>> results = new JSONWithData<>(200, data);
+                JSONWithData<Map<String, Integer>> results = new JSONWithData<>(200, data);
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.OK);
 
                 Cookie tokenCookie = new Cookie("token", token);

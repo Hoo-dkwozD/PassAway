@@ -3,10 +3,12 @@ package sg.edu.sportsschool.Services;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.DatatypeConverter;
@@ -18,8 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import sg.edu.sportsschool.DTO.Request.CompleteRegisterStaffDto;
+import sg.edu.sportsschool.DTO.Request.CreateStaffDto;
 import sg.edu.sportsschool.DTO.Request.SignInDto;
-import sg.edu.sportsschool.DTO.Request.SignupDto;
+import sg.edu.sportsschool.DTO.Request.RegisterStaffDto;
 import sg.edu.sportsschool.DTO.Request.UpdatePasswordDto;
 import sg.edu.sportsschool.DTO.Request.UpdateProfileDto;
 import sg.edu.sportsschool.DTO.Response.SignInReponseDto;
@@ -39,11 +43,13 @@ public class StaffService {
 
     private StaffRepository sRepository;
     private AuthenticationService authenticationService;
+    private EmailService emailService;
 
     @Autowired
-    public StaffService(StaffRepository sRepository, AuthenticationService authenticationService) {
+    public StaffService(StaffRepository sRepository, AuthenticationService authenticationService, EmailService emailService) {
         this.sRepository = sRepository;
         this.authenticationService = authenticationService;
+        this.emailService = emailService;
     }
 
     public ResponseEntity<JSONBody> getAllStaff() {
@@ -120,6 +126,7 @@ public class StaffService {
                 }
 
                 Map<String, List<Staff>> data = new HashMap<>();
+                addedStaff = sRepository.findAll();
                 data.put("staffs", addedStaff);
                 JSONWithData<Map<String, List<Staff>>> results = new JSONWithData<>(201, data);
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.CREATED);
@@ -134,27 +141,129 @@ public class StaffService {
         }
     }
 
-    public ResponseEntity<JSONBody> signUp(SignupDto signupDto) {
-        // Check if user is already present
-        Staff staff = sRepository.findByEmail(signupDto.getEmail());
-        if (staff.getHashedPassword() != null) {
-            throw new BadRequestException("Staff account already exists. ");
+    public ResponseEntity<JSONBody> createStaff(CreateStaffDto staffDto) {
+        try {
+            String targetStaffEmail = staffDto.getEmail();
+            Staff staff = sRepository.findByEmail(targetStaffEmail);
+            if (
+                staff == null 
+                && (
+                    targetStaffEmail.endsWith("@sportsschool.edu.sg") 
+                    || targetStaffEmail.endsWith("@nysi.org.sg")
+                )
+            ) {
+                Staff targetStaff = new Staff();
+                targetStaff.setEmail(targetStaffEmail);
+                targetStaff.setFirstName(staffDto.getFirstName());
+                targetStaff.setLastName(staffDto.getLastName());
+                targetStaff.setContactNumber(staffDto.getContactNumber());
+                targetStaff.setRole(staffDto.getRole());
+                targetStaff.setHashedPassword(null);
+                targetStaff.setCannotBook(staffDto.isCannotBook());
+                targetStaff.setDisabled(staffDto.isDisabled());
+
+                sRepository.save(targetStaff);
+
+                Map<String, Staff> data = new HashMap<>();
+                data.put("staff", targetStaff);
+                JSONWithData<Map<String, Staff>> results = new JSONWithData<>(201, data);
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.CREATED);
+
+                return response;
+            } else {
+                JSONWithMessage results = new JSONWithMessage(400, "The staff to add already exists or has invalid fields. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.BAD_REQUEST);
+
+                return response;
+            }
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server unable to parse file as CSV file. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
         }
+    }
 
-        // Hash the password
-        String encryptedPassword = hashPassword(signupDto.getPassword());
-        staff.setFirstName(signupDto.getFirstName());
-        staff.setLastName(signupDto.getLastName());
-        staff.setContactNumber(signupDto.getContactNumber());
-        staff.setHashedPassword(encryptedPassword);
-        staff.setCannotBook(false);
+    public ResponseEntity<JSONBody> registerStaff(RegisterStaffDto staffDto) {
+        try {
+            // Check if user is already present
+            Staff staff = sRepository.findByEmail(staffDto.getEmail());
 
-        sRepository.save(staff);
+            if (staff == null) {
+                JSONWithMessage results = new JSONWithMessage(401, "The specified user is not authorised to use this service. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
 
-        Map<String, Staff> data = new HashMap<>();
-        data.put("staff", staff);
-        JSONWithData<Map<String, Staff>> body = new JSONWithData<>(201, data);
-        return new ResponseEntity<JSONBody>(body, HttpStatus.CREATED);
+                return response;
+            } else if (staff.isRegistered()) {
+                JSONWithMessage results = new JSONWithMessage(403, "The specified user is already registered. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.FORBIDDEN);
+
+                return response;
+            } else {
+                String registerKey = randomStringToken(20);
+                String encodedString = Base64.getEncoder().encodeToString(registerKey.getBytes());
+                staff.setHashedPassword(encodedString);
+
+                sRepository.save(staff);
+
+                emailService.sendRegistrationEmail(staff.getEmail(), staff.getFirstName() + " " + staff.getLastName(), encodedString);
+
+                JSONBody results = new JSONBody(204);
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NO_CONTENT);
+
+                return response;
+            }
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server could not register the user. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
+        }
+    }
+
+    public ResponseEntity<JSONBody> completeStaffRegistration(CompleteRegisterStaffDto staffDto) {
+        try {
+            // Check if user is already present
+            Staff staff = sRepository.findByEmail(staffDto.getEmail());
+
+            if (staff == null) {
+                JSONWithMessage results = new JSONWithMessage(401, "The specified user is not authorised to use this service. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
+
+                return response;
+            } else if (staff.isRegistered()) {
+                JSONWithMessage results = new JSONWithMessage(403, "The specified user is already registered. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.FORBIDDEN);
+
+                return response;
+            } else if (staff.getHashedPassword().equals(staffDto.getRegisterKey())) {
+                String encryptedPassword = hashPassword(staffDto.getPassword());
+                staff.setFirstName(staffDto.getFirstName());
+                staff.setLastName(staffDto.getLastName());
+                staff.setContactNumber(staffDto.getContactNumber());
+                staff.setHashedPassword(encryptedPassword);
+                staff.setCannotBook(false);
+                staff.setDisabled(false);
+                staff.setRegistered(true);
+
+                sRepository.save(staff);
+
+                Map<String, Staff> data = new HashMap<>();
+                data.put("staff", staff);
+                JSONWithData<Map<String, Staff>> body = new JSONWithData<>(201, data);
+                return new ResponseEntity<JSONBody>(body, HttpStatus.CREATED);
+            } else {
+                JSONWithMessage results = new JSONWithMessage(401, "Unauthorised account creation. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
+
+                return response;
+            }
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server could not register the user. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
+        }
     }
 
     // public ResponseEntity<JSONBody> signIn(SignInDto signInDto) {
@@ -206,6 +315,19 @@ public class StaffService {
                 "Exception occurred when hashing password. No such algorithm exists: " + hashingAlgorithm
             );
         }
+    }
+
+    public String randomStringToken(int length) {
+        int upperLimit = 122;
+        int lowerLimit = 65;
+        Random random = new Random();
+
+        String result = random.ints(upperLimit, lowerLimit + 1)
+                        .limit(length)
+                        .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                        .toString();
+
+        return result;
     }
 
     public ResponseEntity<JSONBody> updateStaffProfile(UpdateProfileDto dto) {
