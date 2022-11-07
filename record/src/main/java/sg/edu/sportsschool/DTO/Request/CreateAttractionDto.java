@@ -16,8 +16,7 @@ public class CreateAttractionDto {
     private String benefits;
     private String termsConditions;
 
-    public CreateAttractionDto() {
-    }
+    public CreateAttractionDto() {}
 
     public CreateAttractionDto(String name, String description, char passType, float replacementFee,
             int numAccompanyingGuests, int maxPassesPerLoan, int maxLoansPerMonth, String address, String membershipId,
@@ -149,5 +148,4 @@ public class CreateAttractionDto {
     public void setTermsConditions(String termsConditions) {
         this.termsConditions = termsConditions;
     }
-
 }

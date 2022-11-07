@@ -9,8 +9,7 @@ public class UpdateProfileDto {
     private String role;
     private boolean cannotBook;
 
-    public UpdateProfileDto() {
-    }
+    public UpdateProfileDto() {}
 
     public UpdateProfileDto(Integer staffId, String email, String firstName, String lastName, String contactNumber,
             String role, boolean cannotBook) {
@@ -74,5 +73,4 @@ public class UpdateProfileDto {
     public void setCannotBook(boolean cannotBook) {
         this.cannotBook = cannotBook;
     }
-
 }

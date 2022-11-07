@@ -23,10 +23,10 @@ import sg.edu.sportsschool.Entities.AuthenticationToken;
 import sg.edu.sportsschool.Entities.Staff;
 import sg.edu.sportsschool.Exceptions.BadRequestException;
 import sg.edu.sportsschool.Exceptions.InternalServerException;
+import sg.edu.sportsschool.Helper.JSONBody;
+import sg.edu.sportsschool.Helper.JSONWithData;
+import sg.edu.sportsschool.Helper.JSONWithMessage;
 import sg.edu.sportsschool.Repositories.StaffRepository;
-import sg.edu.sportsschool.helper.JSONBody;
-import sg.edu.sportsschool.helper.JSONWithData;
-import sg.edu.sportsschool.helper.JSONWithMessage;
 
 @Service
 public class StaffService {

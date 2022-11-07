@@ -48,12 +48,12 @@ public class Attraction {
     @OneToMany(mappedBy = "attraction")
     private Set<Pass> passes;
 
-    public Attraction() {
-    }
+    public Attraction() {}
 
-    public Attraction(String name, String description, char passType, float replacementFee, int numAccompanyingGuests,
-            int maxPassesPerLoan, int maxLoansPerMonth, boolean cannotBook, String address, String membershipId,
-            Date expiryDate, String benefits, String termsConditions) {
+    public Attraction(String name, String description, char passType, float replacementFee, 
+                    int numAccompanyingGuests, int maxPassesPerLoan, int maxLoansPerMonth, 
+                    boolean cannotBook, String address, String membershipId,
+                    Date expiryDate, String benefits, String termsConditions) {
         this.name = name;
         this.description = description;
         this.passType = passType;
@@ -189,5 +189,4 @@ public class Attraction {
     public String toString() {
         return name;
     }
-
 }

@@ -18,8 +18,7 @@ public class UpdateAttractionDto {
     private String termsConditions;
     private boolean cannotBook;
 
-    public UpdateAttractionDto() {
-    }
+    public UpdateAttractionDto() {}
 
     public UpdateAttractionDto(Integer attractionId, String name, String description, char passType,
             float replacementFee, int numAccompanyingGuests, int maxPassesPerLoan, int maxLoansPerMonth, String address,
@@ -170,5 +169,4 @@ public class UpdateAttractionDto {
     public void setCannotBook(boolean cannotBook) {
         this.cannotBook = cannotBook;
     }
-
 }

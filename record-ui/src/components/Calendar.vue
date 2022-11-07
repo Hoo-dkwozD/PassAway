@@ -1,7 +1,8 @@
 <template>
   <!-- how many passes are available for this date -->
   <div>
-    <v-calendar :attributes="attributes"> </v-calendar>
+    <v-calendar :attributes="attributes" @dayclick="dayClicked">
+    </v-calendar>
   </div>
 </template>
 
@@ -9,10 +10,10 @@
 import { defineComponent } from "vue";
 import "v-calendar/dist/style.css";
 type ticketInformation = {
-  description: String;
+  description: string;
   isComplete: boolean;
   dates: Date;
-  color: String;
+  color: string;
 };
 // type date = {
 //   weekdays: number
@@ -20,6 +21,7 @@ type ticketInformation = {
 interface Data {
   //array of custom type Array<todos>
   ticketInformation: ticketInformation[];
+  selectedDay: null;
 }
 export default defineComponent({
   data(): Data {
@@ -28,19 +30,26 @@ export default defineComponent({
       {
         description: "2 Passes left",
         isComplete: false,
-        dates: new Date(2022, 9, 1), // date should be array of objects where one object is one date, format month year and day into an object
+        dates: new Date(2022, 11, 11), // date should be array of objects where one object is one date, format month year and day into an object
         color: "red",
       },
       {
         description: "1 Pass left",
         isComplete: false,
-        dates: new Date(2022, 9, 2), // date should be array of objects where one object is one date
+        dates: new Date(2022, 11, 12), // date should be array of objects where one object is one date
         color: "red",
       },
     ];
+    const selectedDay = null;
     return {
       ticketInformation,
+      selectedDay,
     };
+  },
+  methods: {
+    dayClicked(day: any): void {
+      this.selectedDay = day;
+    },
   },
   computed: {
     attributes() {

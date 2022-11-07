@@ -1,12 +1,10 @@
 package sg.edu.sportsschool.DTO.Request;
 
 public class SignInDto {
-
     private String email;
     private String password;
 
-    public SignInDto() {
-    }
+    public SignInDto() {}
 
     public SignInDto(String email, String password) {
         this.email = email;

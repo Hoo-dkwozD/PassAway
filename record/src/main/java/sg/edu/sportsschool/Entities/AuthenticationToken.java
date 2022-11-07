@@ -22,8 +22,7 @@ public class AuthenticationToken {
     @JoinColumn(nullable = false, name = "staff_id")
     private Staff staff;
 
-    public AuthenticationToken() {
-    }
+    public AuthenticationToken() {}
 
     public AuthenticationToken(Staff staff) {
         this.staff = staff;
@@ -62,5 +61,4 @@ public class AuthenticationToken {
     public void setStaff(Staff staff) {
         this.staff = staff;
     }
-
 }

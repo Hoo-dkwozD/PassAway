@@ -1,7 +1,6 @@
 package sg.edu.sportsschool.DTO.Request;
 
 public class SignupDto {
-
     private String firstName;
     private String lastName;
     private String email;
@@ -9,8 +8,7 @@ public class SignupDto {
     private String role;
     private String password;
 
-    public SignupDto() {
-    }
+    public SignupDto() {}
 
     public SignupDto(String firstName, String lastName, String email, String contactNumber, String role,
             String password) {

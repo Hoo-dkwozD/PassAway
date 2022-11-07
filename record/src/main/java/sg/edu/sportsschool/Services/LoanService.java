@@ -29,11 +29,11 @@ import sg.edu.sportsschool.Entities.Pass;
 import sg.edu.sportsschool.Entities.Staff;
 import sg.edu.sportsschool.Exceptions.BadRequestException;
 import sg.edu.sportsschool.Exceptions.InternalServerException;
+import sg.edu.sportsschool.Helper.JSONBody;
+import sg.edu.sportsschool.Helper.JSONWithData;
+import sg.edu.sportsschool.Helper.JSONWithMessage;
+import sg.edu.sportsschool.Helper.PassComparator;
 import sg.edu.sportsschool.Repositories.LoanRepository;
-import sg.edu.sportsschool.helper.JSONBody;
-import sg.edu.sportsschool.helper.JSONWithData;
-import sg.edu.sportsschool.helper.JSONWithMessage;
-import sg.edu.sportsschool.helper.PassComparator;
 
 @Service
 public class LoanService {

@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class ExceptionControllerAdvice {
-
     @ExceptionHandler(value = CustomException.class)
     public final ResponseEntity<String> handleCustomException(CustomException exception){
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
@@ -29,5 +28,4 @@ public class ExceptionControllerAdvice {
     public final ResponseEntity<String> handleMessagingException(MessagingException e) {
         return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    
 }
