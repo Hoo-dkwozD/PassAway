@@ -35,7 +35,7 @@
           >
             Calendar
           </select>
-          <Calendar class="calendarStyle" v-if="showCalendar" />
+          <calendar-picker class="calendarStyle" v-if="showCalendar" />
         </div>
 
         <div class="dropdown" id="group-date">
@@ -62,7 +62,7 @@
 <script lang="ts">
 import type { ComponentPublicInstance } from "vue";
 import { defineComponent } from "vue";
-import Calendar from "../components/Calendar.vue";
+import CalendarPicker from "../components/CalendarPicker.vue";
 import { useCounterStore } from "../stores/counter";
 
 // Typings
@@ -103,7 +103,7 @@ export default defineComponent({
   methods: {},
   props: {},
   components: {
-    Calendar,
+    CalendarPicker,
   },
 });
 </script>

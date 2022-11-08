@@ -1,8 +1,25 @@
 <template>
   <!-- how many passes are available for this date -->
   <div>
-    <v-calendar :attributes="attributes" @dayclick="dayClicked">
-    </v-calendar>
+    <div class="position-absolute">
+      <button
+        id="calendar-details"
+        class="form-select shadow"
+        @click="showCalendar = !showCalendar"
+      >
+        {{
+          selectedDay != null
+            ? selectedDay.toISOString().substring(0, 10)
+            : "No date selected"
+        }}
+      </button>
+      <div v-if="showCalendar" @click="showCalendar = !showCalendar">
+        <v-date-picker
+          v-model="selectedDay"
+          :attributes="attributes"
+        ></v-date-picker>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -21,9 +38,11 @@ type ticketInformation = {
 interface Data {
   //array of custom type Array<todos>
   ticketInformation: ticketInformation[];
-  selectedDay: null;
+  selectedDay: any;
+  showCalendar: boolean;
 }
 export default defineComponent({
+  name: "CalendarPicker",
   data(): Data {
     //contain dates where there are passes booked
     const ticketInformation = [
@@ -40,17 +59,14 @@ export default defineComponent({
         color: "red",
       },
     ];
-    const selectedDay = null;
+    // const selectedDay = new Date()
     return {
       ticketInformation,
-      selectedDay,
+      selectedDay: new Date(),
+      showCalendar: false,
     };
   },
-  methods: {
-    dayClicked(day: any): void {
-      this.selectedDay = day;
-    },
-  },
+  props: ["date"],
   computed: {
     attributes() {
       return [
@@ -68,9 +84,25 @@ export default defineComponent({
       ];
     },
   },
+  methods: {},
 });
 </script>
 
 
 <style>
+
+  #calendar-details {
+    left: 0;
+    letter-spacing: 0;
+    line-height: 24px;
+    top: 0;
+    white-space: nowrap;
+    padding-left: 20px;
+    width: 180px;
+    padding-right: 30px;
+  }
+
+  .shadow {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
 </style>

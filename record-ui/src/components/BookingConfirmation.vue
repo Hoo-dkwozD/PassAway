@@ -1,4 +1,5 @@
 <template>
+
   <div>
     <h1 class="text-center">{{ title }}</h1>
   </div>
@@ -134,7 +135,7 @@ h2 {
   color: white;
 }
 
-.btn:hover {
+.btn-block:hover {
   background-color: #f37931;
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   color: black;

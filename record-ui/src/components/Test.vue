@@ -1,46 +1,42 @@
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid px-0">
     <div
       id="sectionheader"
       :style="{ backgroundImage: `url(${currentBackground})` }"
+      class="row"
     >
-      <div class="main">
-        <h1 class="title">Singapore Zoo</h1>
-        <h3 class="titledescription">
+      <div class="main container-fluid">
+        <h1 class="title row">Singapore Zoo</h1>
+        <h3 class="titledescription row">
           Each physical pass equates to 2 entries to the attraction, you are
           entitled to 2 passes a month.
         </h3>
       </div>
 
-      <div class="bookingdetails">
+      <div class="bookingdetails container-fluid">
         <div class="dropdown" id="group-location">
-          <select v-model="attraction" class="form-select">
+          <select
+            v-model="attraction"
+            class="form-select shadow"
+            @change="populateNoOfTickets()"
+          >
             <option disabled value="">Attractions</option>
-            <option v-for="location in locations" :value="{ location }">
+            <option
+              v-for="(id, location) in locations"
+              :value="{ location }"
+              @onselect="populateNoOfTickets()"
+            >
               {{ location }}
             </option>
           </select>
         </div>
 
-        <div class="dropdown" id="group-calendar">
-          <button
-            class="form-select"
-            id="calendar-details"
-            data-bs-toggle="dropdown"
-            @click="showCalendar = !showCalendar"
-          >
-            {{ dateSelected }}
-          </button>
-          <Calendar
-            v-model="dateSelected"
-            class="calendarStyle"
-            v-if="showCalendar"
-            @click="showCalendar = !showCalendar"
-          />
+        <div id="group-calendar">
+          <calendar-picker />
         </div>
 
         <div class="dropdown" id="group-date">
-          <select v-model="numPassesSelected" class="form-select">
+          <select v-model="numPassesSelected" class="form-select shadow">
             <option disabled value="">Passes</option>
             <option v-for="pass in numberofPasses" :value="{ pass }">
               {{ pass }}
@@ -52,7 +48,11 @@
           <router-link
             to="{name: 'BookingConfirmation', params: { id: {{loanID}} }}"
           >
-            <button type="button" class="btn btn-submit btn-lg">
+            <button
+              type="submit"
+              class="btn btn-submit btn-lg"
+              @click="addLoan()"
+            >
               Book Now
             </button>
           </router-link>
@@ -66,11 +66,11 @@
 import axios from "axios";
 import { DatePicker } from "v-calendar";
 import { defineComponent } from "vue";
-import Calendar from "../components/Calendar.vue";
+import CalendarPicker from "./CalendarPicker.vue";
 
 // Typings
 interface Data {
-  locations: string[];
+  locations: object;
   attraction: string;
   dateSelected: Date;
   numPassesSelected: string;
@@ -79,6 +79,7 @@ interface Data {
   showCalendar: boolean;
   currentBackground: string;
   loanID: number;
+  attractionId: number;
 }
 
 export default defineComponent({
@@ -86,54 +87,62 @@ export default defineComponent({
     return {
       type: true,
       attraction: "",
-      locations: ["Singapore Zoo", "Gardens By the Bay", "USS"],
+      locations: {},
       dateSelected: new Date(),
       numPassesSelected: "",
       numberofPasses: [],
       showCalendar: false,
       currentBackground: "/assets/header.png",
       loanID: 0,
+      attractionId: 0,
     };
   },
-  async created() {
-    const MAX_PASS = 3;
 
-    for (let i = 0; i < MAX_PASS; i++) {
-      this.numberofPasses.push(i);
+  async created() {
+    const attractions = await axios.get(
+      import.meta.env.VITE_API_URL + "api/attraction/list"
+    );
+
+    for (let attraction of attractions.data.data) {
+      const location = attraction.name;
+      const attractionId = attraction.attractionId;
+      const maxPassesPerLoan = attraction.maxPassesPerLoan;
+      this.locations[location] = [attractionId, maxPassesPerLoan];
     }
   },
-  computed: {
-    displayedDate(): string {
-      return this.dateSelected.toLocaleDateString();
-    },
-  },
+  computed: {},
   methods: {
-    getAttractionId(attractionName: string) {
-      return axios.get(
-        import.meta.env.VITE_API_URL + "attraction/get/" + attractionName
-      );
+    async populateNoOfTickets(): Promise<any> {
+      this.numberofPasses = [];
+      const selectedAttraction = this.attraction["location"];
+      const maxPasses = this.locations[selectedAttraction][1];
+
+      for (let i = 1; i <= maxPasses; i++) {
+        this.numberofPasses.push(i);
+      }
     },
-    async addTaskBackend(
-      staffId: string,
-      attraction: string,
-      numPassesSelected: string,
-      dateSelected: Date
-    ): Promise<JSONResponse | AddTaskJSONResponse | any> {
-      const attractionId = this.getAttractionId(attraction);
-      const date = dateSelected.getDate();
-      const month = dateSelected.getMonth();
-      const year = dateSelected.getFullYear();
+    async addLoan(): Promise<any> {
+      const staffId = this.staffId;
+      const attractionId = this.attractionId;
+      const numPassesSelected = this.numPassesSelected;
+      const dateArr = this.dateSelected
+        .toISOString()
+        .substring(0, 10)
+        .split("-");
+      const day = dateArr[2];
+      const month = dateArr[1];
+      const year = dateArr[0];
 
       try {
         const res = await axios.post(
           import.meta.env.VITE_API_URL + "loan/add",
           {
-            staffId: parseInt(staffId),
-            attractionId: parseInt(attractionId),
+            staffId: parseInt(staffId), //retrieve from cookie
+            attractionId: attractionId,
             numPasses: parseInt(numPassesSelected),
-            yyyy: year,
-            mm: month,
-            dd: date,
+            yyyy: parseInt(year),
+            mm: parseInt(month),
+            dd: parseInt(day),
           }
         );
         this.loanID = res.data.loanId;
@@ -147,9 +156,8 @@ export default defineComponent({
       }
     },
   },
-  props: {},
   components: {
-    Calendar,
+    "calendar-picker": CalendarPicker,
   },
 });
 </script>
@@ -174,7 +182,6 @@ export default defineComponent({
   letter-spacing: 0;
   line-height: 1.4;
   margin-left: 100px;
-  white-space: nowrap;
 }
 
 .titledescription {
@@ -196,14 +203,15 @@ export default defineComponent({
 .bookingdetails {
   align-items: center;
   display: flex;
-  margin-left: 100px;
+  margin-left: 90px;
   border-radius: 30px;
   box-shadow: 0px 12px 14px;
-  padding: 10px;
+  padding: 5px;
+  padding-top: 15px;
   background-color: white;
   border: 1px none;
   width: 850px;
-  height: 100px;
+  height: 90px;
 }
 
 #group-location {
@@ -214,7 +222,7 @@ export default defineComponent({
   min-height: 56px;
   width: 450px;
   margin-left: 20px;
-  margin-right: 60px;
+  margin-right: 10px;
 }
 
 #group-calendar {
@@ -226,7 +234,7 @@ export default defineComponent({
   min-height: 56px;
   width: 300px;
   padding-left: 10px;
-  margin-right: 40px;
+  margin-right: 30px;
 }
 
 #group-date {
@@ -236,7 +244,7 @@ export default defineComponent({
   gap: 50px;
   min-height: 56px;
   width: 250px;
-  padding-left: 10px;
+  padding-left: 5px;
   margin-right: 40px;
 }
 
@@ -278,11 +286,21 @@ export default defineComponent({
   padding-left: 20px;
 }
 
+.shadow {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
 .btn-submit {
-  background-color: orange !important;
+  background-color: #f37931;
   letter-spacing: 0;
   line-height: 24px;
-  white-space: nowrap;
+  color:black;
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   padding-left: 20px;
+}
+
+.btn-submit:hover {
+  background-color: #d72255;
+  color: white;
 }
 </style>
