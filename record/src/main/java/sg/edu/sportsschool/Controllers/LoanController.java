@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -44,10 +45,10 @@ public class LoanController {
         return lService.addLoan(loanDTO);
     }
 
-    @GetMapping(path = "/available-passes")
-    public ResponseEntity<JSONBody> getNumAvailablePassesForDate(@RequestParam Integer aId,
-            @RequestParam int yyyy, @RequestParam int mm, @RequestParam int dd) {
-        return lService.getNumAvailablePassesForDate(aId, yyyy, mm, dd);
+    @GetMapping(path = "/available-passes-month")
+    public ResponseEntity<JSONBody> getNumAvailablePassesForMonth(@RequestParam Integer aId,
+            @RequestParam int yyyy, @RequestParam int mm) {
+        return lService.getNumAvailablePassesForMonth(aId, yyyy, mm);
     }
 
     @PutMapping(path = "/collect")
@@ -56,10 +57,13 @@ public class LoanController {
     }
 
     // TODO Cancellation of loans
-
+    @DeleteMapping(path = "/cancel")
+    public ResponseEntity<JSONBody> cancelLoans(@RequestParam List<Integer> loanIds) {
+        return lService.cancelLoans(loanIds);
+    }
     // ------------------------------------------------------------------------------------------------
     // // -- Following codes are used for testing only
-
+   
 
     // //
     // ------------------------------------------------------------------------------------------------

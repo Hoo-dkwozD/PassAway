@@ -2,12 +2,15 @@ package sg.edu.sportsschool.Services;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -98,6 +101,12 @@ public class LoanService {
         int dd = loanDTO.getdd();
         String ddString = (dd < 10) ? "0" + dd : dd + "";
 
+        // Cannot book if today < visit date - 8 months
+        Date vDate = Date.valueOf(String.format("%d-%d-%d", yyyy, mm, dd));
+        if (isBookingTooEarly(vDate)) {
+            throw new BadRequestException("Booking date is too early. You can only book up to 8 months before visit date.");
+        }
+
         // Cannot book if # passes borrower has + passes requested > aMaxPassesPerLoan
         Integer numPassesLoanedOnDate = lRepository.getNumPassesLoanedOnDate(staffId, yyyyString, mmString, ddString,
                 aId);
@@ -131,7 +140,7 @@ public class LoanService {
 
         // Send confirmation email
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, d MMM YYYY"); // e.g. Wednesday, 2 Oct 2022
-        String visitDate = dateFormat.format(Date.valueOf(String.format("%d-%d-%d", yyyy, mm, dd)));
+        String visitDate = dateFormat.format(vDate);
         dateFormat = new SimpleDateFormat("d MMM YYYY"); // e.g. 2 Oct 2022
         String ballotDate = dateFormat.format(new Date(System.currentTimeMillis()));
         
@@ -162,21 +171,39 @@ public class LoanService {
 
     }
 
-    public ResponseEntity<JSONBody> getNumAvailablePassesForDate(Integer aId, int yyyy, int mm, int dd) {
+    public ResponseEntity<JSONBody> getNumAvailablePassesForMonth(Integer aId, int yyyy, int mm) {
         String yyyyString = yyyy + "";
         String mmString = (mm < 10) ? "0" + mm : mm + "";
-        String ddString = (dd < 10) ? "0" + dd : dd + "";
+        
+        Map<String, Integer> res = new HashMap<>();
+        Set<Pass> allAttrPasses = pService.returnAllPassesByAttrId(aId);
+        
+        if (allAttrPasses == null) {
+            throw new InternalServerException(
+                    "Server unable to get passes for attraction id" + aId + " from database.");
+        }
+        
+        int totalNumPasses = allAttrPasses.size();
+        if (totalNumPasses == 0) {
+            throw new BadRequestException("No passes have been allocated yet for attraction id: " + aId);
+        }
 
         try {
-            Set<Pass> availablePasses = getAvailablePassesForDate(aId, yyyyString, mmString, ddString);
-            Integer numAvailablePassesForDate = availablePasses.size();
-            JSONWithData<Integer> body = new JSONWithData<>(200, numAvailablePassesForDate);
+            YearMonth yearMonthObj = YearMonth.of(yyyy, mm);
+            int daysInMonth = yearMonthObj.lengthOfMonth();
+            for (int i = 1; i <= daysInMonth; i++) {
+                String ddString = (i < 10) ? "0" + i : i + "";
+                Integer numAvailPasses = totalNumPasses - lRepository.getLoanedPassesByDate(aId, yyyyString, mmString, ddString).size();
+                res.put(yearMonthObj.atDay(i).toString(), numAvailPasses); // e.g. {"2020-12-01": 30}
+            }
+            
+            JSONWithData<Map<String, Integer>> body = new JSONWithData<>(200, res);
             return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
 
         } catch (Exception e) {
             throw new InternalServerException(String.format(
-                    "Server unable to get all currently booked passes of attraction ID %d for (yyyy-mm-dd) %s-%s-%s ",
-                    aId, yyyyString, mmString, ddString));
+                    "Server unable to get all currently booked passes of attraction ID %d for (yyyy-mm) %s-%s ",
+                    aId, yyyyString, mmString));
         }
     }
 
@@ -184,7 +211,7 @@ public class LoanService {
         try {
             List<LoanResponseDto> response = new ArrayList<>();
             List<Loan> loans = lRepository.getLoanedPassByEmail(email);
-            
+
             // TODO insert code to get previous borrower from kaiwei
 
             for (Loan l : loans) {
@@ -201,7 +228,7 @@ public class LoanService {
             throw new InternalServerException("Server unable to get all loans of email: " + email);
         }
     }
-
+    
     public ResponseEntity<JSONBody> collectPasses(String emailTo, List<Integer> loanIds) {
         try {
             Iterator<Loan> loans = lRepository.findAllById(loanIds).iterator();
@@ -256,10 +283,7 @@ public class LoanService {
 
     public List<Loan> getReminderDateLoans(Date reminderDate) {
         try {
-            // Date reminderDate = Date.valueOf("2022-10-23");
-            // reminderDate = Date.valueOf(reminderDate.toLocalDate().minusDays(1));
             List<Loan> loans = lRepository.getReminderDateLoans(reminderDate);
-            // JSONWithData<List<Loan>> body = new JSONWithData<>(200, loans);
             return loans;
 
         } catch (Exception e) {
@@ -267,17 +291,29 @@ public class LoanService {
         }
     }
 
+    public ResponseEntity<JSONBody> cancelLoans(List<Integer> loanIds) {
+        try {
+            lRepository.deleteAllById(loanIds);
+            return new ResponseEntity<JSONBody>(new JSONWithMessage(200, "successfully deleted loans"), HttpStatus.OK);
+        } catch (Exception e) {
+            throw new InternalServerException("Server unable to delete loans");
+        }
+    }
+    
+    
+
     // ------------------------------------------------------------------------------------------------
     // -- Non-JSON response Methods
     public Integer getNumPassesLoanedOnDate(Integer staffId, String yyyy, String mm, String dd, Integer aId) {
         return lRepository.getNumPassesLoanedOnDate(staffId, yyyy, mm, dd, aId);
     }
 
+    
+
     public Set<Pass> getAvailablePassesForDate(Integer aId, String yyyyString, String mmString, String ddString) {
         Set<Pass> availableAttrPasses = pService.returnAllPassesByAttrId(aId);
 
-        Set<Pass> currentLoansPasses = lRepository.findAllCurrentlyLoanedPassesByAttrId(aId, yyyyString, mmString,
-                ddString); // Get all the currently booked passes for that attraction on a particular date
+        Set<Pass> currentLoansPasses = lRepository.getLoanedPassesByDate(aId, yyyyString, mmString, ddString);
 
         if (availableAttrPasses != null && currentLoansPasses != null) {
             availableAttrPasses.removeAll(currentLoansPasses);
@@ -323,6 +359,18 @@ public class LoanService {
         }
 
     }
+
+    public boolean isBookingTooEarly(Date visitDate) {
+        // returns true if today < visitDate - 8 months
+        Date earliestDateToBook = Date.valueOf(visitDate.toLocalDate().minusMonths(8));
+        Date today = new Date(System.currentTimeMillis());
+        return today.before(earliestDateToBook);
+    }
+
+    
+    
+
+      
 
     // -- Following codes are used for testing only
 

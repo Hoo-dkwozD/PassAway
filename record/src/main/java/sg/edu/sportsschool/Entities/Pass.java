@@ -1,5 +1,6 @@
 package sg.edu.sportsschool.Entities;
 
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -68,4 +69,10 @@ public class Pass {
         }
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(passId, attraction.getAttractionId());
+    }
+
 }
