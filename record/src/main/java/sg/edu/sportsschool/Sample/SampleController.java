@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import sg.edu.sportsschool.Helper.JSONBody;
+import sg.edu.sportsschool.Helper.Json.JSONBody;
 import sg.edu.sportsschool.Helper.Sample.Task;
 
 @CrossOrigin

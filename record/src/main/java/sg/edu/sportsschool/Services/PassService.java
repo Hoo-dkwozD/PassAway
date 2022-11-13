@@ -14,10 +14,10 @@ import sg.edu.sportsschool.Entities.Attraction;
 import sg.edu.sportsschool.Entities.Pass;
 import sg.edu.sportsschool.Exceptions.BadRequestException;
 import sg.edu.sportsschool.Exceptions.InternalServerException;
-import sg.edu.sportsschool.Helper.JSONBody;
-import sg.edu.sportsschool.Helper.JSONWithData;
-import sg.edu.sportsschool.Helper.JSONWithMessage;
 import sg.edu.sportsschool.Helper.ReadCsv;
+import sg.edu.sportsschool.Helper.Json.JSONBody;
+import sg.edu.sportsschool.Helper.Json.JSONWithData;
+import sg.edu.sportsschool.Helper.Json.JSONWithMessage;
 import sg.edu.sportsschool.Repositories.PassRepository;
 
 @Service

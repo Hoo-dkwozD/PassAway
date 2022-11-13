@@ -26,11 +26,11 @@ import sg.edu.sportsschool.DTO.Request.UpdatePasswordDto;
 import sg.edu.sportsschool.DTO.Request.UpdateProfileDto;
 import sg.edu.sportsschool.Entities.Staff;
 import sg.edu.sportsschool.Exceptions.InternalServerException;
-import sg.edu.sportsschool.Helper.JSONBody;
-import sg.edu.sportsschool.Helper.JSONWithData;
-import sg.edu.sportsschool.Helper.JSONWithMessage;
 import sg.edu.sportsschool.Helper.ReadCsv;
 import sg.edu.sportsschool.Helper.StaffRole;
+import sg.edu.sportsschool.Helper.Json.JSONBody;
+import sg.edu.sportsschool.Helper.Json.JSONWithData;
+import sg.edu.sportsschool.Helper.Json.JSONWithMessage;
 import sg.edu.sportsschool.Repositories.StaffRepository;
 
 @Service

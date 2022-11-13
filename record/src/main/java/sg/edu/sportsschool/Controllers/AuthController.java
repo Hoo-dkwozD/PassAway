@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import sg.edu.sportsschool.DTO.Request.SignInDto;
-import sg.edu.sportsschool.Helper.JSONBody;
+import sg.edu.sportsschool.Helper.Json.JSONBody;
 import sg.edu.sportsschool.Services.AuthService;
 
 @CrossOrigin
