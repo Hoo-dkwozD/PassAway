@@ -1,0 +1,16 @@
+{
+    "name": "Gardens by the bay",
+    "description": "Premium corporate friends of the gardens by the bay (cfoz) membership",
+    "passType": "0",
+    "replacementFee": 60.15,
+    "numAccompanyingGuests": 2,
+    "maxPassesPerLoan": 2,
+    "maxLoansPerMonth": 2,
+    "address": "18 Marina Gardens Dr, Singapore 018953",
+    "membershipId": "587418925",
+    "expiryDateYYYY": 2022,
+    "expiryDateMM": 12,
+    "expiryDateDD": 30,
+    "benefits": "Present this letter to enjoy up to 20% discount at selected Retail and F&B outlets.",
+    "termsConditions": "abc"
+}

@@ -19,7 +19,7 @@ import sg.edu.sportsschool.DTO.Request.CreateStaffDto;
 import sg.edu.sportsschool.DTO.Request.RegisterStaffDto;
 import sg.edu.sportsschool.DTO.Request.UpdatePasswordDto;
 import sg.edu.sportsschool.DTO.Request.UpdateProfileDto;
-import sg.edu.sportsschool.Helper.JSONBody;
+import sg.edu.sportsschool.Helper.Json.JSONBody;
 import sg.edu.sportsschool.Services.StaffService;
 
 @CrossOrigin
@@ -151,6 +151,80 @@ public class StaffController {
         return staffService.getStaff(staffId);
     }
 
+    /**
+     * @api {post} /staffs Upload staffs using CSV file
+     * @apiName UploadStaffs
+     * @apiGroup Staff
+     * 
+     * @apiBody {CSV} file CSV file to upload. The content-type of the request is not JSON but the respective file format. 
+     * 
+     * @apiSuccess {Number} code HTTP status code.
+     * @apiSuccess {Object} data The users that have successfully been uploaded.
+     * @apiSuccess {Object[]} data[staffs] Staffs created.
+     * @apiSuccess {Number} staffs[staffId] Staff ID.
+     * @apiSuccess {String} staffs[email] Email of the staff.
+     * @apiSuccess {String} staffs[firstName] First name of the staff.
+     * @apiSuccess {String} staffs[lastName] Last name of the staff.
+     * @apiSuccess {String} staffs[contactNumber] Contact number of the staff.
+     * @apiSuccess {String} staffs[role] Role of the staff. ("0": BORROWER, "1": ADMINISTRATOR, "2": GOP)
+     * @apiSuccess {Boolean} staffs[cannotBook] Whether the staff can book.
+     * @apiSuccess {String} staffs[disabled] Whether the staff is soft-deleted.
+     * @apiSuccess {String} staffs[registered] Whether the staff is registered already.
+     * 
+     * @apiSuccessExample {json} Success-Response:
+     *     HTTP/1.1 201 Created
+     *     {
+     *         "code": 201,
+     *         "data": {
+     *             "staffs": [
+     *                 {
+     *                     "staffId": 1, 
+     *                     "email": "test@sportsschool.edu.sg", 
+     *                     "firstName": "test", 
+     *                     "lastName": "testing", 
+     *                     "contactNumber": null, 
+     *                     "role": "ADMINISTRATOR", 
+     *                     "cannotBook": true, 
+     *                     "disabled": false, 
+     *                     "registered": false
+     *                 }, 
+     *                 {
+     *                     "staffId": 2, 
+     *                     "email": "test1@sportsschool.edu.sg", 
+     *                     "firstName": "test1", 
+     *                     "lastName": "testing1", 
+     *                     "contactNumber": null, 
+     *                     "role": "BORROWER", 
+     *                     "cannotBook": true, 
+     *                     "disabled": false, 
+     *                     "registered": false
+     *                 },
+     *             ]
+     *         }
+     *     }
+     * 
+     * @apiError (Error 400) {Number} code HTTP status code.
+     * @apiError (Error 400) {String} message Error message.
+     * 
+     * @apiErrorExample {json} Error-Response:
+     *     HTTP/1.1 400 Bad Request
+     *     {
+     *         "code": 400,
+     *         "message": "The uploaded CSV file is not valid. "
+     *     }
+     * 
+     * @apiError (Error 500) {Number} code HTTP status code.
+     * @apiError (Error 500) {String} message Error message.
+     * 
+     * @apiErrorExample {json} Error-Response:
+     *     HTTP/1.1 500 Internal Server Error
+     *     {
+     *         "code": 500,
+     *         "message": "Server unable to parse file as CSV file. "
+     *     }
+     * 
+     * @apiDescription Upload staffs through a CSV file. 
+     */
     @PostMapping("/staffs")
     public ResponseEntity<JSONBody> createStaffs(@RequestParam("file") MultipartFile file) {
         return staffService.createStaffs(file);

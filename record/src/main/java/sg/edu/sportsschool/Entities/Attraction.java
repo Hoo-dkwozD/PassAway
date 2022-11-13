@@ -3,28 +3,34 @@ package sg.edu.sportsschool.Entities;
 import java.sql.Date;
 import java.util.Set;
 
+import sg.edu.sportsschool.Helper.PassType;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
+// import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 @Entity
 @Table(name = "attraction")
-@JsonIgnoreProperties({ "barcodeImage" })
 public class Attraction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer attractionId;
 
     private String name;
+
+    @Column(columnDefinition = "TEXT", name = "description")
     private String description;
-    private char passType;
+
+    @Enumerated(EnumType.ORDINAL)
+    private PassType passType;
+
     private float replacementFee;
     private int numAccompanyingGuests;
     private int maxPassesPerLoan;
@@ -32,12 +38,13 @@ public class Attraction {
     private boolean cannotBook;
     private String address;
     private String membershipId;
-
-    @Lob
-    @Column(columnDefinition = "BLOB")
-    private byte[] barcodeImage;
-
     private Date expiryDate;
+
+    @Column(columnDefinition = "TEXT", name = "barcode_image")
+    private String barcodeImage;
+
+    @Column(columnDefinition = "TEXT", name = "background_image")
+    private String backgroundImage;
 
     @Column(columnDefinition = "TEXT")
     private String benefits;
@@ -50,10 +57,11 @@ public class Attraction {
 
     public Attraction() {}
 
-    public Attraction(String name, String description, char passType, float replacementFee, 
+    public Attraction(String name, String description, PassType passType, float replacementFee, 
                     int numAccompanyingGuests, int maxPassesPerLoan, int maxLoansPerMonth, 
                     boolean cannotBook, String address, String membershipId,
-                    Date expiryDate, String benefits, String termsConditions) {
+                    Date expiryDate, String barcodeImage, String backgroundImage, 
+                    String benefits, String termsConditions) {
         this.name = name;
         this.description = description;
         this.passType = passType;
@@ -65,6 +73,8 @@ public class Attraction {
         this.address = address;
         this.membershipId = membershipId;
         this.expiryDate = expiryDate;
+        this.barcodeImage = barcodeImage;
+        this.backgroundImage = backgroundImage;
         this.benefits = benefits;
         this.termsConditions = termsConditions;
     }
@@ -89,11 +99,11 @@ public class Attraction {
         this.description = description;
     }
 
-    public char getPassType() {
+    public PassType getPassType() {
         return passType;
     }
 
-    public void setPassType(char passType) {
+    public void setPassType(PassType passType) {
         this.passType = passType;
     }
 
@@ -153,12 +163,20 @@ public class Attraction {
         this.membershipId = membershipId;
     }
 
-    public byte[] getBarcodeImage() {
+    public String getBarcodeImage() {
         return barcodeImage;
     }
 
-    public void setBarcodeImage(byte[] barcodeImage) {
+    public void setBarcodeImage(String barcodeImage) {
         this.barcodeImage = barcodeImage;
+    }
+
+    public String getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(String backgroundImage) {
+        this.backgroundImage = backgroundImage;
     }
 
     public Date getExpiryDate() {

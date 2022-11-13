@@ -4,9 +4,9 @@ import sg.edu.sportsschool.DTO.Request.SignInDto;
 import sg.edu.sportsschool.DTO.Response.SignInReponseDto;
 import sg.edu.sportsschool.Entities.Auth;
 import sg.edu.sportsschool.Entities.Staff;
-import sg.edu.sportsschool.Helper.JSONBody;
-import sg.edu.sportsschool.Helper.JSONWithData;
-import sg.edu.sportsschool.Helper.JSONWithMessage;
+import sg.edu.sportsschool.Helper.Json.JSONBody;
+import sg.edu.sportsschool.Helper.Json.JSONWithData;
+import sg.edu.sportsschool.Helper.Json.JSONWithMessage;
 import sg.edu.sportsschool.Repositories.AuthRepository;
 import sg.edu.sportsschool.Repositories.StaffRepository;
 
