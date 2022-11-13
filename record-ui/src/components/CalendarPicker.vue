@@ -1,5 +1,6 @@
 <template>
   <!-- how many passes are available for this date -->
+  <!-- div block with hi -->
   <div>
     <div class="position-absolute">
       <button
