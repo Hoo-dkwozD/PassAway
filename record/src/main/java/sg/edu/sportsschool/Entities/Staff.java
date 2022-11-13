@@ -57,7 +57,7 @@ public class Staff {
         this.firstName = firstName;
         this.lastName = lastName;
         this.contactNumber = null;
-        this.role = StaffRole.ADMINISTRATOR;
+        this.role = role;
         this.hashedPassword = null;
         this.cannotBook = true;
         this.isRegistered = false;

@@ -17,19 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import sg.edu.sportsschool.DTO.Request.CompleteRegisterStaffDto;
 import sg.edu.sportsschool.DTO.Request.CreateStaffDto;
-import sg.edu.sportsschool.DTO.Request.SignInDto;
 import sg.edu.sportsschool.DTO.Request.RegisterStaffDto;
 import sg.edu.sportsschool.DTO.Request.UpdatePasswordDto;
 import sg.edu.sportsschool.DTO.Request.UpdateProfileDto;
-import sg.edu.sportsschool.DTO.Response.SignInReponseDto;
-import sg.edu.sportsschool.Entities.AuthenticationToken;
 import sg.edu.sportsschool.Entities.Staff;
-import sg.edu.sportsschool.Exceptions.BadRequestException;
 import sg.edu.sportsschool.Exceptions.InternalServerException;
 import sg.edu.sportsschool.Helper.JSONBody;
 import sg.edu.sportsschool.Helper.JSONWithData;
@@ -42,13 +37,13 @@ import sg.edu.sportsschool.Repositories.StaffRepository;
 public class StaffService {
 
     private StaffRepository sRepository;
-    private AuthenticationService authenticationService;
+    // private AuthenticationService authenticationService;
     private EmailService emailService;
 
     @Autowired
-    public StaffService(StaffRepository sRepository, AuthenticationService authenticationService, EmailService emailService) {
+    public StaffService(StaffRepository sRepository, EmailService emailService) {
         this.sRepository = sRepository;
-        this.authenticationService = authenticationService;
+        // this.authenticationService = authenticationService;
         this.emailService = emailService;
     }
 
@@ -59,28 +54,33 @@ public class StaffService {
             JSONWithData<List<Staff>> body = new JSONWithData<List<Staff>>(200, allStaff);
             return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
         } catch (Exception e) {
-            throw new InternalServerException("Server unable to get all staff from database");
+            JSONWithMessage results = new JSONWithMessage(500, "Server unable to retrieve staff details. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
         }
     }
 
-    public ResponseEntity<JSONBody> getStaff(String token) {
-        try {
-            Staff s = authenticationService.getStaff(token);
-            JSONWithData<Staff> body = new JSONWithData<>(200, s);
-            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
-        } catch (Exception e) {
-            throw new InternalServerException("Server unable to get staff from database");
-        }
-    }
+    // public ResponseEntity<JSONBody> getStaff(String token) {
+    //     try {
+    //         Staff s = authenticationService.getStaff(token);
+    //         JSONWithData<Staff> body = new JSONWithData<>(200, s);
+    //         return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+    //     } catch (Exception e) {
+    //         throw new InternalServerException("Server unable to get staff from database");
+    //     }
+    // }
 
     public ResponseEntity<JSONBody> getStaff(Integer staffId) {
         try {
             Staff s = sRepository.findById(staffId).get();
             JSONWithData<Staff> body = new JSONWithData<>(200, s);
             return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
-
         } catch (Exception e) {
-            throw new InternalServerException("Server unable to get staff from database");
+            JSONWithMessage results = new JSONWithMessage(500, "Server unable to retrieve staff detail. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
         }
     }
 
@@ -177,7 +177,7 @@ public class StaffService {
                 return response;
             }
         } catch (Exception e) {
-            JSONWithMessage results = new JSONWithMessage(500, "Server unable to parse file as CSV file. ");
+            JSONWithMessage results = new JSONWithMessage(500, "Server unable create new staff. ");
             ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
 
             return response;
@@ -202,7 +202,7 @@ public class StaffService {
             } else {
                 String registerKey = randomStringToken(20);
                 String encodedString = Base64.getEncoder().encodeToString(registerKey.getBytes());
-                staff.setHashedPassword(encodedString);
+                staff.setHashedPassword(hashPassword(encodedString));
 
                 sRepository.save(staff);
 
@@ -236,7 +236,7 @@ public class StaffService {
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.FORBIDDEN);
 
                 return response;
-            } else if (staff.getHashedPassword().equals(staffDto.getRegisterKey())) {
+            } else if (staff.getHashedPassword().equals(hashPassword(staffDto.getRegisterKey()))) {
                 String encryptedPassword = hashPassword(staffDto.getPassword());
                 staff.setFirstName(staffDto.getFirstName());
                 staff.setLastName(staffDto.getLastName());
@@ -260,6 +260,232 @@ public class StaffService {
             }
         } catch (Exception e) {
             JSONWithMessage results = new JSONWithMessage(500, "Server could not register the user. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
+        }
+    }
+
+    public ResponseEntity<JSONBody> updateStaffProfileAdmin(UpdateProfileDto dto) {
+        try {
+            Staff staff = sRepository.findByStaffId(dto.getStaffId());
+
+            if (staff == null) {
+                JSONWithMessage results = new JSONWithMessage(404, "User not found. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NOT_FOUND);
+
+                return response;
+            }
+
+            staff.setFirstName(dto.getFirstName());
+            staff.setLastName(dto.getLastName());
+            staff.setContactNumber(dto.getContactNumber());
+            staff.setRole(dto.getRole());
+            staff.setCannotBook(dto.isCannotBook());
+            staff.setDisabled(dto.isDisabled());
+
+            if (!staff.getEmail().equals(dto.getEmail())) {
+                String registerKey = randomStringToken(20);
+                String encodedString = Base64.getEncoder().encodeToString(registerKey.getBytes());
+                staff.setHashedPassword(hashPassword(encodedString));
+
+                sRepository.save(staff);
+
+                emailService.sendEmailChangeEmail(staff.getEmail(), staff.getFirstName() + " " + staff.getLastName(), encodedString);
+
+                JSONBody results = new JSONBody(204);
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NO_CONTENT);
+
+                return response;
+            } else {
+                sRepository.save(staff);
+
+                JSONWithData<Staff> body = new JSONWithData<>(200, staff);
+                return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server could not change user details. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
+        }
+    }
+
+    public ResponseEntity<JSONBody> updateStaffProfile(UpdateProfileDto dto) {
+        try {
+            Staff staff = sRepository.findByStaffId(dto.getStaffId());
+
+            if (staff == null) {
+                JSONWithMessage results = new JSONWithMessage(404, "User not found. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NOT_FOUND);
+
+                return response;
+            }
+
+            staff.setFirstName(dto.getFirstName());
+            staff.setLastName(dto.getLastName());
+            staff.setContactNumber(dto.getContactNumber());
+
+            if (!staff.getEmail().equals(dto.getEmail())) {
+                String registerKey = randomStringToken(20);
+                String encodedString = Base64.getEncoder().encodeToString(registerKey.getBytes());
+                staff.setHashedPassword(hashPassword(encodedString));
+
+                sRepository.save(staff);
+
+                emailService.sendEmailChangeEmail(staff.getEmail(), staff.getFirstName() + " " + staff.getLastName(), encodedString);
+
+                JSONBody results = new JSONBody(204);
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NO_CONTENT);
+
+                return response;
+            } else {
+                sRepository.save(staff);
+
+                JSONWithData<Staff> body = new JSONWithData<>(200, staff);
+                return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server could not change user details. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
+        }
+    }
+
+    public ResponseEntity<JSONBody> updateStaffPassword(UpdatePasswordDto dto) {
+        try {
+            Staff staff = sRepository.findByStaffId(dto.getStaffId());
+
+            if (staff == null) {
+                JSONWithMessage results = new JSONWithMessage(404, "User not found. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NOT_FOUND);
+
+                return response;
+            } else if (!staff.getHashedPassword().equals(hashPassword(dto.getOldPassword()))) {
+                JSONWithMessage results = new JSONWithMessage(401, "The specified user is not authorised to use this service. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
+
+                return response;
+            } else if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
+                JSONWithMessage results = new JSONWithMessage(400, "The specified new password does not match the confirmation password. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.BAD_REQUEST);
+
+                return response;
+            } else {
+                staff.setHashedPassword(hashPassword(dto.getNewPassword()));
+
+                sRepository.save(staff);
+
+                JSONWithData<Staff> body = new JSONWithData<>(200, staff);
+                return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server could not change user password. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
+        }
+    }
+
+    public ResponseEntity<JSONBody> resetPassword(int staffId) {
+        try {
+            Staff staff = sRepository.findByStaffId(staffId);
+
+            if (staff == null) {
+                JSONWithMessage results = new JSONWithMessage(404, "User not found. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NOT_FOUND);
+
+                return response;
+            } else {
+                String registerKey = randomStringToken(20);
+                String encodedString = Base64.getEncoder().encodeToString(registerKey.getBytes());
+                staff.setHashedPassword(hashPassword(encodedString));
+
+                emailService.sendPasswordChangeEmail(staff.getEmail(), staff.getFirstName() + " " + staff.getLastName(), encodedString);
+
+                sRepository.save(staff);
+
+                JSONWithData<Staff> body = new JSONWithData<>(200, staff);
+                return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server could not change user password. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
+        }
+    }
+
+    public ResponseEntity<JSONBody> disableStaff(int staffId) {
+        try {
+            Staff staff = sRepository.findByStaffId(staffId);
+
+            if (staff == null) {
+                JSONWithMessage results = new JSONWithMessage(404, "User not found. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NOT_FOUND);
+
+                return response;
+            } else {
+                staff.setDisabled(true);
+
+                sRepository.save(staff);
+
+                JSONWithData<Staff> body = new JSONWithData<>(200, staff);
+                return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server could not soft-delete user. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
+        }
+    }
+
+    public ResponseEntity<JSONBody> lockStaff(int staffId) {
+        try {
+            Staff staff = sRepository.findByStaffId(staffId);
+
+            if (staff == null) {
+                JSONWithMessage results = new JSONWithMessage(404, "User not found. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NOT_FOUND);
+
+                return response;
+            } else {
+                staff.setCannotBook(true);
+
+                sRepository.save(staff);
+
+                JSONWithData<Staff> body = new JSONWithData<>(200, staff);
+                return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server could not lock the user. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
+        }
+    }
+
+    public ResponseEntity<JSONBody> unlockStaff(int staffId) {
+        try {
+            Staff staff = sRepository.findByStaffId(staffId);
+
+            if (staff == null) {
+                JSONWithMessage results = new JSONWithMessage(404, "User not found. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NOT_FOUND);
+
+                return response;
+            } else {
+                staff.setCannotBook(false);
+
+                sRepository.save(staff);
+
+                JSONWithData<Staff> body = new JSONWithData<>(200, staff);
+                return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server could not unlock the user. ");
             ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
 
             return response;
@@ -322,22 +548,12 @@ public class StaffService {
         int lowerLimit = 65;
         Random random = new Random();
 
-        String result = random.ints(upperLimit, lowerLimit + 1)
+        String result = random.ints(lowerLimit, upperLimit + 1)
                         .limit(length)
                         .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                         .toString();
 
         return result;
-    }
-
-    public ResponseEntity<JSONBody> updateStaffProfile(UpdateProfileDto dto) {
-        // TO DO
-        return null;
-    }
-
-    public ResponseEntity<JSONBody> updateStaffPassword(UpdatePasswordDto dto) {
-        // TO DO
-        return null;
     }
 
 }

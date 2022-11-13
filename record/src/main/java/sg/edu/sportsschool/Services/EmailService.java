@@ -58,6 +58,42 @@ public class EmailService {
     }
 
     @Async
+    public void sendEmailChangeEmail(String emailTo, String staffName, String registerKey) throws MessagingException {
+        Context context = new Context();
+        context.setVariable("staffName", staffName);
+        registerKey = "" + registerKey;
+        context.setVariable("registerKey", registerKey);
+        String process = templateEngine.process("EmailChangeEmailTemplate.html", context);
+
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false);
+        helper.setSubject("Email Update For " + staffName);
+        helper.setText(process, true);
+        helper.setTo(emailTo);
+
+        javaMailSender.send(mimeMessage);
+        System.out.println("Email update confirmation email sent.");
+    }
+
+    @Async
+    public void sendPasswordChangeEmail(String emailTo, String staffName, String registerKey) throws MessagingException {
+        Context context = new Context();
+        context.setVariable("staffName", staffName);
+        registerKey = "" + registerKey;
+        context.setVariable("registerKey", registerKey);
+        String process = templateEngine.process("PasswordChangeEmailTemplate.html", context);
+
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false);
+        helper.setSubject("Password Reset For " + staffName);
+        helper.setText(process, true);
+        helper.setTo(emailTo);
+
+        javaMailSender.send(mimeMessage);
+        System.out.println("Password reset confirmation email sent.");
+    }
+
+    @Async
     public void sendEmailWithCorpLetter(String emailTo, String staffName, String ballotDate, String visitDate,
             Attraction a, byte[] barcodeImage) throws MessagingException {
         Context context = new Context();

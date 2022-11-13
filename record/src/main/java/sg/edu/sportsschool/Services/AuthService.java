@@ -1,6 +1,7 @@
 package sg.edu.sportsschool.Services;
 
 import sg.edu.sportsschool.DTO.Request.SignInDto;
+import sg.edu.sportsschool.DTO.Response.SignInReponseDto;
 import sg.edu.sportsschool.Entities.Auth;
 import sg.edu.sportsschool.Entities.Staff;
 import sg.edu.sportsschool.Helper.JSONBody;
@@ -54,7 +55,7 @@ public class AuthService {
         try {
             Staff targetStaff = staffRepository.findByEmail(dto.getEmail());
 
-            if (targetStaff == null || !checkPassword(targetStaff.getHashedPassword(), dto.getPassword())) {
+            if (targetStaff == null || !checkPassword(targetStaff.getHashedPassword(), dto.getPassword()) || targetStaff.isDisabled()) {
                 JSONWithMessage results = new JSONWithMessage(400, "Authentication failed. ");
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.BAD_REQUEST);
 
@@ -72,10 +73,12 @@ public class AuthService {
                     .withClaim("staff-id", targetStaff.getStaffId())
                     .sign(algorithm);
 
-                Map<String, Integer> data = new HashMap<>();
-                data.put("staffId", targetStaff.getStaffId());
+                SignInReponseDto resDto = new SignInReponseDto(
+                    targetStaff.getStaffId(), 
+                    targetStaff.getRole().ordinal() + ""
+                );
 
-                JSONWithData<Map<String, Integer>> results = new JSONWithData<>(200, data);
+                JSONWithData<SignInReponseDto> results = new JSONWithData<>(200, resDto);
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.OK);
 
                 Cookie tokenCookie = new Cookie("token", token);
