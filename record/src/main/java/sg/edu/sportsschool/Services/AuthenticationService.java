@@ -3,8 +3,8 @@ package sg.edu.sportsschool.Services;
 import sg.edu.sportsschool.Entities.AuthenticationToken;
 import sg.edu.sportsschool.Entities.Staff;
 import sg.edu.sportsschool.Exceptions.InternalServerException;
-import sg.edu.sportsschool.Helper.JSONBody;
-import sg.edu.sportsschool.Helper.JSONWithData;
+import sg.edu.sportsschool.Helper.Json.JSONBody;
+import sg.edu.sportsschool.Helper.Json.JSONWithData;
 import sg.edu.sportsschool.Repositories.TokenRepository;
 
 import java.io.IOException;

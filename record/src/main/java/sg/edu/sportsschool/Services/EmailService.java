@@ -28,7 +28,7 @@ public class EmailService {
     private TemplateEngine templateEngine;
     private LoanRepository loanRepository;
     private PdfService pdfService;
-    private final String LOGO_FILE_PATH = "src/main/static/sportsSchLogo.jpg";
+    private final String LOGO_FILE_PATH = "src/main/resources/static/sportsSchLogo.jpg";
 
     @Autowired
     public EmailService(JavaMailSender javaMailSender, TemplateEngine templateEngine, LoanRepository loanRepository,

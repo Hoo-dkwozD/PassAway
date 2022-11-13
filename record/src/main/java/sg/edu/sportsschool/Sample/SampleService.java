@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 // import org.springframework.web.client.HttpStatusCodeException;
 // import org.springframework.web.client.RestTemplate;
 
-import sg.edu.sportsschool.Helper.JSONBody;
-import sg.edu.sportsschool.Helper.JSONWithData;
-import sg.edu.sportsschool.Helper.JSONWithMessage;
 import sg.edu.sportsschool.Helper.RecordProperties;
+import sg.edu.sportsschool.Helper.Json.JSONBody;
+import sg.edu.sportsschool.Helper.Json.JSONWithData;
+import sg.edu.sportsschool.Helper.Json.JSONWithMessage;
 import sg.edu.sportsschool.Helper.Sample.Task;
 
 import java.util.ArrayList;
@@ -23,12 +23,10 @@ import java.util.ArrayList;
 @Service
 public class SampleService {
     private final SampleRepository sampleRepository;
-    private final RecordProperties recordProperties;
 
     @Autowired
     public SampleService(SampleRepository sampleRepository, RecordProperties recordProperties) {
         this.sampleRepository = sampleRepository;
-        this.recordProperties = recordProperties;
     }
 
     public ResponseEntity<JSONBody> getTask() {
