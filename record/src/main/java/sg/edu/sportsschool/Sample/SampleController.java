@@ -31,4 +31,13 @@ public class SampleController {
     public ResponseEntity<JSONBody> removeTask(@PathVariable("id") long id) {
         return sampleService.removeTask(id);
     }
+
+    @GetMapping(path = "/api/load/available-passes")
+    public List<AvailablePassesView> getAvailablePasses() {
+        List<AvailablePassesView> listOfAvailablePasses = new ArrayList<>();
+        listOfAvailablePasses.add(
+                new AvailablePassesView(LocalDate.now(), "SomeString")
+        );
+        return listOfAvailablePasses;
+    }
 }
