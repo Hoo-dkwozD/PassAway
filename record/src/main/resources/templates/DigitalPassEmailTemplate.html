@@ -1,0 +1,46 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Email</title>
+</head>
+
+<body>
+  <p>Dear <span th:text="${staffName}">, </span></p>
+  <p>We are pleased to inform that your booking to <span th:text="${attrName}"> is confirmed as follows: </p>
+
+  <p>Date of Visit: <span th:text="${visitDate}"></span> (1 day only)</p>
+
+  <p>Membership ID: <span th:text="${membershipId}"></span></p>
+
+  <div>
+    <p>For any change in visit date, you are required to cancel your booking (at least 1 day before) and to submit a new
+      booking in the system.</p>
+    <p>Attached is the Corporate Membership letter to <span th:text="${attrName}">. Please check that the details are
+        accurate.</p>
+    <p>Please take note of the following on the day of your visit to <span th:text="${attrName}">:</p>
+
+    <ul>
+      <li>Present this email, the attached corporate membership letter and your staff pass at the entrance of <span
+          th:text="${attrName}">.</li>
+      <li>Entry is strictly based on your details in this email and corporate membership letter.</li>
+      <li>Your presence is required on the day of visit. Entry will be denied without staff's presence. </li>
+      <li>Your booking is non-transferable. Entry is strictly based on the details in this email and Corporate
+        Membership letter. </li>
+      <li>Visit date is strictly based on the date stated in this email and Corporate Membership letter. </li>
+      <li>Staff found abusing the Corporate Membership letter will be subject to disciplinary actions. </li>
+    </ul>
+
+    <p>Enjoy your visit to <span th:text="${attrName}"></span>!</p>
+    <p>Warm regards</p>
+    <p>HR Department</p>
+  </div>
+
+  <p style="border: 1px solid black">There is an attachment to this email.</p>
+
+</body>
+
+</html>

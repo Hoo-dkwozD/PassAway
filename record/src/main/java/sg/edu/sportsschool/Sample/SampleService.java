@@ -1,4 +1,4 @@
-package sg.edu.sportsschool.record.Sample;
+package sg.edu.sportsschool.Sample;
 
 import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.core.io.ClassPathResource;
@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 // import org.springframework.web.client.HttpStatusCodeException;
 // import org.springframework.web.client.RestTemplate;
 
-import sg.edu.sportsschool.helper.RecordProperties;
-import sg.edu.sportsschool.helper.JSONBody;
-import sg.edu.sportsschool.helper.JSONWithMessage;
-import sg.edu.sportsschool.helper.JSONWithData;
-import sg.edu.sportsschool.helper.Sample.Task;
+import sg.edu.sportsschool.Helper.JSONBody;
+import sg.edu.sportsschool.Helper.JSONWithData;
+import sg.edu.sportsschool.Helper.JSONWithMessage;
+import sg.edu.sportsschool.Helper.RecordProperties;
+import sg.edu.sportsschool.Helper.Sample.Task;
 
 import java.util.ArrayList;
 

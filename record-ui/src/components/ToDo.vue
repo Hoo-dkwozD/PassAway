@@ -1,157 +1,228 @@
 <template>
-    <div class="to-do-wrapper">
-        <div class="input-wrapper">
-            <div class="input-card text-white">
-                <h2>{{ question }}</h2>
-                <div class="input-group">
-                    <input v-model="entry" @keyup.enter="saveEntry()" type="text" class="form-control" placeholder="Task name" aria-label="New task name" aria-describedby="save-entry-btn">
-                    <button @click="saveEntry()" class="btn btn-success" type="button" id="save-entry-btn">Save</button>
-                </div>
-            </div>
+  <div class="container-fluid">
+    <div
+      id="sectionheader"
+      :style="{ backgroundImage: `url(${currentBackground})` }"
+    >
+      <div class="main">
+        <!-- <img v-if="currentBackground == 'SingaporeZoo'" src="/assets/header.png"/>
+        <img v-else-if="currentBackground == 'sportsschool'" src="/assets/sportsschool.png"/>
+        <img v-else src="/assets/gardensbybay.png"/> -->
+        <h1 class="title">Singapore Zoo</h1>
+        <h3 class="titledescription">
+          Each physical pass equates to 2 entries to the attraction, you are
+          entitled to 2 passes a month.
+        </h3>
+      </div>
+
+      <div class="bookingdetails">
+        <div class="dropdown" id="group-location">
+          <select v-model="attraction" class="form-select">
+            <option disabled value="">Attractions</option>
+            <option v-for="location in locations" :value="{ location }">
+              {{ location }}
+            </option>
+          </select>
         </div>
-        <div class="list-display text-white">
-            <ul class="list-wrapper">
-                <li v-for="(item, idx) in list.items" class="list-group-item">
-                    <input 
-                        class="form-check-input" 
-                        type="checkbox" 
-                        @change="complete($event, idx)" 
-                        v-model="localList" 
-                        :value="item.id" 
-                        :id="idx.toString()" 
-                    />
-                    &nbsp;
-                    <label class="form-check-label" :for="idx.toString()">{{ item.name }}</label>
-                </li>
-            </ul>
+
+        <div class="dropdown" id="group-calendar">
+          <select
+            class="form-select"
+            id="calendar-details"
+            type="button"
+            data-bs-toggle="dropdown"
+            @click="showCalendar = !showCalendar"
+          >
+            Calendar
+          </select>
+          <Calendar class="calendarStyle" v-if="showCalendar" />
         </div>
+
+        <div class="dropdown" id="group-date">
+          <select v-model="numPassesSelected" class="form-select">
+            <option disabled value="">Passes</option>
+            <option v-for="pass in numberofPasses" :value="{ pass }">
+              {{ pass }}
+            </option>
+          </select>
+        </div>
+
+        <div id="group-submit">
+          <router-link to="/bookingconfirmation">
+            <button type="button" class="btn btn-submit btn-lg">
+              Book Now
+            </button>
+          </router-link>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useListStore } from "@/stores/list";
-import axios from 'axios';
+import type { ComponentPublicInstance } from "vue";
+import { defineComponent } from "vue";
+import Calendar from "../components/Calendar.vue";
+import { useCounterStore } from "../stores/counter";
 
 // Typings
-interface JSONResponse {
-    code: number
-}
-
-interface AddTaskJSONResponse extends JSONResponse {
-    data: {
-        id: number,
-        name: string
-    }
-}
-
-interface RemoveTaskJSONResponse extends JSONResponse {
-    message: string
+interface Data {
+  locations: string[];
+  attraction: string;
+  dateSelected: Date;
+  numPassesSelected: number;
+  numberofPasses: number[];
+  type: boolean;
+  showCalendar: boolean;
+  currentBackground: string;
+  store: any;
 }
 
 export default defineComponent({
-    data() {
-        const list = useListStore();
-        const entry: string = "";
-        const localList: any[] = [];
+  data(): Data {
+    return {
+      type: true,
+      attraction: "",
+      locations: ["Singapore Zoo", "Gardens By the Bay", "USS"],
+      dateSelected: new Date(),
+      numPassesSelected: 0,
+      numberofPasses: [],
+      showCalendar: false,
+      currentBackground: "/assets/header.png",
+      store: useCounterStore(),
+    };
+  },
+  async created() {
+    const MAX_PASS = 3;
 
-        return {
-            list: list,
-            entry: entry,
-            localList: localList
-        };
-    },
-    props: {
-        question: String
-    },
-    async created() {
-        try {
-            this.list.removeAll();
-
-            const res = await axios.get(import.meta.env.VITE_API_URL + "api/task");
-
-            const data = res.data;
-
-            if (data.code === 200) {
-                for (let task of data.data) {
-                    this.list.add(task.id, task.name);
-                }
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    },
-    methods: {
-        async saveEntry() {
-            if (this.entry !== null || this.entry === '') {
-                const response: JSONResponse | AddTaskJSONResponse | any = await this.addTaskBackend(this.entry);
-
-                if (response.code === 201 && this.isAddTaskJSONResponse(response)) {
-                    this.list.add(response.data.id, response.data.name);
-                    this.entry = "";
-                }
-            }
-        },
-        async addTaskBackend(name: string): Promise<JSONResponse | AddTaskJSONResponse | any> {
-            try {
-                const res = await axios.post(
-                    import.meta.env.VITE_API_URL + "api/task",
-                    {
-                        name: name
-                    }
-                );
-
-                return res.data;
-            } catch (err) {
-                return {
-                    code: 500
-                };
-            }
-        },
-        isAddTaskJSONResponse(obj: any): obj is AddTaskJSONResponse {
-            return "data" in obj;
-        },
-        isRemoveTaskJSONResponse(obj: any): obj is RemoveTaskJSONResponse {
-            return "message" in obj;
-        },
-        async complete(e: Event, idx: number) {
-            const response: JSONResponse | RemoveTaskJSONResponse | any = await this.removeTaskBackend(this.list.items[idx]);
-            this.localList.pop();
-
-            if (response.code === 200 && this.isRemoveTaskJSONResponse(response)) {
-                this.list.remove(idx);
-            }
-        },
-        async removeTaskBackend(item: { name: string, id: number }): Promise<JSONResponse | RemoveTaskJSONResponse | any> {
-            try {
-                const res = await axios.delete(
-                    import.meta.env.VITE_API_URL + `api/task/${item.id}`,
-                    {
-                        data: item
-                    }
-                );
-                return res.data;
-            } catch (err) {
-                return {
-                    code: 500
-                };
-            }
-        }
+    for (let i = 0; i < MAX_PASS; i++) {
+      this.numberofPasses.push(i);
     }
+  },
+
+  methods: {},
+  props: {},
+  components: {
+    Calendar,
+  },
 });
 </script>
 
-<style scoped>
-.to-do-wrapper {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+<style>
+#sectionheader {
+  width: 100%;
+  background-size: cover;
+  padding-top: 300px;
+  padding-bottom: 300px;
 }
-
-.input-wrapper, .list-display {
-    padding: 0.5em;
+.main {
+  margin-bottom: 10px;
+}
+.title {
+  color: rgb(247, 247, 132);
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  letter-spacing: 0;
+  line-height: 1.6;
+  margin-left: 100px;
+  white-space: nowrap;
+}
+.titledescription {
+  color: white;
+  font-family: Arial, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.6;
+  margin-left: 100px;
+  min-height: 54px;
+  width: 405px;
+}
+.calendarStyle {
+  position: absolute;
+  margin-top: 25px;
+}
+.bookingdetails {
+  align-items: center;
+  display: flex;
+  margin-left: 100px;
+  border-radius: 30px;
+  box-shadow: 0px 12px 14px;
+  padding: auto;
+  background-color: white;
+  border: 1px none;
+  width: 500px;
+  height: 200px;
+}
+#group-location {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 50px;
+  min-height: 56px;
+  width: 150px;
+  margin-left: 20px;
+  margin-right: 30px;
+}
+#group-calendar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 50px;
+  min-height: 56px;
+  width: 150px;
+  padding-left: 20px;
+  margin-right: 50px;
+}
+#group-date {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 50px;
+  min-height: 56px;
+  width: 132px;
+  padding-left: 20px;
+  margin-right: 50px;
+}
+#group-submit {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 50px;
+  min-height: 56px;
+  width: 132px;
+  padding-left: 20px;
+  margin-right: 50px;
+}
+#location-details {
+  left: 0;
+  letter-spacing: 0;
+  line-height: 24px;
+  top: 0;
+  white-space: nowrap;
+  padding-left: 20px;
+}
+#calendar-details {
+  left: 0;
+  letter-spacing: 0;
+  line-height: 24px;
+  top: 0;
+  white-space: nowrap;
+  padding-left: 20px;
+}
+#date-details {
+  left: 0;
+  letter-spacing: 0;
+  line-height: 24px;
+  top: 0;
+  white-space: nowrap;
+  padding-left: 20px;
+}
+.btn-submit {
+  background-color: orange !important;
+  letter-spacing: 0;
+  line-height: 24px;
+  white-space: nowrap;
+  padding-left: 20px;
 }
 </style>

@@ -1,4 +1,4 @@
-package sg.edu.sportsschool.record.Sample;
+package sg.edu.sportsschool.Sample;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

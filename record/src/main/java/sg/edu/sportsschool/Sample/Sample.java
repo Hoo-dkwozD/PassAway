@@ -1,4 +1,4 @@
-package sg.edu.sportsschool.record.Sample;
+package sg.edu.sportsschool.Sample;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

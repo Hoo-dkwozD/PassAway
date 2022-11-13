@@ -1,4 +1,4 @@
-package sg.edu.sportsschool.helper;
+package sg.edu.sportsschool.Helper;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

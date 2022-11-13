@@ -1,14 +1,14 @@
 <template>
-    <ToDo question="To-dos:"></ToDo>
+  <ToDo question="To-dos:"></ToDo>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import ToDo from '@/components/ToDo.vue';
+import { defineComponent } from "vue";
+import ToDo from "../components/ToDo.vue";
 
 export default defineComponent({
-    components: {
-        ToDo
-    }
+  components: {
+    ToDo,
+  },
 });
 </script>

@@ -1,5 +1,4 @@
-package sg.edu.sportsschool.record.Sample;
-
+package sg.edu.sportsschool.Sample;
 
 import java.time.LocalDate;
 

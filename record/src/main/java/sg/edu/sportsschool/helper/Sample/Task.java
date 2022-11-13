@@ -1,4 +1,4 @@
-package sg.edu.sportsschool.helper.Sample;
+package sg.edu.sportsschool.Helper.Sample;
 
 public class Task {
     private String name;

@@ -1,4 +1,4 @@
-package sg.edu.sportsschool.helper;
+package sg.edu.sportsschool.Helper;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -36,5 +36,14 @@ public class DockerSecretsProcessor implements EnvironmentPostProcessor {
             properties.put("sql-host", "localhost");
             environment.getPropertySources().addLast(new PropertiesPropertySource("DBProperties", properties));
         }
+
+        // String privateKeyPath = getClass().getClassLoader().getResource("private.key").getPath();
+        // Resource privateKey = new FileSystemResource(privateKeyPath);
+        // String publicKeyPath = getClass().getClassLoader().getResource("public.key").getPath();
+        // Resource publicKey = new FileSystemResource(publicKeyPath);
+
+        // if (!privateKey.exists() || !publicKey.exists()) {
+        //     throw new RuntimeException("No signing keys found for authentication. ");
+        // }
     }
 }

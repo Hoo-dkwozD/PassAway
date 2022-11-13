@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+# PassAway This is gooood
+=======
 # PassAway :D
 
 _logo here_
@@ -93,3 +96,4 @@ This file helps shutdown and remove any containers and images produced by settin
 ## Attributions
 
 _Attributions of copyrights here_
+>>>>>>> 8d26b47e63cdd0d3321f995f6d9e8e0e94574939
