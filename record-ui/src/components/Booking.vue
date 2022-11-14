@@ -55,17 +55,17 @@
         </div>
 
         <div id="group-submit">
-          <router-link
+          <!-- <router-link
           to="{name: 'BookingConfirmation', params: {loanID}}"
+          > -->
+          <button
+            type="submit"
+            class="btn btn-submit btn-lg"
+            @click="addLoan()"
           >
-            <button
-              type="submit"
-              class="btn btn-submit btn-lg"
-              @click="addLoan()"
-            >
-              Book Now
-            </button>
-          </router-link>
+            Book Now
+          </button>
+          <!-- </router-link> -->
         </div>
       </div>
     </div>
@@ -168,9 +168,9 @@ export default defineComponent({
 
       try {
         const res = await axios.post(
-          import.meta.env.VITE_API_URL + "loan/add",
+          import.meta.env.VITE_API_URL + "api/loan/add",
           {
-            staffId: parseInt(staffId), //retrieve from cookie
+            staffId: parseInt("1"), //retrieve from cookie
             attractionId: attractionId,
             numPasses: parseInt(numPassesSelected),
             yyyy: parseInt(year),

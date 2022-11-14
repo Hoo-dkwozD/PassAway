@@ -1,71 +1,89 @@
 <template>
+  <div
+    class="imageDiv p-5 mb-5"
+    :style="{ backgroundImage: `url(${currentBackground})` }"
+  >
+    <div>
+      <h1 class="text-center">{{ title }}</h1>
+    </div>
 
-  <div>
-    <h1 class="text-center">{{ title }}</h1>
-  </div>
+    <div class="table-responsive tableblock">
+      <table class="table table-hover border shadow p-3 mb-5 bg-white rounded">
+        <tbody>
+          <thead class="table-active bookingfont">
+            <tr>
+              <th class="fw-bold">Loan Details</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tr>
+            <th class="bookingfont fw-bold">Loan</th>
+            <td class="bookingfont align-right">Loan ID</td>
+          </tr>
+          <tr>
+            <th class="bookingfont fw-bold">Loan Date</th>
+            <td class="bookingfont align-right">Date</td>
+          </tr>
+          <tr>
+            <th class="bookingfont fw-bold">Due Date</th>
+            <td class="bookingfont align-right">Date</td>
+          </tr>
+          <tr>
+            <th class="bookingfont fw-bold">Attraction</th>
+            <td class="bookingfont align-right">AttractionName</td>
+          </tr>
+          <tr>
+            <th class="bookingfont fw-bold">Number of Passes</th>
+            <td class="bookingfont align-right">2</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-  <div class="table-responsive tableblock">
-    <table class="table-borderless">
-      <tbody>
-        <tr>
-          <th class="bookingfont fw-bold">Loan</th>
-          <td class="bookingfont align-right">Loan ID</td>
-        </tr>
-        <tr>
-          <th class="bookingfont fw-bold">Loan Date</th>
-          <td class="bookingfont align-right">Date</td>
-        </tr>
-        <tr>
-          <th class="bookingfont fw-bold">Due Date</th>
-          <td class="bookingfont align-right">Date</td>
-        </tr>
-        <tr>
-          <th class="bookingfont fw-bold">Attraction</th>
-          <td class="bookingfont align-right">AttractionName</td>
-        </tr>
-        <tr>
-          <th class="bookingfont fw-bold">Number of Passes</th>
-          <td class="bookingfont align-right">2</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <div class="text-center m-5 p-5">
+      <button
+        type="button"
+        class="btn btn-color btn-lg btn-block"
+        @click="showPreviousLoaner"
+      >
+        Check previous borrower
+      </button>
+    </div>
 
-  <div class="text-center m-5">
-    <button
-      type="button"
-      class="btn btn-color btn-lg btn-block"
-      @click="showPreviousLoaner"
-    >
-      Check previous borrower
-    </button>
-  </div>
-  <div v-if="checkLoaner">
-    <table class="table-borderless tableblock">
-      <h2 class="text-center">Previous Loaner Details</h2>
-      <tbody>
-        <tr>
-          <th class="bookingfont fw-bold">Previous Loaner</th>
-          <td class="bookingfont align-right">Name</td>
-        </tr>
-        <tr>
-          <th class="bookingfont fw-bold">Due Date</th>
-          <td class="bookingfont align-right">Date</td>
-        </tr>
-        <tr>
-          <th class="bookingfont fw-bold">Email</th>
-          <td class="bookingfont align-right">test@test.com</td>
-        </tr>
-        <tr>
-          <th class="bookingfont fw-bold">Attraction</th>
-          <td class="bookingfont align-right">AttractionName</td>
-        </tr>
-        <tr>
-          <th class="bookingfont fw-bold">Number of Passes</th>
-          <td class="bookingfont align-right">2</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-responsive tableblock">
+      <table
+        class="table table-hover border shadow p-3 mb-5 bg-white rounded"
+        v-if="checkLoaner"
+      >
+        <tbody>
+          <tr class="table-warning bookingfont">
+            <th class="fw-bold">Previous Loaner's Details</th>
+            <th></th>
+          </tr>
+          <tr>
+            <th class="bookingfont fw-bold">Name</th>
+            <td class="bookingfont align-right">Bob Aw</td>
+          </tr>
+          <tr>
+            <th class="bookingfont fw-bold">Email</th>
+            <td class="bookingfont align-right">BobAw@ss.edu.sg</td>
+          </tr>
+          <tr>
+            <th class="bookingfont fw-bold">Due Date</th>
+            <td class="bookingfont align-right">Date</td>
+          </tr>
+          <tr>
+            <th class="bookingfont fw-bold">Attraction</th>
+            <td class="bookingfont align-right">AttractionName</td>
+          </tr>
+          <tr>
+            <th class="bookingfont fw-bold">Number of Passes</th>
+            <td class="bookingfont align-right">2</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="py-5"></div>
   </div>
 </template>
 
@@ -76,17 +94,20 @@ interface Data {
   title: string;
   checkLoaner: boolean;
   id: number;
+  currentBackground: string;
 }
 export default {
   data(): Data {
     return {
-      title: "Booking Confirmation",
+      title: "Your booking is successful!",
       checkLoaner: false,
       id: 0,
+      currentBackground:
+        "https://img.freepik.com/free-vector/white-desktop-background-modern-minimal-design-vector_53876-140226.jpg?w=1800&t=st=1668366952~exp=1668367552~hmac=a23687ccfe071f6c28017a514a3380e222e62d36894545fc6ff4f9ad24033935",
     };
   },
   created() {
-	//test and see what's the issue
+    //test and see what's the issue
     this.id = parseInt(this.$route.params.id);
   },
   methods: {
@@ -101,11 +122,17 @@ export default {
 </script>
 
 <style>
+imageDiv {
+  background-size: 100% 100%;
+}
+
 h1 {
-  font-size: 75px;
+  font-size: 60px;
   padding: 40px;
   margin: 20px;
   font-family: "Trebuchet MS", sans-serif;
+  color: black;
+  font-style: italic;
 }
 
 h2 {
@@ -114,14 +141,16 @@ h2 {
 }
 
 .bookingfont {
-  font-size: 24px;
+  font-size: 20px;
   font-family: "Trebuchet MS", sans-serif;
   padding: 15px;
 }
 
 .tableblock {
-  margin-right: 100px;
-  margin-left: 450px;
+  margin-right: 500px;
+  margin-left: 500px;
+  padding-left: 100px;
+  padding-right: 100px;
 }
 
 .align-right {
