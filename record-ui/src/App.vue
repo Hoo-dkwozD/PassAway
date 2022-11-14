@@ -15,22 +15,21 @@
           class="place lato mx-auto"
           :to="route.path"
         >
-        <div class="auto-layout-horizontal display" v-if="route.name == 'Sign In'">
-          {{ route.name }}
-        </div>
-        <div v-else-if="role == 'Admin'" class="lato2 display">
-          {{ route.name }}
-        </div>
-
-
+          <div
+            class="auto-layout-horizontal display"
+            v-if="route.name == 'Sign In'"
+          >
+            {{ route.name }}
+          </div>
+          <div v-else-if="role == 'Admin'" class="lato2 display">
+            {{ route.name }}
+          </div>
         </RouterLink>
       </nav>
     </div>
-
   </div>
 
-    <RouterView />
-  
+  <RouterView />
 </template>
 
 <script lang="ts">
@@ -49,22 +48,30 @@ export default defineComponent({
     const role = "Admin";
     const routes: Route[] = [
       {
+        path: "/Home",
+        name: "Home",
+      },
+      {
+        path: "/Bookings",
+        name: "Bookings",
+      },
+      {
         path: "/Analytics",
-        name: "Analytics"
+        name: "Analytics",
       },
       {
         path: "/Admin",
-        name: "Admin"
+        name: "Admin",
       },
       {
         path: "/signin",
-        name: "Sign In"
+        name: "Sign In",
       },
     ];
 
     return {
       routes,
-      role
+      role,
     };
   },
   components: {
@@ -120,7 +127,7 @@ export default defineComponent({
 }
 
 .lato2 {
-  color: #F57921;
+  color: #f57921;
   font-family: "Lato", sans-serif;
   font-size: 17px;
   font-weight: bolder;
@@ -171,6 +178,6 @@ export default defineComponent({
 }
 
 .display {
-  display:inline-block;
+  display: inline-block;
 }
 </style>

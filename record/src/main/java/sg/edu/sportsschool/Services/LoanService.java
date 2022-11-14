@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -80,6 +81,20 @@ public class LoanService {
 
         } catch (Exception e) {
             throw new InternalServerException("Server unable to retrieve all loans");
+        }
+    }
+
+    public ResponseEntity<JSONBody> getLoan(int id) {
+        try {
+            Optional<Loan> optLoan = lRepository.findById(id);
+            if (!optLoan.isPresent()) {
+                throw new BadRequestException("Loan with id " + id + " does not exist");
+            }
+
+            return new ResponseEntity<JSONBody>(new JSONWithData<>(200, optLoan.get()), HttpStatus.OK);
+
+        } catch (Exception e) {
+            throw new InternalServerException("Server unable to get loan of id: " + id);
         }
     }
 
@@ -150,6 +165,8 @@ public class LoanService {
         String visitDate = dateFormat.format(vDate);
         dateFormat = new SimpleDateFormat("d MMM YYYY"); // e.g. 2 Oct 2022
         String ballotDate = dateFormat.format(new Date(System.currentTimeMillis()));
+
+        List<Loan> res = assignPasses(sortedAvailablePasses, staff, yyyy, mm, dd, numPassesRequested);
         
         // Send confirmation email with corporate letter if digital pass
         if (a.getPassType() == PassType.DIGITAL) { // check barcode present if digital pass
@@ -178,7 +195,7 @@ public class LoanService {
         }
 
         System.out.println("Returning body in loan service");
-        return new ResponseEntity<JSONBody>(new JSONWithMessage(200, "Loans added successfully"), HttpStatus.OK);
+        return new ResponseEntity<JSONBody>(new JSONWithData<List<Loan>>(200, res), HttpStatus.OK);
 
     }
 
@@ -349,7 +366,7 @@ public class LoanService {
         return sortedPasses;
     }
 
-    public void assignPasses(TreeSet<Pass> sortedAvailablePasses, Staff staff, int yyyy, int mm, int dd,
+    public List<Loan> assignPasses(TreeSet<Pass> sortedAvailablePasses, Staff staff, int yyyy, int mm, int dd,
             int numPassesRequested) {
         int i = 0; // counter to add number of passes according to numPassesRequested
         Date startDate = Date.valueOf(String.format("%d-%d-%d", yyyy, mm, dd));
@@ -360,17 +377,22 @@ public class LoanService {
         if (calendar.get(Calendar.DAY_OF_YEAR) % 2 == 0) { // assign passes from behind/front if day is even/odd
             availablePasses = sortedAvailablePasses.descendingIterator();
         }
-
+        List<Loan> res = new ArrayList<>();
         // Add loan according to the number of passes that borrower wants
         while (availablePasses.hasNext() && (i < numPassesRequested)) {
             Pass pass = availablePasses.next();
-            boolean hasCollectedReturned = pass.getAttraction().getPassType() == PassType.DIGITAL ? true : false; // true/false for
-                                                                                                     // digital/physical
-                                                                                                     // pass
-            Loan loan = new Loan(staff, pass, startDate, hasCollectedReturned, hasCollectedReturned);
+            boolean hasCollectedReturned = pass.getAttraction().getPassType() == PassType.DIGITAL ? true : false; // true/false digital/physical pass
+            Loan loan = new Loan(
+                    staff,
+                    pass,
+                    startDate,
+                    hasCollectedReturned,
+                    hasCollectedReturned);
+            res.add(loan);
             lRepository.save(loan);
             i++;
         }
+        return res;
 
     }
 

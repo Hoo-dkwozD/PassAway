@@ -8,6 +8,7 @@ import router from "./router";
 import "./assets/main.css";
 import VCalendar from 'v-calendar'
 
+
 const app = createApp(App);
 
 app.use(createPinia());

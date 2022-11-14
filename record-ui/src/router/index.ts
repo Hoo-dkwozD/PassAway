@@ -15,15 +15,26 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: "/Home",
+      name: "Home",
+      component: BookView,
+      props: true,
+    },
+    {
+      path: "/Bookings",
+      name: "Bookings",
+      component: BookView,
+      props: true,
+    },
+    {
       path: "/Admin",
       name: "Admin",
-      component: BookView,
+      component: AboutView,
     },
     {
       path: "/Analytics",
       name: "Analytics",
-      component: SampleView,
-      props: true
+      component: AboutView,
     },
     {
       path: "/signin",
@@ -31,10 +42,10 @@ const router = createRouter({
       component: AboutView,
     },
     {
-      path: "/bookingconfirmation",
+      path: "/bookingconfirmation/:loanID",
       name: "Booking Confirmation",
       component: BookingConfirmationView
-    }
+    },
   ],
 });
 
