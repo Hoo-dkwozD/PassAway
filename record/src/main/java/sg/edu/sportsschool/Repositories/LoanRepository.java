@@ -56,4 +56,11 @@ public interface LoanRepository extends JpaRepository<Loan, Integer> {
             SELECT * FROM Loan WHERE start_date < :overdueDate AND has_returned = FALSE
             """, nativeQuery = true)
     List<Loan> getOverdueLoans(Date overdueDate);
+
+    @Query(value = """
+            SELECT * FROM LOAN WHERE pass_id = :passId AND staff_id != :staffId
+            AND has_returned = FALSE AND start_date < :startDate
+            ORDER BY start_date DESC
+            """, nativeQuery = true)
+    List<Loan> getPrevBorrowers(String passId, Integer staffId, Date startDate);
 }

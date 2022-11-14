@@ -1,4 +1,4 @@
-package sg.edu.sportsschool.Helper;
+package sg.edu.sportsschool.Helper.Json;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

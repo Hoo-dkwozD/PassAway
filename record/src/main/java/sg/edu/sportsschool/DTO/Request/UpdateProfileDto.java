@@ -1,25 +1,50 @@
 package sg.edu.sportsschool.DTO.Request;
 
+import sg.edu.sportsschool.Helper.StaffRole;
+
 public class UpdateProfileDto {
     private Integer staffId;
     private String email;
     private String firstName;
     private String lastName;
     private String contactNumber;
-    private String role;
-    private boolean cannotBook;
+    private StaffRole role = StaffRole.BORROWER;
+    private boolean cannotBook = true;
+    private boolean isDisabled = true;
 
     public UpdateProfileDto() {}
 
     public UpdateProfileDto(Integer staffId, String email, String firstName, String lastName, String contactNumber,
-            String role, boolean cannotBook) {
+            String role, boolean cannotBook, boolean isDisabled) {
         this.staffId = staffId;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.contactNumber = contactNumber;
-        this.role = role;
         this.cannotBook = cannotBook;
+        this.isDisabled = isDisabled;
+
+        switch (role) {
+            case "administrator":
+                this.role = StaffRole.ADMINISTRATOR;
+                break;
+            case "borrower":
+                this.role = StaffRole.BORROWER;
+                break;
+            case "gop":
+                this.role = StaffRole.GOP;
+                break;
+            default:
+                this.role = StaffRole.BORROWER;
+        }
+    }
+
+    public UpdateProfileDto(Integer staffId, String email, String firstName, String lastName, String contactNumber) {
+        this.staffId = staffId;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.contactNumber = contactNumber;
     }
 
     public Integer getStaffId() {
@@ -58,11 +83,11 @@ public class UpdateProfileDto {
         this.contactNumber = contactNumber;
     }
 
-    public String getRole() {
+    public StaffRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(StaffRole role) {
         this.role = role;
     }
 
@@ -72,5 +97,13 @@ public class UpdateProfileDto {
 
     public void setCannotBook(boolean cannotBook) {
         this.cannotBook = cannotBook;
+    }
+
+    public boolean isDisabled() {
+        return isDisabled;
+    }
+
+    public void setDisabled(boolean isDisabled) {
+        this.isDisabled = isDisabled;
     }
 }

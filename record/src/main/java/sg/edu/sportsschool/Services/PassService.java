@@ -14,10 +14,10 @@ import sg.edu.sportsschool.Entities.Attraction;
 import sg.edu.sportsschool.Entities.Pass;
 import sg.edu.sportsschool.Exceptions.BadRequestException;
 import sg.edu.sportsschool.Exceptions.InternalServerException;
-import sg.edu.sportsschool.Helper.JSONBody;
-import sg.edu.sportsschool.Helper.JSONWithData;
-import sg.edu.sportsschool.Helper.JSONWithMessage;
 import sg.edu.sportsschool.Helper.ReadCsv;
+import sg.edu.sportsschool.Helper.Json.JSONBody;
+import sg.edu.sportsschool.Helper.Json.JSONWithData;
+import sg.edu.sportsschool.Helper.Json.JSONWithMessage;
 import sg.edu.sportsschool.Repositories.PassRepository;
 
 @Service
@@ -57,7 +57,14 @@ public class PassService {
         }
 
         // Get all passIds from csv file, add a new pass for each passId
-        List<String[]> passesList = ReadCsv.read(cardNumbersCSVFile);
+        List<String[]> passesList = new ArrayList<>();
+        try {
+            passesList = ReadCsv.read(cardNumbersCSVFile);
+        } catch (Exception e) {
+            // TODO
+            JSONWithMessage body = new JSONWithMessage(200, "Passes added successfully");
+            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+        }
 
         if (passesList == null) {
             throw new InternalServerException("Exception occured when reading csv file");
@@ -119,7 +126,13 @@ public class PassService {
         }
     }
 
-
+    public Set<Pass> returnLostPassesByAttrId(Integer aId) {
+        Set<Pass> allPasses = returnAllPassesByAttrId(aId);
+        if (allPasses == null) {
+            return null;
+        }
+        return null;
+    }
     
 
     // -- Following codes are used for testing only

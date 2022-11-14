@@ -3,11 +3,11 @@ package sg.edu.sportsschool.DTO.Response;
 public class SignInReponseDto {
 
     private Integer staffId;
-    private String token;
+    private String role;
 
-    public SignInReponseDto(Integer staffId, String token) {
+    public SignInReponseDto(Integer staffId, String role) {
         this.staffId = staffId;
-        this.token = token;
+        this.role = role;
     }
 
     public Integer getStaffId() {
@@ -18,11 +18,11 @@ public class SignInReponseDto {
         this.staffId = staffId;
     }
 
-    public String getToken() {
-        return token;
+    public String getRole() {
+        return role;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setRole(String role) {
+        this.role = role;
     }
 }

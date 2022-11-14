@@ -1,0 +1,11 @@
+{
+    "name": "PassAway",
+    "version": "1.0.0",
+    "description": "REST API docs for PassAway",
+    "title": "PassAway APIs",
+    "url" : "https://localhost:8080/api",
+    "header": {
+        "title": "PassAway REST API Documentation",
+        "filename": "header.md"
+    }
+}
