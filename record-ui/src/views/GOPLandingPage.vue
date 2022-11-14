@@ -1,12 +1,20 @@
 <script lang='ts'>
 import { defineComponent } from 'vue'
 export default defineComponent({
+    data(){
+        return{
+            isActive: false,
+        }
+    },
   components: {
     
   },
   methods:{
     searchBorrower(){
         //generate html table in the DOM
+        this.isActive = !this.isActive;
+        console.log("hello");
+        
     }
   }
 });
@@ -38,6 +46,31 @@ export default defineComponent({
                                 <button type="button"
                                     class="btn btn-outline-secondary text-uppercase fw-bold search-btn" @click="searchBorrower()">Search</button>
                             </div>
+                            <div :class="{active: isActive}">
+                                <table class="table table-striped table-hover mt-3">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Contact Number</th>
+                                            <th scope="col">Card Number</th>
+                                            <th scope="col">Start Date</th>
+                                            <th scope="col">Place of Interest</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Mark</td>
+                                            <td>Otto</td>
+                                            <td>@mdo</td>
+                                            <td>@mdo</td>
+                                            <td>Date Returned</td>
+                                            <td>Gardens By the Bay</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
 
                     </div>
@@ -56,5 +89,8 @@ export default defineComponent({
 
 .borrower-search {
     text-align: center;
+}
+.active{
+    display: none;
 }
 </style>
