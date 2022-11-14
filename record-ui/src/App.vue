@@ -62,8 +62,6 @@ export default defineComponent({
         name: "Sign In"
       },
     ];
-
-  data () {
     return {
       routes,
       role
