@@ -5,10 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -20,7 +18,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
 
@@ -43,24 +40,25 @@ import sg.edu.sportsschool.Helper.Json.JSONBody;
 import sg.edu.sportsschool.Helper.Json.JSONWithData;
 import sg.edu.sportsschool.Helper.Json.JSONWithMessage;
 import sg.edu.sportsschool.Repositories.LoanRepository;
+import sg.edu.sportsschool.Repositories.PassRepository;
 
 @Service
 public class LoanService {
 
     private LoanRepository lRepository;
     private AttractionService aService;
-    private PassService pService;
+    private PassRepository pRepository;
     private StaffService staffService;
     private EmailService emailService;
 
     private final String STATIC_FOLDER = System.getProperty("user.dir") + "/src/main/resources/static/";
 
     @Autowired
-    public LoanService(LoanRepository loRepository, AttractionService aService, PassService pService,
+    public LoanService(LoanRepository loRepository, AttractionService aService, PassRepository pRepository,
             StaffService staffService, EmailService emailService) {
         this.lRepository = loRepository;
         this.aService = aService;
-        this.pService = pService;
+        this.pRepository = pRepository;
         this.staffService = staffService;
         this.emailService = emailService;
     }
@@ -68,9 +66,9 @@ public class LoanService {
     public ResponseEntity<JSONBody> getAllLoans() {
         try {
             List<Loan> loans = lRepository.findAll();
-            
+
             List<LoanResponseDto> response = createLoanResponseDto(loans);
-            
+
             JSONWithData<List<LoanResponseDto>> body = new JSONWithData<>(200, response);
             return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
 
@@ -89,7 +87,7 @@ public class LoanService {
             Loan l = optLoan.get();
             List<Loan> temp = new ArrayList<>();
             temp.add(l);
-            
+
             List<LoanResponseDto> response = createLoanResponseDto(temp);
 
             return new ResponseEntity<JSONBody>(new JSONWithData<>(200, response), HttpStatus.OK);
@@ -113,6 +111,11 @@ public class LoanService {
         if (staff == null) {
             throw new InternalServerException(
                     "Staff of staff id: " + staffId + " does not exist in the database");
+        }
+
+        // Check if staff can book
+        if (staff.isCannotBook()) {
+            throw new BadRequestException("Staff of staff id: " + staffId + " cannot book");
         }
 
         String aName = a.getName();
@@ -159,11 +162,6 @@ public class LoanService {
                     "Unable to book %d pass(es). There are insufficient available pass(es) for %s for loan on (yyyy-mm-dd): %s-%s-%s",
                     numPassesRequested, aName, yyyyString, mmString, ddString));
 
-        // assign passes if can book
-        TreeSet<Pass> sortedAvailablePasses = sortSetPasses(availablePassesForLoan);
-        List<Loan> loans = assignPasses(sortedAvailablePasses, staff, yyyy, mm, dd, numPassesRequested);
-        List<LoanResponseDto> response = createLoanResponseDto(loans);
-
         // Send confirmation email
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, d MMM YYYY"); // e.g. Wednesday, 2 Oct 2022
         String visitDate = dateFormat.format(vDate);
@@ -173,13 +171,16 @@ public class LoanService {
         // Send confirmation email with corporate letter if digital pass
         if (a.getPassType() == PassType.DIGITAL) { // check barcode present if digital pass
             String barcodeImagePath = a.getBarcodeImage();
-            System.out.println(barcodeImagePath);
+            if (barcodeImagePath == null || barcodeImagePath.equals("")) {
+                throw new BadRequestException("Attraction of id: " + aId + " does not have a barcode image");
+            }
+            // System.out.println("barcodeImagePath " + barcodeImagePath);
             byte[] barcodeImage = null;
             try {
                 // System.out.println(Paths.get(STATIC_FOLDER, barcodeImagePath));
                 barcodeImage = Files.readAllBytes(Paths.get(STATIC_FOLDER, barcodeImagePath));
-            } catch (IOException e) {
-                throw new BadRequestException("Barcode for attraction " + a.getName() + " is not set yet.");
+            } catch (Exception e) {
+                throw new InternalServerException("Server unable to read barcode image at path: " + Paths.get(STATIC_FOLDER, barcodeImagePath));
             }
 
             try {
@@ -189,6 +190,7 @@ public class LoanService {
 
             } catch (MessagingException e) {
                 // TODO Log the error here
+                throw new InternalServerException("Server unable to send email to: " + staff.getEmail());
             }
         } else {
             try {
@@ -196,8 +198,14 @@ public class LoanService {
 
             } catch (MessagingException e) {
                 // TODO: Log the error here
+                throw new InternalServerException("Server unable to send email to: " + staff.getEmail());
             }
         }
+
+        // assign passes if can book and email can be sent successfully
+        TreeSet<Pass> sortedAvailablePasses = sortSetPasses(availablePassesForLoan);
+        List<Loan> loans = assignPasses(sortedAvailablePasses, staff, yyyy, mm, dd, numPassesRequested);
+        List<LoanResponseDto> response = createLoanResponseDto(loans);
 
         System.out.println("Returning body in loan service");
         return new ResponseEntity<JSONBody>(new JSONWithData<List<LoanResponseDto>>(200, response), HttpStatus.OK);
@@ -209,12 +217,7 @@ public class LoanService {
         String mmString = (mm < 10) ? "0" + mm : mm + "";
 
         Map<String, Integer> res = new HashMap<>();
-        Set<Pass> allAttrPasses = pService.returnAllPassesByAttrId(aId);
-
-        if (allAttrPasses == null) {
-            throw new InternalServerException(
-                    "Server unable to get passes for attraction id" + aId + " from database.");
-        }
+        Set<Pass> allAttrPasses = pRepository.findAllPassesByAttrId(aId);
 
         int totalNumPasses = allAttrPasses.size();
         if (totalNumPasses == 0) {
@@ -347,16 +350,87 @@ public class LoanService {
         }
         try {
             lRepository.deleteAllById(canCancelLoanIds);
-            
+
             if (cannotCancelLoanIds.size() > 0) {
-                return new ResponseEntity<JSONBody>(new JSONWithMessage(200, "successfully deleted loans: " + canCancelLoanIds + " Unable to cancel loans of: " + cannotCancelLoanIds + " 1 day before the visit date."), HttpStatus.OK); 
+                return new ResponseEntity<JSONBody>(new JSONWithMessage(200,
+                        "successfully deleted loans: " + canCancelLoanIds + " Unable to cancel loans of: "
+                                + cannotCancelLoanIds + " 1 day before the visit date."),
+                        HttpStatus.OK);
             } else {
-                return new ResponseEntity<JSONBody>(new JSONWithMessage(200, "successfully deleted loans: " + canCancelLoanIds), HttpStatus.OK); 
+                return new ResponseEntity<JSONBody>(
+                        new JSONWithMessage(200, "successfully deleted loans: " + canCancelLoanIds), HttpStatus.OK);
             }
-            
+
         } catch (Exception e) {
             throw new InternalServerException("Server unable to delete loans");
         }
+    }
+
+    public ResponseEntity<JSONBody> reportLostPass(List<Integer> loanIds) {
+        // List<Integer> loanIds = dto.getLoanIds();
+        if (loanIds == null || loanIds.size() == 0) {
+            throw new BadRequestException("Please select loan(s) to report lost passes.");
+        }
+
+        List<Loan> lostLoans = lRepository.findAllById(loanIds);
+        // write all passes belonging to lost loans as being lost to prevent further borrowing
+        for (Loan lostLoan : lostLoans) {
+            Pass p = lostLoan.getPass();
+            p.setLost(true);
+            pRepository.saveAndFlush(p);
+            Staff s = lostLoan.getStaff();
+            s.setCannotBook(true);
+            // lostLoan.setPass(p);
+            // lostLoan.setStaff(s);
+            lRepository.saveAndFlush(lostLoan);
+        }
+
+        for (Loan lostLoan : lostLoans) {
+            
+            List<Loan> affectedLoans = lRepository.getAffectedLoansOfLostPass(lostLoan.getPass().getPassId(), lostLoan.getStaff().getStaffId(),
+                    lostLoan.getStartDate());
+            System.out.println("affectedLoans" + affectedLoans);
+            
+            for (Loan affectedLoan : affectedLoans) {
+                lRepository.deleteById(affectedLoan.getLoanId());
+                Staff affectedLoanStaff = affectedLoan.getStaff();
+                
+                String yyyyString = String.valueOf(affectedLoan.getStartDate().toLocalDate().getYear());
+                int mm = affectedLoan.getStartDate().toLocalDate().getMonthValue();
+                String mmString = (mm < 10) ? "0" + mm : mm + "";
+                int dd = affectedLoan.getStartDate().toLocalDate().getDayOfMonth();
+                String ddString = (dd < 10) ? "0" + dd : dd + "";
+                Set<Pass> availablePasses = getAvailablePassesForDate(
+                        affectedLoan.getPass().getAttraction().getAttractionId(), yyyyString, mmString, ddString);
+                System.out.println("availablePasses for " + yyyyString + mmString + ddString + " : " + availablePasses);
+
+                if (availablePasses.size() == 0) {
+                    // send email to them to make new booking
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, d MMM YYYY");
+                    String visitDate = dateFormat.format(affectedLoan.getStartDate());
+                    try {
+                        emailService.sendRebookLoanEmail(affectedLoanStaff.getEmail(), affectedLoanStaff.getFirstName(),affectedLoan.getPass().getAttraction().getName(), visitDate);
+                        
+                    } catch (MessagingException e) {
+                        // TODO: Log the error
+                        System.out.println("Error sending email to " + affectedLoanStaff.getEmail());
+                    }
+                    
+
+                } else {
+                    // reassign their passes (add new loans but dont send email)
+                    Pass availablePass = availablePasses.iterator().next();
+                    Loan newLoan = new Loan(affectedLoan.getStaff(), availablePass,
+                            affectedLoan.getStartDate(), false, false);
+                    // newLoan.setLoanId(affectedLoan.getLoanId());
+                    lRepository.saveAndFlush(newLoan);
+                }
+            }
+
+
+        }
+        
+        return new ResponseEntity<JSONBody>(new JSONWithMessage(200, "successfully reported lost passes: " + loanIds), HttpStatus.OK);
     }
 
     // ------------------------------------------------------------------------------------------------
@@ -366,14 +440,11 @@ public class LoanService {
     }
 
     public Set<Pass> getAvailablePassesForDate(Integer aId, String yyyyString, String mmString, String ddString) {
-        Set<Pass> availableAttrPasses = pService.returnAllPassesByAttrId(aId);
-        // get lost passes to be removed
-
+        Set<Pass> availableAttrPasses = pRepository.findAllPassesByAttrId(aId);
+        System.out.println("availableAttrPasses" + availableAttrPasses);
         Set<Pass> currentLoansPasses = lRepository.getLoanedPassesByDate(aId, yyyyString, mmString, ddString);
-
-        if (availableAttrPasses != null && currentLoansPasses != null) {
-            availableAttrPasses.removeAll(currentLoansPasses);
-        }
+        System.out.println("currentLoansPasses" + currentLoansPasses);
+        availableAttrPasses.removeAll(currentLoansPasses);
         return availableAttrPasses;
     }
 

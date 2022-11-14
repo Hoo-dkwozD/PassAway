@@ -148,7 +148,8 @@ public class StaffService {
             if (staff == null
                     && (targetStaffEmail.endsWith("@sportsschool.edu.sg")
                             || targetStaffEmail.endsWith("@nysi.org.sg")
-                            || targetStaffEmail.endsWith(".edu.sg"))) {
+                            || targetStaffEmail.endsWith(".edu.sg")
+                            || targetStaffEmail.endsWith("@gmail.com"))) {
                 Staff targetStaff = new Staff();
                 targetStaff.setEmail(targetStaffEmail);
                 targetStaff.setFirstName(staffDto.getFirstName());

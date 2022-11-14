@@ -75,4 +75,10 @@ public class Pass {
         return Objects.hash(passId, attraction.getAttractionId());
     }
 
+    @Override
+    public String toString() {
+      return passId + "";
+    }
+
+    
 }

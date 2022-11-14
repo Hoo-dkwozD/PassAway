@@ -11,6 +11,9 @@
 <body>
   <p>Dear <span th:text="${staffName}">, </span></p>
   <p>This is a reminder that you have not collected your pass(es) to <span th:text="${attrName}"></span> on <span th:text="${visitDate}"></span> </p>
+  <p>Here are the details of the previous borrower: <span th:text="${attrName}"></span> on <span th:text="${visitDate}"></span> </p>
+  <p>Name: <span th:text="${prevBorrowerName}"></span></p> 
+  <p>Contact number: <span th:text="${prevBorrowerContact}"></span> </p>
 
   <p>
     For any change in visit date, you are required to cancel your booking (at least 1 day before) and to submit a new booking in the system.

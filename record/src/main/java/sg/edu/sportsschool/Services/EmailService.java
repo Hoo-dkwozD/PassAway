@@ -3,6 +3,7 @@ package sg.edu.sportsschool.Services;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.sql.Date;
+import java.time.DayOfWeek;
 import java.util.List;
 
 import javax.mail.MessagingException;
@@ -19,6 +20,9 @@ import org.thymeleaf.context.Context;
 
 import sg.edu.sportsschool.Entities.Attraction;
 import sg.edu.sportsschool.Entities.Loan;
+import sg.edu.sportsschool.Entities.Pass;
+import sg.edu.sportsschool.Entities.Staff;
+import sg.edu.sportsschool.Helper.PassType;
 import sg.edu.sportsschool.Repositories.LoanRepository;
 
 @Service
@@ -76,7 +80,8 @@ public class EmailService {
     }
 
     @Async
-    public void sendPasswordChangeEmail(String emailTo, String staffName, String registerKey) throws MessagingException {
+    public void sendPasswordChangeEmail(String emailTo, String staffName, String registerKey)
+            throws MessagingException {
         Context context = new Context();
         context.setVariable("staffName", staffName);
         registerKey = "" + registerKey;
@@ -108,7 +113,7 @@ public class EmailService {
         helper.setSubject("Booking Confirmation for " + a.getName() + " on " + visitDate);
         helper.setText(process, true);
         helper.setTo(emailTo);
-        
+
         ByteArrayOutputStream os = pdfService.generateCorpLetter(a.getAddress(), ballotDate, a.getName(), barcodeImage,
                 a.getExpiryDate().toString(), a.getMembershipId(), staffName, visitDate, a.getBenefits(),
                 a.getTermsConditions(), a.getDescription());
@@ -121,7 +126,7 @@ public class EmailService {
         System.out.println("Email sent.");
 
     }
-    
+
     @Async
     public void sendEmailWithAuthLetter(String emailTo, String staffName, String ballotDate, String visitDate,
             Attraction a) throws MessagingException {
@@ -139,7 +144,8 @@ public class EmailService {
         helper.setTo(emailTo);
 
         // Generate the auth letter
-        ByteArrayOutputStream os = pdfService.generateAuthLetter(a.getAddress(), ballotDate, a.getDescription(), visitDate, staffName, LOGO_FILE_PATH);
+        ByteArrayOutputStream os = pdfService.generateAuthLetter(a.getAddress(), ballotDate, a.getDescription(),
+                visitDate, staffName, LOGO_FILE_PATH);
         System.out.println("Auth letter generated");
 
         // Attach the auth letter pdf
@@ -178,10 +184,26 @@ public class EmailService {
         List<Loan> reminderLoans = loanRepository.getReminderDateLoans(reminderDate);
 
         for (Loan loan : reminderLoans) {
+            if (loan.getPass().getAttraction().getPassType() == PassType.DIGITAL) {
+                continue; // skip digital passes
+            }
+
+            Pass p = loan.getPass();
+            Staff s = loan.getStaff();
+            List<Loan> prevBorrowers = loanRepository.getPrevBorrowers(p.getPassId(), s.getStaffId(),
+                    loan.getStartDate());
+            String prevBorrowerName = (prevBorrowers.size() > 0) ? prevBorrowers.get(0).getStaff().getFirstName()
+                    : "None";
+            String prevBorrowerContact = (prevBorrowers.size() > 0)
+                    ? prevBorrowers.get(0).getStaff().getContactNumber()
+                    : "None";
+
             Context context = new Context();
-            context.setVariable("staffName", loan.getStaff().getFirstName());
-            context.setVariable("attrName", loan.getPass().getAttraction().getName());
+            context.setVariable("staffName", s.getFirstName());
+            context.setVariable("attrName", p.getAttraction().getName());
             context.setVariable("visitDate", loan.getStartDate().toString());
+            context.setVariable("prevBorrowerName", prevBorrowerName);
+            context.setVariable("prevBorrowerContact", prevBorrowerContact);
             String process = templateEngine.process("PassCollectReminderEmailTemplate.html", context);
 
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -189,15 +211,15 @@ public class EmailService {
                 MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false);
                 helper.setSubject("Reminder to collect pass(es)");
                 helper.setText(process, true);
-                helper.setTo(loan.getStaff().getEmail());
+                helper.setTo(s.getEmail());
 
                 javaMailSender.send(mimeMessage);
-                System.out.println("Collection reminder email sent." + loan.getStaff().getEmail());
+                System.out.println("Collection reminder email sent." + s.getEmail());
 
             } catch (MessagingException e) {
                 // TODO Log the exception here
                 System.out.println(
-                        "Server unable to send reminder email for pass collection to: " + loan.getStaff().getEmail());
+                        "Server unable to send reminder email for pass collection to: " + s.getEmail());
                 continue;
             }
         }
@@ -207,9 +229,14 @@ public class EmailService {
     // @Scheduled(fixedRate = 8000) // uncomment to test (cron = "0 0 9 * * *") 9am
     // everyday
     public void sendLoanOverdueReminderEmail() {
-        // Send reminder email for loans whose visit date is tomorrow
         Date overdueDate = new Date(System.currentTimeMillis());
         List<Loan> overdueLoans = loanRepository.getOverdueLoans(overdueDate);
+
+        // No email if today is saturday or sunday
+        if (overdueDate.toLocalDate().getDayOfWeek() == DayOfWeek.SATURDAY
+                || overdueDate.toLocalDate().getDayOfWeek() == DayOfWeek.SUNDAY) {
+            return;
+        }
 
         for (Loan loan : overdueLoans) {
             Context context = new Context();
@@ -235,6 +262,25 @@ public class EmailService {
                 continue;
             }
         }
+    }
+
+    @Async
+    public void sendRebookLoanEmail(String emailTo, String staffName, String attrName, String visitDate)
+            throws MessagingException {
+        Context context = new Context();
+        context.setVariable("staffName", staffName);
+        context.setVariable("attrName", attrName);
+        context.setVariable("visitDate", visitDate);
+        String process = templateEngine.process("RebookLoanEmailTemplate.html", context);
+
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false);
+        helper.setSubject("Action required: Loan affected by lost pass");
+        helper.setText(process, true);
+        helper.setTo(emailTo);
+
+        javaMailSender.send(mimeMessage);
+        System.out.println("Rebook loan notification email sent to " + emailTo);
     }
 
     public File getAuthLetter(String STORAGE_FOLDER, String fileName) {
