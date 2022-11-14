@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import sg.edu.sportsschool.DTO.Request.LoanDTO;
-import sg.edu.sportsschool.Helper.JSONBody;
+import sg.edu.sportsschool.Helper.Json.JSONBody;
 import sg.edu.sportsschool.Services.LoanService;
 
 @RestController

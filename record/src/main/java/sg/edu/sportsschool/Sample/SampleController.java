@@ -1,10 +1,14 @@
 package sg.edu.sportsschool.Sample;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import sg.edu.sportsschool.Helper.JSONBody;
+import sg.edu.sportsschool.Helper.Json.JSONBody;
 import sg.edu.sportsschool.Helper.Sample.Task;
 
 @CrossOrigin
@@ -30,5 +34,14 @@ public class SampleController {
     @DeleteMapping(path = "/api/task/{id}")
     public ResponseEntity<JSONBody> removeTask(@PathVariable("id") long id) {
         return sampleService.removeTask(id);
+    }
+
+    @GetMapping(path = "/api/load/available-passes")
+    public List<AvailablePassesView> getAvailablePasses() {
+        List<AvailablePassesView> listOfAvailablePasses = new ArrayList<>();
+        listOfAvailablePasses.add(
+                new AvailablePassesView(LocalDate.now(), "SomeString")
+        );
+        return listOfAvailablePasses;
     }
 }

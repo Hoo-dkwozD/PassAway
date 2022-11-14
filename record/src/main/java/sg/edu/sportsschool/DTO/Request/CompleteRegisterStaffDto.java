@@ -1,23 +1,29 @@
 package sg.edu.sportsschool.DTO.Request;
 
-public class SignupDto {
+public class CompleteRegisterStaffDto {
+    private String email;
+    private String registerKey;
     private String firstName;
     private String lastName;
-    private String email;
     private String contactNumber;
-    private String role;
     private String password;
 
-    public SignupDto() {}
-
-    public SignupDto(String firstName, String lastName, String email, String contactNumber, String role,
-            String password) {
+    public CompleteRegisterStaffDto(String email, String registerKey, String firstName, 
+                                    String lastName, String contactNumber, String password) {
+        this.email = email;
+        this.registerKey = registerKey;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email;
         this.contactNumber = contactNumber;
-        this.role = role;
         this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getRegisterKey() {
+        return registerKey;
     }
 
     public String getFirstName() {
@@ -36,28 +42,12 @@ public class SignupDto {
         this.lastName = lastName;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getContactNumber() {
         return contactNumber;
     }
 
     public void setContactNumber(String contactNumber) {
         this.contactNumber = contactNumber;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public String getPassword() {

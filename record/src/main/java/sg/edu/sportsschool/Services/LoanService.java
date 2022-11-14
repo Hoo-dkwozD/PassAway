@@ -1,5 +1,8 @@
 package sg.edu.sportsschool.Services;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.YearMonth;
@@ -29,10 +32,11 @@ import sg.edu.sportsschool.Entities.Pass;
 import sg.edu.sportsschool.Entities.Staff;
 import sg.edu.sportsschool.Exceptions.BadRequestException;
 import sg.edu.sportsschool.Exceptions.InternalServerException;
-import sg.edu.sportsschool.Helper.JSONBody;
-import sg.edu.sportsschool.Helper.JSONWithData;
-import sg.edu.sportsschool.Helper.JSONWithMessage;
 import sg.edu.sportsschool.Helper.PassComparator;
+import sg.edu.sportsschool.Helper.PassType;
+import sg.edu.sportsschool.Helper.Json.JSONBody;
+import sg.edu.sportsschool.Helper.Json.JSONWithData;
+import sg.edu.sportsschool.Helper.Json.JSONWithMessage;
 import sg.edu.sportsschool.Repositories.LoanRepository;
 
 @Service
@@ -43,6 +47,8 @@ public class LoanService {
     private PassService pService;
     private StaffService staffService;
     private EmailService emailService;
+
+    private final String STATIC_FOLDER = System.getProperty("user.dir") + "src/main/resources/static";
 
     @Autowired
     public LoanService(LoanRepository loRepository, AttractionService aService, PassService pService,
@@ -145,11 +151,15 @@ public class LoanService {
         String ballotDate = dateFormat.format(new Date(System.currentTimeMillis()));
         
         // Send confirmation email with corporate letter if digital pass
-        if (a.getPassType() == 'd') { // check barcode present if digital pass
-            byte[] barcodeImage = a.getBarcodeImage();
-            if (barcodeImage == null) {
+        if (a.getPassType() == PassType.DIGITAL) { // check barcode present if digital pass
+            String barcodeImagePath = a.getBarcodeImage();
+            byte[] barcodeImage = null;
+            try {
+                barcodeImage = Files.readAllBytes(Paths.get(STATIC_FOLDER, barcodeImagePath));
+            } catch (IOException e) {
                 throw new BadRequestException("Barcode for attraction " + a.getName() + " is not set yet.");
             }
+
             try {
                 emailService.sendEmailWithCorpLetter(staff.getEmail(), staff.getFirstName(), ballotDate, visitDate, a, barcodeImage);
                 System.out.println("Confirmation email sent successfully");
@@ -350,7 +360,7 @@ public class LoanService {
         // Add loan according to the number of passes that borrower wants
         while (availablePasses.hasNext() && (i < numPassesRequested)) {
             Pass pass = availablePasses.next();
-            boolean hasCollectedReturned = pass.getAttraction().getPassType() == 'd' ? true : false; // true/false for
+            boolean hasCollectedReturned = pass.getAttraction().getPassType() == PassType.DIGITAL ? true : false; // true/false for
                                                                                                      // digital/physical
                                                                                                      // pass
             Loan loan = new Loan(staff, pass, startDate, hasCollectedReturned, hasCollectedReturned);

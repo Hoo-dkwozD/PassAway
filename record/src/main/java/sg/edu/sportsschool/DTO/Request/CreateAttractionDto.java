@@ -1,9 +1,11 @@
 package sg.edu.sportsschool.DTO.Request;
 
+import sg.edu.sportsschool.Helper.PassType;
+
 public class CreateAttractionDto {
     private String name;
     private String description;
-    private char passType;
+    private PassType passType;
     private float replacementFee;
     private int numAccompanyingGuests;
     private int maxPassesPerLoan;
@@ -18,7 +20,7 @@ public class CreateAttractionDto {
 
     public CreateAttractionDto() {}
 
-    public CreateAttractionDto(String name, String description, char passType, float replacementFee,
+    public CreateAttractionDto(String name, String description, PassType passType, float replacementFee,
             int numAccompanyingGuests, int maxPassesPerLoan, int maxLoansPerMonth, String address, String membershipId,
             int expiryDateYYYY, int expiryDateMM, int expiryDateDD, String benefits, String termsConditions) {
         this.name = name;
@@ -53,11 +55,11 @@ public class CreateAttractionDto {
         this.description = description;
     }
 
-    public char getPassType() {
+    public PassType getPassType() {
         return passType;
     }
 
-    public void setPassType(char passType) {
+    public void setPassType(PassType passType) {
         this.passType = passType;
     }
 

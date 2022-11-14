@@ -8,6 +8,10 @@ public class UpdatePasswordDto {
 
     public UpdatePasswordDto() {}
 
+    public UpdatePasswordDto(Integer staffId) {
+        this.staffId = staffId;
+    }
+
     public UpdatePasswordDto(Integer staffId, String oldPassword, String newPassword, String confirmPassword) {
         this.staffId = staffId;
         this.oldPassword = oldPassword;
