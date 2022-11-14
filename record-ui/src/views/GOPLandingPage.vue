@@ -56,6 +56,7 @@ export default defineComponent({
                                             <th scope="col">Card Number</th>
                                             <th scope="col">Start Date</th>
                                             <th scope="col">Place of Interest</th>
+                                            <th scope="col">Status</th>
 
                                         </tr>
                                     </thead>
@@ -67,6 +68,8 @@ export default defineComponent({
                                             <td>@mdo</td>
                                             <td>Date Returned</td>
                                             <td>Gardens By the Bay</td>
+                                            <td><button type="button" class="btn btn-outline-secondary">Collected</button></td>
+
                                         </tr>
                                     </tbody>
                                 </table>
