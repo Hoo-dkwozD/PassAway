@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,9 +39,14 @@ public class LoanController {
         this.lService = lService;
     }
 
-    @GetMapping(path = "/list-all")
+    @GetMapping(path = "/")
     public ResponseEntity<JSONBody> getAllLoans() {
         return lService.getAllLoans();
+    }
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<JSONBody> getLoan(@PathVariable int id) {
+        return lService.getLoan(id);
     }
 
     @GetMapping(path = "/list-by-email")
@@ -64,7 +70,6 @@ public class LoanController {
         return lService.collectPasses(emailTo, loanIds);
     }
 
-    // TODO Cancellation of loans
     @DeleteMapping(path = "/cancel")
     public ResponseEntity<JSONBody> cancelLoans(@RequestParam List<Integer> loanIds) {
         return lService.cancelLoans(loanIds);

@@ -62,13 +62,14 @@ public class StaffService {
     }
 
     // public ResponseEntity<JSONBody> getStaff(String token) {
-    //     try {
-    //         Staff s = authenticationService.getStaff(token);
-    //         JSONWithData<Staff> body = new JSONWithData<>(200, s);
-    //         return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
-    //     } catch (Exception e) {
-    //         throw new InternalServerException("Server unable to get staff from database");
-    //     }
+    // try {
+    // Staff s = authenticationService.getStaff(token);
+    // JSONWithData<Staff> body = new JSONWithData<>(200, s);
+    // return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+    // } catch (Exception e) {
+    // throw new InternalServerException("Server unable to get staff from
+    // database");
+    // }
     // }
 
     public ResponseEntity<JSONBody> getStaff(Integer staffId) {
@@ -100,27 +101,21 @@ public class StaffService {
                 return response;
             } else {
                 List<Staff> addedStaff = csvData
-                                            .stream()
-                                            .map(
-                                                arr -> new Staff(
-                                                    arr[1], 
-                                                    arr[0].split(" ")[0], 
-                                                    arr[0].split(" ")[1], 
-                                                    StaffRole.BORROWER
-                                                )
-                                            )
-                                            .collect(Collectors.toList());
+                        .stream()
+                        .map(
+                                arr -> new Staff(
+                                        arr[1],
+                                        arr[0].split(" ")[0],
+                                        arr[0].split(" ")[1],
+                                        StaffRole.BORROWER))
+                        .collect(Collectors.toList());
 
                 for (Staff targetStaff : addedStaff) {
                     String targetStaffEmail = targetStaff.getEmail();
                     Staff staff = sRepository.findByEmail(targetStaffEmail);
-                    if (
-                        staff == null 
-                        && (
-                            targetStaffEmail.endsWith("@sportsschool.edu.sg") 
-                            || targetStaffEmail.endsWith("@nysi.org.sg")
-                        )
-                    ) {
+                    if (staff == null
+                            && (targetStaffEmail.endsWith("@sportsschool.edu.sg")
+                                    || targetStaffEmail.endsWith("@nysi.org.sg"))) {
                         sRepository.save(targetStaff);
                     }
                 }
@@ -145,13 +140,10 @@ public class StaffService {
         try {
             String targetStaffEmail = staffDto.getEmail();
             Staff staff = sRepository.findByEmail(targetStaffEmail);
-            if (
-                staff == null 
-                && (
-                    targetStaffEmail.endsWith("@sportsschool.edu.sg") 
-                    || targetStaffEmail.endsWith("@nysi.org.sg")
-                )
-            ) {
+            if (staff == null
+                    && (targetStaffEmail.endsWith("@sportsschool.edu.sg")
+                            || targetStaffEmail.endsWith("@nysi.org.sg")
+                            || targetStaffEmail.endsWith(".edu.sg"))) {
                 Staff targetStaff = new Staff();
                 targetStaff.setEmail(targetStaffEmail);
                 targetStaff.setFirstName(staffDto.getFirstName());
@@ -171,7 +163,8 @@ public class StaffService {
 
                 return response;
             } else {
-                JSONWithMessage results = new JSONWithMessage(400, "The staff to add already exists or has invalid fields. ");
+                JSONWithMessage results = new JSONWithMessage(400,
+                        "The staff to add already exists or has invalid fields. ");
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.BAD_REQUEST);
 
                 return response;
@@ -190,7 +183,8 @@ public class StaffService {
             Staff staff = sRepository.findByEmail(staffDto.getEmail());
 
             if (staff == null) {
-                JSONWithMessage results = new JSONWithMessage(401, "The specified user is not authorised to use this service. ");
+                JSONWithMessage results = new JSONWithMessage(401,
+                        "The specified user is not authorised to use this service. ");
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
 
                 return response;
@@ -206,7 +200,8 @@ public class StaffService {
 
                 sRepository.save(staff);
 
-                emailService.sendRegistrationEmail(staff.getEmail(), staff.getFirstName() + " " + staff.getLastName(), encodedString);
+                emailService.sendRegistrationEmail(staff.getEmail(), staff.getFirstName() + " " + staff.getLastName(),
+                        encodedString);
 
                 JSONBody results = new JSONBody(204);
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NO_CONTENT);
@@ -227,7 +222,8 @@ public class StaffService {
             Staff staff = sRepository.findByEmail(staffDto.getEmail());
 
             if (staff == null) {
-                JSONWithMessage results = new JSONWithMessage(401, "The specified user is not authorised to use this service. ");
+                JSONWithMessage results = new JSONWithMessage(401,
+                        "The specified user is not authorised to use this service. ");
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
 
                 return response;
@@ -291,7 +287,8 @@ public class StaffService {
 
                 sRepository.save(staff);
 
-                emailService.sendEmailChangeEmail(staff.getEmail(), staff.getFirstName() + " " + staff.getLastName(), encodedString);
+                emailService.sendEmailChangeEmail(staff.getEmail(), staff.getFirstName() + " " + staff.getLastName(),
+                        encodedString);
 
                 JSONBody results = new JSONBody(204);
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NO_CONTENT);
@@ -333,7 +330,8 @@ public class StaffService {
 
                 sRepository.save(staff);
 
-                emailService.sendEmailChangeEmail(staff.getEmail(), staff.getFirstName() + " " + staff.getLastName(), encodedString);
+                emailService.sendEmailChangeEmail(staff.getEmail(), staff.getFirstName() + " " + staff.getLastName(),
+                        encodedString);
 
                 JSONBody results = new JSONBody(204);
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NO_CONTENT);
@@ -363,12 +361,14 @@ public class StaffService {
 
                 return response;
             } else if (!staff.getHashedPassword().equals(hashPassword(dto.getOldPassword()))) {
-                JSONWithMessage results = new JSONWithMessage(401, "The specified user is not authorised to use this service. ");
+                JSONWithMessage results = new JSONWithMessage(401,
+                        "The specified user is not authorised to use this service. ");
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
 
                 return response;
             } else if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
-                JSONWithMessage results = new JSONWithMessage(400, "The specified new password does not match the confirmation password. ");
+                JSONWithMessage results = new JSONWithMessage(400,
+                        "The specified new password does not match the confirmation password. ");
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.BAD_REQUEST);
 
                 return response;
@@ -402,7 +402,8 @@ public class StaffService {
                 String encodedString = Base64.getEncoder().encodeToString(registerKey.getBytes());
                 staff.setHashedPassword(hashPassword(encodedString));
 
-                emailService.sendPasswordChangeEmail(staff.getEmail(), staff.getFirstName() + " " + staff.getLastName(), encodedString);
+                emailService.sendPasswordChangeEmail(staff.getEmail(), staff.getFirstName() + " " + staff.getLastName(),
+                        encodedString);
 
                 sRepository.save(staff);
 
@@ -493,28 +494,30 @@ public class StaffService {
     }
 
     // public ResponseEntity<JSONBody> signIn(SignInDto signInDto) {
-    //     // Check if user exists by email
-    //     String staffEmail = signInDto.getEmail();
-    //     Staff staff = sRepository.findByEmail(staffEmail);
+    // // Check if user exists by email
+    // String staffEmail = signInDto.getEmail();
+    // Staff staff = sRepository.findByEmail(staffEmail);
 
-    //     if (staff == null) {
-    //         throw new BadRequestException("Staff of email: " + staffEmail + " not found");
-    //     }
+    // if (staff == null) {
+    // throw new BadRequestException("Staff of email: " + staffEmail + " not
+    // found");
+    // }
 
-    //     if (!staff.getHashedPassword().equals(hashPassword(signInDto.getPassword()))) {
-    //         throw new BadRequestException("Wrong password");
-    //     }
+    // if (!staff.getHashedPassword().equals(hashPassword(signInDto.getPassword())))
+    // {
+    // throw new BadRequestException("Wrong password");
+    // }
 
-    //     // if password match, retrieve the token
-    //     AuthenticationToken token = authenticationService.getToken(staff);
+    // // if password match, retrieve the token
+    // AuthenticationToken token = authenticationService.getToken(staff);
 
-    //     if (token == null) {
-    //         throw new InternalServerException("Token is not present");
-    //     }
+    // if (token == null) {
+    // throw new InternalServerException("Token is not present");
+    // }
 
-    //     JSONWithData<SignInReponseDto> body = new JSONWithData<>(200,
-    //             new SignInReponseDto(staff.getStaffId(), token.getToken()));
-    //     return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+    // JSONWithData<SignInReponseDto> body = new JSONWithData<>(200,
+    // new SignInReponseDto(staff.getStaffId(), token.getToken()));
+    // return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
     // }
 
     // ------------------------------------------------------------------------------------------------
@@ -538,8 +541,7 @@ public class StaffService {
             return hash;
         } catch (NoSuchAlgorithmException e) {
             throw new InternalServerException(
-                "Exception occurred when hashing password. No such algorithm exists: " + hashingAlgorithm
-            );
+                    "Exception occurred when hashing password. No such algorithm exists: " + hashingAlgorithm);
         }
     }
 
@@ -549,9 +551,9 @@ public class StaffService {
         Random random = new Random();
 
         String result = random.ints(lowerLimit, upperLimit + 1)
-                        .limit(length)
-                        .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                        .toString();
+                .limit(length)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
 
         return result;
     }

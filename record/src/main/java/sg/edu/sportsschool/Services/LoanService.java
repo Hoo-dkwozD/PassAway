@@ -5,7 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -14,8 +17,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
 
@@ -48,7 +53,7 @@ public class LoanService {
     private StaffService staffService;
     private EmailService emailService;
 
-    private final String STATIC_FOLDER = System.getProperty("user.dir") + "src/main/resources/static";
+    private final String STATIC_FOLDER = System.getProperty("user.dir") + "/src/main/resources/static/";
 
     @Autowired
     public LoanService(LoanRepository loRepository, AttractionService aService, PassService pService,
@@ -62,24 +67,35 @@ public class LoanService {
 
     public ResponseEntity<JSONBody> getAllLoans() {
         try {
-            List<LoanResponseDto> response = new ArrayList<>();
             List<Loan> loans = lRepository.findAll();
             
-            // TODO insert code to get previous borrower from kaiwei
+            List<LoanResponseDto> response = createLoanResponseDto(loans);
             
-
-            for (Loan l : loans) {
-                Staff s = l.getStaff();
-                Pass p = l.getPass();
-                response.add(new LoanResponseDto(l.getLoanId(), s.getFirstName(), s.getEmail(), l.getStartDate(),
-                        p.getAttraction().getName(), l.isHasCollected(), l.isHasReturned(), p.getPassId(), p.isLost(),
-                        "prevBorrowerName", "prevBorrowerContact"));
-            }
             JSONWithData<List<LoanResponseDto>> body = new JSONWithData<>(200, response);
             return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
 
         } catch (Exception e) {
             throw new InternalServerException("Server unable to retrieve all loans");
+        }
+    }
+
+    public ResponseEntity<JSONBody> getLoan(int id) {
+        try {
+            Optional<Loan> optLoan = lRepository.findById(id);
+            if (!optLoan.isPresent()) {
+                throw new BadRequestException("Loan with id " + id + " does not exist");
+            }
+
+            Loan l = optLoan.get();
+            List<Loan> temp = new ArrayList<>();
+            temp.add(l);
+            
+            List<LoanResponseDto> response = createLoanResponseDto(temp);
+
+            return new ResponseEntity<JSONBody>(new JSONWithData<>(200, response), HttpStatus.OK);
+
+        } catch (Exception e) {
+            throw new InternalServerException("Server unable to get loan of id: " + id);
         }
     }
 
@@ -111,7 +127,8 @@ public class LoanService {
         // Cannot book if today < visit date - 8 months
         Date vDate = Date.valueOf(String.format("%d-%d-%d", yyyy, mm, dd));
         if (isBookingTooEarly(vDate)) {
-            throw new BadRequestException("Booking date is too early. You can only book up to 8 months before visit date.");
+            throw new BadRequestException(
+                    "Booking date is too early. You can only book up to 8 months before visit date.");
         }
 
         // Cannot book if # passes borrower has + passes requested > aMaxPassesPerLoan
@@ -134,7 +151,8 @@ public class LoanService {
                     "Unable to make anymore loans. Max. loans per month is %d. You have %d loans for (yyyy-mm): %d-%d currently. Cancel other loans if you wish to make new loans.",
                     maxLoansPerMonth, loanCountInMonth, yyyy, mm));
 
-        // Cannot book if # available pass for that attraction for the date < # passes that user requested
+        // Cannot book if # available pass for that attraction for the date < # passes
+        // that user requested
         Set<Pass> availablePassesForLoan = getAvailablePassesForDate(aId, yyyyString, mmString, ddString);
         if (availablePassesForLoan.size() < numPassesRequested)
             throw new InternalServerException(String.format(
@@ -143,57 +161,61 @@ public class LoanService {
 
         // assign passes if can book
         TreeSet<Pass> sortedAvailablePasses = sortSetPasses(availablePassesForLoan);
-        assignPasses(sortedAvailablePasses, staff, yyyy, mm, dd, numPassesRequested);
+        List<Loan> loans = assignPasses(sortedAvailablePasses, staff, yyyy, mm, dd, numPassesRequested);
+        List<LoanResponseDto> response = createLoanResponseDto(loans);
 
         // Send confirmation email
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, d MMM YYYY"); // e.g. Wednesday, 2 Oct 2022
         String visitDate = dateFormat.format(vDate);
         dateFormat = new SimpleDateFormat("d MMM YYYY"); // e.g. 2 Oct 2022
         String ballotDate = dateFormat.format(new Date(System.currentTimeMillis()));
-        
+
         // Send confirmation email with corporate letter if digital pass
         if (a.getPassType() == PassType.DIGITAL) { // check barcode present if digital pass
             String barcodeImagePath = a.getBarcodeImage();
+            System.out.println(barcodeImagePath);
             byte[] barcodeImage = null;
             try {
+                // System.out.println(Paths.get(STATIC_FOLDER, barcodeImagePath));
                 barcodeImage = Files.readAllBytes(Paths.get(STATIC_FOLDER, barcodeImagePath));
             } catch (IOException e) {
                 throw new BadRequestException("Barcode for attraction " + a.getName() + " is not set yet.");
             }
 
             try {
-                emailService.sendEmailWithCorpLetter(staff.getEmail(), staff.getFirstName(), ballotDate, visitDate, a, barcodeImage);
+                emailService.sendEmailWithCorpLetter(staff.getEmail(), staff.getFirstName(), ballotDate, visitDate, a,
+                        barcodeImage);
                 System.out.println("Confirmation email sent successfully");
-                
+
             } catch (MessagingException e) {
                 // TODO Log the error here
             }
         } else {
             try {
                 emailService.sendEmailWithAuthLetter(staff.getEmail(), staff.getFirstName(), ballotDate, visitDate, a);
-                
+
             } catch (MessagingException e) {
                 // TODO: Log the error here
             }
         }
 
         System.out.println("Returning body in loan service");
-        return new ResponseEntity<JSONBody>(new JSONWithMessage(200, "Loans added successfully"), HttpStatus.OK);
+        return new ResponseEntity<JSONBody>(new JSONWithData<List<LoanResponseDto>>(200, response), HttpStatus.OK);
 
     }
 
     public ResponseEntity<JSONBody> getNumAvailablePassesForMonth(Integer aId, int yyyy, int mm) {
         String yyyyString = yyyy + "";
         String mmString = (mm < 10) ? "0" + mm : mm + "";
-        
+
         Map<String, Integer> res = new HashMap<>();
         Set<Pass> allAttrPasses = pService.returnAllPassesByAttrId(aId);
-        
+
         if (allAttrPasses == null) {
             throw new InternalServerException(
                     "Server unable to get passes for attraction id" + aId + " from database.");
         }
-        
+
         int totalNumPasses = allAttrPasses.size();
         if (totalNumPasses == 0) {
             throw new BadRequestException("No passes have been allocated yet for attraction id: " + aId);
@@ -204,10 +226,11 @@ public class LoanService {
             int daysInMonth = yearMonthObj.lengthOfMonth();
             for (int i = 1; i <= daysInMonth; i++) {
                 String ddString = (i < 10) ? "0" + i : i + "";
-                Integer numAvailPasses = totalNumPasses - lRepository.getLoanedPassesByDate(aId, yyyyString, mmString, ddString).size();
+                Integer numAvailPasses = totalNumPasses
+                        - lRepository.getLoanedPassesByDate(aId, yyyyString, mmString, ddString).size();
                 res.put(yearMonthObj.atDay(i).toString(), numAvailPasses); // e.g. {"2020-12-01": 30}
             }
-            
+
             JSONWithData<Map<String, Integer>> body = new JSONWithData<>(200, res);
             return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
 
@@ -223,15 +246,19 @@ public class LoanService {
             List<LoanResponseDto> response = new ArrayList<>();
             List<Loan> loans = lRepository.getLoanedPassByEmail(email);
 
-            // TODO insert code to get previous borrower from kaiwei
-
             for (Loan l : loans) {
                 Staff s = l.getStaff();
                 Pass p = l.getPass();
-                List<Loan> prevBorrowers = lRepository.getPrevBorrowers(p.getPassId(), s.getStaffId(), null);
+                List<Loan> prevBorrowers = getPrevBorrowers(p.getPassId(), s.getStaffId(),
+                        l.getStartDate());
+                String prevBorrowerName = (prevBorrowers.size() > 0) ? prevBorrowers.get(0).getStaff().getFirstName()
+                        : "None";
+                String prevBorrowerContact = (prevBorrowers.size() > 0)
+                        ? prevBorrowers.get(0).getStaff().getContactNumber()
+                        : "None";
                 response.add(new LoanResponseDto(l.getLoanId(), s.getFirstName(), s.getEmail(), l.getStartDate(),
                         p.getAttraction().getName(), l.isHasCollected(), l.isHasReturned(), p.getPassId(), p.isLost(),
-                        "prevBorrowerName", "prevBorrowerContact"));
+                        prevBorrowerName, prevBorrowerContact));
             }
             JSONWithData<List<LoanResponseDto>> body = new JSONWithData<>(200, response);
             return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
@@ -240,7 +267,7 @@ public class LoanService {
             throw new InternalServerException("Server unable to get all loans of email: " + email);
         }
     }
-    
+
     public ResponseEntity<JSONBody> collectPasses(String emailTo, List<Integer> loanIds) {
         try {
             Iterator<Loan> loans = lRepository.findAllById(loanIds).iterator();
@@ -304,24 +331,39 @@ public class LoanService {
     }
 
     public ResponseEntity<JSONBody> cancelLoans(List<Integer> loanIds) {
-        // TODO Only can cancel up to 1 day before the loan
+        if (loanIds == null) {
+            throw new BadRequestException("Please select loan(s) to cancel.");
+        }
+
+        List<Integer> canCancelLoanIds = new ArrayList<>();
+        List<Integer> cannotCancelLoanIds = new ArrayList<>();
+        List<Loan> allLoans = lRepository.findAllById(loanIds);
+        for (Loan loan : allLoans) {
+            if (loan.getStartDate().before(Date.valueOf(LocalDate.now().plusDays(1)))) {
+                cannotCancelLoanIds.add(loan.getLoanId());
+            } else {
+                canCancelLoanIds.add(loan.getLoanId());
+            }
+        }
         try {
-            lRepository.deleteAllById(loanIds);
-            return new ResponseEntity<JSONBody>(new JSONWithMessage(200, "successfully deleted loans"), HttpStatus.OK);
+            lRepository.deleteAllById(canCancelLoanIds);
+            
+            if (cannotCancelLoanIds.size() > 0) {
+                return new ResponseEntity<JSONBody>(new JSONWithMessage(200, "successfully deleted loans: " + canCancelLoanIds + " Unable to cancel loans of: " + cannotCancelLoanIds + " 1 day before the visit date."), HttpStatus.OK); 
+            } else {
+                return new ResponseEntity<JSONBody>(new JSONWithMessage(200, "successfully deleted loans: " + canCancelLoanIds), HttpStatus.OK); 
+            }
+            
         } catch (Exception e) {
             throw new InternalServerException("Server unable to delete loans");
         }
     }
-    
-    
 
     // ------------------------------------------------------------------------------------------------
     // -- Non-JSON response Methods
     public Integer getNumPassesLoanedOnDate(Integer staffId, String yyyy, String mm, String dd, Integer aId) {
         return lRepository.getNumPassesLoanedOnDate(staffId, yyyy, mm, dd, aId);
     }
-
-    
 
     public Set<Pass> getAvailablePassesForDate(Integer aId, String yyyyString, String mmString, String ddString) {
         Set<Pass> availableAttrPasses = pService.returnAllPassesByAttrId(aId);
@@ -349,7 +391,7 @@ public class LoanService {
         return sortedPasses;
     }
 
-    public void assignPasses(TreeSet<Pass> sortedAvailablePasses, Staff staff, int yyyy, int mm, int dd,
+    public List<Loan> assignPasses(TreeSet<Pass> sortedAvailablePasses, Staff staff, int yyyy, int mm, int dd,
             int numPassesRequested) {
         int i = 0; // counter to add number of passes according to numPassesRequested
         Date startDate = Date.valueOf(String.format("%d-%d-%d", yyyy, mm, dd));
@@ -360,17 +402,24 @@ public class LoanService {
         if (calendar.get(Calendar.DAY_OF_YEAR) % 2 == 0) { // assign passes from behind/front if day is even/odd
             availablePasses = sortedAvailablePasses.descendingIterator();
         }
-
+        List<Loan> res = new ArrayList<>();
         // Add loan according to the number of passes that borrower wants
         while (availablePasses.hasNext() && (i < numPassesRequested)) {
             Pass pass = availablePasses.next();
-            boolean hasCollectedReturned = pass.getAttraction().getPassType() == PassType.DIGITAL ? true : false; // true/false for
-                                                                                                     // digital/physical
-                                                                                                     // pass
-            Loan loan = new Loan(staff, pass, startDate, hasCollectedReturned, hasCollectedReturned);
+            boolean hasCollectedReturned = pass.getAttraction().getPassType() == PassType.DIGITAL ? true : false; // true/false
+                                                                                                                  // digital/physical
+                                                                                                                  // pass
+            Loan loan = new Loan(
+                    staff,
+                    pass,
+                    startDate,
+                    hasCollectedReturned,
+                    hasCollectedReturned);
+            res.add(loan);
             lRepository.save(loan);
             i++;
         }
+        return res;
 
     }
 
@@ -381,10 +430,30 @@ public class LoanService {
         return today.before(earliestDateToBook);
     }
 
-    
-    
+    public List<Loan> getPrevBorrowers(String passId, Integer staffId, Date visitDate) {
+        return lRepository.getPrevBorrowers(passId, staffId, visitDate);
+    }
 
-      
+    public List<LoanResponseDto> createLoanResponseDto(List<Loan> loans) {
+        List<LoanResponseDto> res = new ArrayList<>();
+
+        for (Loan l : loans) {
+            Staff s = l.getStaff();
+            Pass p = l.getPass();
+            List<Loan> prevBorrowers = getPrevBorrowers(p.getPassId(), s.getStaffId(),
+                    l.getStartDate());
+            String prevBorrowerName = (prevBorrowers.size() > 0) ? prevBorrowers.get(0).getStaff().getFirstName()
+                    : "None";
+            String prevBorrowerContact = (prevBorrowers.size() > 0)
+                    ? prevBorrowers.get(0).getStaff().getContactNumber()
+                    : "None";
+            res.add(new LoanResponseDto(l.getLoanId(), s.getFirstName(), s.getEmail(), l.getStartDate(),
+                    p.getAttraction().getName(), l.isHasCollected(), l.isHasReturned(), p.getPassId(), p.isLost(),
+                    prevBorrowerName, prevBorrowerContact));
+        }
+
+        return res;
+    }
 
     // -- Following codes are used for testing only
 

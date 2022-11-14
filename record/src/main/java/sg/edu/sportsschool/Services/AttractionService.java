@@ -32,7 +32,7 @@ import sg.edu.sportsschool.Repositories.AttractionRepository;
 @Service
 public class AttractionService {
     private AttractionRepository aRepository;
-    private final String STATIC_FOLDER = System.getProperty("user.dir") + "/src/main/resources/static";
+    private final String STATIC_FOLDER = System.getProperty("user.dir") + "/src/main/resources/static/";
 
     @Autowired
     public AttractionService(AttractionRepository aRepository) {
@@ -189,11 +189,11 @@ public class AttractionService {
             if (imageType == ImageType.BACKGROUND) {
                 Path newFilePath = Paths.get(STATIC_FOLDER, "staticAttractions", newFileName);
                 Files.write(newFilePath, file.getBytes());
-                a.setBackgroundImage("attractions/" + newFileName);
+                a.setBackgroundImage("staticAttractions/" + newFileName);
             } else {
                 Path newFilePath = Paths.get(STATIC_FOLDER, "staticAttractionBarcodes", newFileName);
                 Files.write(newFilePath, file.getBytes());
-                a.setBarcodeImage("attractionBarcodes/" + newFileName);    
+                a.setBarcodeImage("staticAttractionBarcodes/" + newFileName);    
             }
 
             aRepository.save(a);
