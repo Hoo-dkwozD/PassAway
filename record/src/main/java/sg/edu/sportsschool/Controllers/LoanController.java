@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import sg.edu.sportsschool.DTO.Request.LoanDTO;
+import sg.edu.sportsschool.DTO.Request.UpdateLoanDto;
 import sg.edu.sportsschool.Entities.Loan;
 import sg.edu.sportsschool.Helper.Json.JSONBody;
 import sg.edu.sportsschool.Helper.Json.JSONWithData;
@@ -68,6 +69,16 @@ public class LoanController {
     @PutMapping(path = "/collect")
     public ResponseEntity<JSONBody> collectPasses(@RequestParam String emailTo, @RequestParam List<Integer> loanIds) {
         return lService.collectPasses(emailTo, loanIds);
+    }
+
+    @PutMapping(path = "/pass/returnStatus")
+    public ResponseEntity<JSONBody> updateReturned(@RequestBody UpdateLoanDto dto) {
+        return lService.updateReturned(dto);
+    }
+
+    @PutMapping(path = "/pass/collectStatus")
+    public ResponseEntity<JSONBody> updateCollected(@RequestBody UpdateLoanDto dto) {
+        return lService.updateCollected(dto);
     }
 
     // TODO Cancellation of loans

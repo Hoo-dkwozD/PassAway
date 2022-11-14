@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import sg.edu.sportsschool.Entities.Attraction;
 import sg.edu.sportsschool.Entities.Pass;
-import sg.edu.sportsschool.Exceptions.BadRequestException;
 import sg.edu.sportsschool.Exceptions.InternalServerException;
 import sg.edu.sportsschool.Helper.ReadCsv;
 import sg.edu.sportsschool.Helper.Json.JSONBody;

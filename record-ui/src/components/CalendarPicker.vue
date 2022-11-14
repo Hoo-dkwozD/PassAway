@@ -32,6 +32,8 @@ type ticketInformation = {
   dates: Date;
   color: string;
 };
+
+
 // type date = {
 //   weekdays: number
 // }
@@ -45,6 +47,22 @@ export default defineComponent({
   name: "CalendarPicker",
   data(): Data {
     //contain dates where there are passes booked
+
+    let apiResponse = [{
+      date: "2022-11-1",
+      description: "some description"
+    }]
+
+    const ticketInformation2 = apiResponse.map( apiResponseElement => {
+      return {
+        description: apiResponseElement.description,
+        isComplete: false,
+        dates: new Date(apiResponseElement.date),
+        color: "red"
+      }
+    })
+
+
     const ticketInformation = [
       {
         description: "2 Passes left",
