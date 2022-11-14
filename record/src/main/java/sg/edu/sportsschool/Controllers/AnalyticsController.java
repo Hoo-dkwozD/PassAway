@@ -1,5 +1,7 @@
 package sg.edu.sportsschool.Controllers;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,8 +25,8 @@ public class AnalyticsController {
         this.analyticsService = analyticsService;
     }
 
-    @GetMapping("/loanTrend")
-    public ResponseEntity<JSONBody> loanTrend(@RequestBody AnalyticsDto dto) {
-        return this.analyticsService.loanTrend(dto);
+    @GetMapping("/loan/csv")
+    public void loanTrend(@RequestBody AnalyticsDto dto, HttpServletResponse response) {
+        this.analyticsService.getLoanCSV(dto, response);
     }
 }
