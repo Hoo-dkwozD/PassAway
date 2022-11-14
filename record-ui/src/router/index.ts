@@ -8,12 +8,11 @@ import AnalyticsView from '../views/AnalyticsView.vue'
 import Admin from '../views/Admin.vue'
 import EditBarCode from '../views/EditBarCode.vue'
 
-function requireAuth(to,from,next){
+function requireAuth(to, from, next){
   console.log(this);
   console.log(this.$cookies.get('id'));
   next();
 }
-
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

@@ -28,9 +28,27 @@ public class AnalyticsService {
         this.loanRepository = loanRepository;
     }
 
-    public ResponseEntity<JSONBody> loanTrend(AnalyticsDto dto) {
-        return null;
-    }
+    // public ResponseEntity<JSONBody> loanTrend(AnalyticsDto dto) {
+    //     String startDateString = toProperDateString(
+    //         dto.getFromYear(), 
+    //         dto.getFromMonth(), 
+    //         dto.getFromDay()
+    //     );
+
+    //     Date startDate = Date.valueOf(startDateString);
+
+    //     String endDateString = toProperDateString(
+    //         dto.getToYear(), 
+    //         dto.getToMonth(), 
+    //         dto.getToDay()
+    //     );
+
+    //     Date endDate = Date.valueOf(endDateString);
+
+    //     List<Loan> loans = loanRepository.getLoansBetweenDates(startDate, endDate);
+
+    //     List<String[]> csv = loansToCSV(loans);
+    // }
 
     public void getLoanCSV(AnalyticsDto dto, HttpServletResponse response) {
         response.setContentType("text/csv; charset=utf-8");

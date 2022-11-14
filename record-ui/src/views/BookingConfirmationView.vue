@@ -11,8 +11,7 @@ export default defineComponent({
   name: 'BookingConfirmationView',
   components: { BookingConfirmation },
   data() {
-    return {
-    };
+    return {};
   },
   methods: {
     
