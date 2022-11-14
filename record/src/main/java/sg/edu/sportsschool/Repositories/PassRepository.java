@@ -10,4 +10,7 @@ import sg.edu.sportsschool.Entities.Pass;
 public interface PassRepository extends JpaRepository<Pass, String> {
     @Query("SELECT p FROM Pass p WHERE p.attraction.attractionId = :aId")
     Set<Pass> findAllPassesByAttrId(Integer aId);
+
+    @Query("SELECT p FROM Pass p WHERE p.attraction.attractionId = :aId AND p.passId = :passId")
+    Set<Pass> findAllPassesByAttrIdAndPassId(Integer aId, String passId);
 }
