@@ -106,6 +106,7 @@ export default defineComponent({
 </script>
 
 <template>
+    <Navbar></Navbar>
     <div class="content" style="margin-top: 80px;">
         <div class="container-fluid">
             <div class="row">

@@ -1,13 +1,14 @@
 <template>
+  <NavBar></NavBar>
   <div
-    class="imageDiv p-5 mb-5"
+    class="imageDiv p-5 mb-5 container-fluid"
     :style="{ backgroundImage: `url(${currentBackground})` }"
   >
     <div>
       <h1 class="text-center">{{ title }}</h1>
     </div>
 
-    <div class="table-responsive tableblock">
+    <div class="table-responsive tableblock col-6">
       <table class="table table-hover border shadow p-3 mb-5 bg-white rounded">
         <tbody>
           <thead class="table-active bookingfont">
@@ -40,17 +41,7 @@
       </table>
     </div>
 
-    <div class="text-center m-5 p-5">
-      <button
-        type="button"
-        class="btn btn-color btn-lg btn-block"
-        @click="showPreviousLoaner"
-      >
-        Check previous borrower
-      </button>
-    </div>
-
-    <div class="table-responsive tableblock">
+    <div class="table-responsive tableblock col-6">
       <table
         class="table table-hover border shadow p-3 mb-5 bg-white rounded"
         v-if="checkLoaner"
@@ -83,11 +74,24 @@
         </tbody>
       </table>
     </div>
+
+
+    <div class="text-center m-5 p-5">
+      <button
+        type="button"
+        class="btn btn-color btn-lg btn-block"
+        @click="showPreviousLoaner"
+      >
+        Check previous borrower
+      </button>
+    </div>
     <div class="py-5"></div>
   </div>
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
+import NavBar from "@/components/Navbar.vue";
 //get loan by id
 //pass the output from the api to the respective table rows
 interface Data {
@@ -96,7 +100,7 @@ interface Data {
   id: number;
   currentBackground: string;
 }
-export default {
+export default defineComponent({
   data(): Data {
     return {
       title: "Your booking is successful!",
@@ -108,17 +112,15 @@ export default {
   },
   created() {
     //test and see what's the issue
-    this.id = parseInt(this.$route.params.id);
+    console.log(id);
   },
   methods: {
     showPreviousLoaner() {
       this.checkLoaner = this.checkLoaner ? false : true;
     },
   },
-  props: {
-    loanDetails: Object,
-  },
-};
+  props: ['id'],
+});
 </script>
 
 <style>
@@ -147,8 +149,8 @@ h2 {
 }
 
 .tableblock {
-  margin-right: 500px;
-  margin-left: 500px;
+  margin-right: 400px;
+  margin-left: 400px;
   padding-left: 100px;
   padding-right: 100px;
 }

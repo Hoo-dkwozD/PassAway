@@ -2,7 +2,7 @@
 import { defineComponent } from "vue";
 
     export default defineComponent({
-        name: 'appSignup',
+        name: 'Signup',
         data() {
             return {
                 emailInvalid: false,

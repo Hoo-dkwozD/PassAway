@@ -2,13 +2,15 @@
 <script lang="ts">
 import * as d3 from "d3";
 import { defineComponent} from "vue";
+import NavBar from '../components/Navbar.vue';
 const userData: any[] = []
+const filteredData: any[] = []
 export default defineComponent({
     data() {
         return {
             xAxisVariable: "day",
             graphWidth: document.documentElement.clientWidth * 60 / 100,
-            filteredData: [],
+            filteredData,
             userBorrowedPasses: [],
             calorieLimit: 0,
             numOfPasses: [
@@ -21,6 +23,9 @@ export default defineComponent({
             userData,
             currDate: new Date(),
         }
+    },
+    components:{
+        NavBar
     },
     methods: {
         //takes in the userId and specified from and to date
@@ -322,6 +327,7 @@ export default defineComponent({
 </style>
 
 <template>
+    <NavBar></NavBar>
     <div class="row box">
         <div style="width:90%" class="p-3 mx-auto col-6">
             <h2 style="text-align:left">Overview</h2>
