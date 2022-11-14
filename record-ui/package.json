@@ -16,7 +16,9 @@
     "@fortawesome/fontawesome-free": "^6.2.0",
     "@mdi/font": "5.9.55",
     "axios": "^0.27.2",
+    "bootstrap": "^5.2.2",
     "cors": "^2.8.5",
+    "d3": "^7.6.1",
     "express": "^4.18.1",
     "morgan": "^1.10.0",
     "pinia": "^2.0.23",
@@ -29,6 +31,7 @@
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.4",
+    "@types/d3": "^7.4.0",
     "@types/jsdom": "^20.0.0",
     "@types/node": "^16.11.47",
     "@types/webfontloader": "^1.0.0",
