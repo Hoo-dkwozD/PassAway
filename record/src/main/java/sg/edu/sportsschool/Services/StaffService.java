@@ -2,6 +2,7 @@ package sg.edu.sportsschool.Services;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import sg.edu.sportsschool.DTO.Request.CreateStaffDto;
 import sg.edu.sportsschool.DTO.Request.RegisterStaffDto;
 import sg.edu.sportsschool.DTO.Request.UpdatePasswordDto;
 import sg.edu.sportsschool.DTO.Request.UpdateProfileDto;
+import sg.edu.sportsschool.Entities.Loan;
 import sg.edu.sportsschool.Entities.Staff;
 import sg.edu.sportsschool.Exceptions.InternalServerException;
 import sg.edu.sportsschool.Helper.ReadCsv;
@@ -31,6 +33,7 @@ import sg.edu.sportsschool.Helper.StaffRole;
 import sg.edu.sportsschool.Helper.Json.JSONBody;
 import sg.edu.sportsschool.Helper.Json.JSONWithData;
 import sg.edu.sportsschool.Helper.Json.JSONWithMessage;
+import sg.edu.sportsschool.Repositories.LoanRepository;
 import sg.edu.sportsschool.Repositories.StaffRepository;
 
 @Service
@@ -39,12 +42,14 @@ public class StaffService {
     private StaffRepository sRepository;
     // private AuthenticationService authenticationService;
     private EmailService emailService;
+    private LoanRepository lRepository;
 
     @Autowired
-    public StaffService(StaffRepository sRepository, EmailService emailService) {
+    public StaffService(StaffRepository sRepository, EmailService emailService, LoanRepository lRepository) {
         this.sRepository = sRepository;
         // this.authenticationService = authenticationService;
         this.emailService = emailService;
+        this.lRepository = lRepository;
     }
 
     public ResponseEntity<JSONBody> getAllStaff() {
@@ -431,6 +436,12 @@ public class StaffService {
                 staff.setDisabled(true);
 
                 sRepository.save(staff);
+
+                List<Loan> futureLoans = lRepository.getFutureLoanedPassByEmail(staff.getEmail(), new Date(System.currentTimeMillis()));
+
+                for (Loan loan : futureLoans) {
+                    lRepository.delete(loan);
+                }
 
                 JSONWithData<Staff> body = new JSONWithData<>(200, staff);
                 return new ResponseEntity<JSONBody>(body, HttpStatus.OK);

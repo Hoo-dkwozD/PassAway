@@ -46,11 +46,21 @@ public interface LoanRepository extends JpaRepository<Loan, Integer> {
             SELECT l FROM Loan l WHERE l.staff.email = :staffEmail
             """)
     List<Loan> getLoanedPassByEmail(String staffEmail);
-    
+
+    @Query(value = """
+            SELECT l FROM Loan l WHERE l.staff.email = :staffEmail AND l.startDate >= :currentDate 
+            """)
+    List<Loan> getFutureLoanedPassByEmail(String staffEmail, Date currentDate);
+
     @Query(value = """
             SELECT * FROM Loan WHERE start_date = :reminderDate AND has_collected = FALSE
             """, nativeQuery = true)
     List<Loan> getReminderDateLoans(Date reminderDate);
+
+    @Query(value = """
+            SELECT * FROM Loan WHERE start_date >= :startDate AND start_date <= :endDate
+            """, nativeQuery = true)
+    List<Loan> getLoansBetweenDates(Date startDate, Date endDate);
 
     @Query(value = """
             SELECT * FROM Loan WHERE start_date < :overdueDate AND has_returned = FALSE
