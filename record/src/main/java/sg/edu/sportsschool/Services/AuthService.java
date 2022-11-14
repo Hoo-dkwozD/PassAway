@@ -18,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -90,6 +91,7 @@ public class AuthService {
                 return response;
             }
         } catch (Exception e) {
+            e.printStackTrace();
             JSONWithMessage results = new JSONWithMessage(500, "Server unable to authenticate. ");
             ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -135,14 +137,14 @@ public class AuthService {
             String publicKeyString = targetAuth.getPublicKey();
 
             byte[] keyBytes = (new Base64()).decode(privateKeyString.getBytes("utf-8"));
-            X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+            PKCS8EncodedKeySpec privateSpec = new PKCS8EncodedKeySpec(keyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            RSAPrivateKey privateKey = (RSAPrivateKey)keyFactory.generatePrivate(spec);
+            RSAPrivateKey privateKey = (RSAPrivateKey)keyFactory.generatePrivate(privateSpec);
 
             keyBytes = (new Base64()).decode(publicKeyString.getBytes("utf-8"));
-            spec = new X509EncodedKeySpec(keyBytes);
+            X509EncodedKeySpec publicSpec = new X509EncodedKeySpec(keyBytes);
             keyFactory = KeyFactory.getInstance("RSA");
-            RSAPublicKey publicKey = (RSAPublicKey)keyFactory.generatePublic(spec);
+            RSAPublicKey publicKey = (RSAPublicKey)keyFactory.generatePublic(publicSpec);
 
             Map<String, Object> results = new HashMap<>();
             results.put("private", privateKey);

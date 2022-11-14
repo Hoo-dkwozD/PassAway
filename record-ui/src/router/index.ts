@@ -1,19 +1,18 @@
 import { createRouter, createWebHistory } from "vue-router";
 import SampleView from "../views/SampleView.vue";
-import AboutView from "../views/AboutView.vue";
-import BookView from '../views/BookView.vue'
-import BookingConfirmationView from "../views/BookingConfirmationView.vue"
-import Profile from '../views/Profile.vue'
-import ProfilePassword from '../views/ProfilePassword.vue'
-import GOPLandingPage from '../views/GOPLandingPage.vue'
-import AnalyticsView from '../views/AnalyticsView.vue'
+import LoginView from "../views/LoginView.vue";
+import BookView from '../views/BookView.vue';
+import BookingConfirmationView from "../views/BookingConfirmationView.vue";
+import Profile from '../views/Profile.vue';
+import ProfilePassword from '../views/ProfilePassword.vue';
+import GOPLandingPage from '../views/GOPLandingPage.vue';
+import AnalyticsView from '../views/AnalyticsView.vue';
 
-function requireAuth(to,from,next){
+function requireAuth(to, from, next){
   console.log(this);
   console.log(this.$cookies.get('id'));
   next();
 }
-
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,7 +31,7 @@ const router = createRouter({
     {
       path: "/signin",
       name: "Sign In",
-      component: AboutView,
+      component: LoginView,
     },
     {
       path: "/bookingconfirmation",

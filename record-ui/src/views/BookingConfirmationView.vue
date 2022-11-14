@@ -2,13 +2,13 @@
   <booking-confirmation></booking-confirmation>
 </template>
 
-<script>
+<script lang="ts">
 import BookingConfirmation from "../components/BookingConfirmation.vue"
+
 export default {
   components: { BookingConfirmation },
   data() {
-    return {
-    };
+    return {};
   },
   methods: {},
 };
