@@ -4,6 +4,13 @@ import AboutView from "../views/AboutView.vue";
 import BookView from '../views/BookView.vue'
 import BookingConfirmationView from "../views/BookingConfirmationView.vue"
 
+function requireAuth(to,from,next){
+  console.log(this);
+  console.log(this.$cookies.get('id'));
+  next();
+}
+
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [

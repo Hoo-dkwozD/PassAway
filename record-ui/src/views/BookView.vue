@@ -1,15 +1,14 @@
 <template>
-  <Test></Test>
+  <Booking></Booking>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import ToDo from "../components/ToDo.vue";
-import Test from "../components/Test.vue";
+import Booking from "../components/Booking.vue";
 
 export default defineComponent({
   components: {
-    Test,
+    Booking,
   },
 });
 </script>
