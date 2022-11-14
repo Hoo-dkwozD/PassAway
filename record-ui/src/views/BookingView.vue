@@ -1,5 +1,5 @@
 <template>
-
+  <Navbar></Navbar>
   <div class="container">
     <div class="row" id="sectionheader">
       <h1>Singapore Zoo</h1>
@@ -75,7 +75,7 @@ import type { ComponentPublicInstance } from "vue";
 import { defineComponent } from "vue";
 import Calendar from "../components/Calendar.vue";
 import { useCounterStore } from "../stores/counter";
-
+import Navbar from '../components/Navbar.vue'
 // Typings
 interface Data {
   locationSelected: String[];
@@ -99,6 +99,9 @@ export default defineComponent({
       store: useCounterStore(),
     };
   },
+  components:{
+    Navbar
+  },
   async created() {
     const MAX_PASS = 3;
 
@@ -109,9 +112,6 @@ export default defineComponent({
 
   methods: {},
   props: {},
-  components: {
-    Calendar,
-  },
 });
 </script>
 

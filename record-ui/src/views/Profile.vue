@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import axios from 'axios';
+import Navbar from '../components/Navbar.vue';
 
 // Typings
 interface ProfileData {
@@ -104,11 +105,15 @@ export default defineComponent({
         fullName(): String {
             return this.firstName + " " + this.lastName;
         }
+    },
+    components:{
+        Navbar
     }
 })
 </script>
 
 <template>
+    <Navbar></Navbar>
     <div class="content" style="margin-top: 80px;">
         <div class="container-fluid">
             <div class="row align-items-stretch">
