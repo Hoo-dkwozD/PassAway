@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -25,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import sg.edu.sportsschool.DTO.Request.LoanDTO;
+import sg.edu.sportsschool.DTO.Request.UpdateLoanDto;
 import sg.edu.sportsschool.DTO.Response.LoanResponseDto;
 import sg.edu.sportsschool.Entities.Attraction;
 import sg.edu.sportsschool.Entities.Loan;
@@ -300,6 +302,45 @@ public class LoanService {
 
         } catch (Exception e) {
             throw new InternalServerException("Server unable to get all loans of reminder date ");
+        }
+    }
+
+    public ResponseEntity<JSONBody> updateCollected(UpdateLoanDto dto) {
+        Optional<Loan> optLoan = lRepository.findById(dto.getLoanId());
+
+        if (!optLoan.isPresent()) {
+            JSONWithMessage results = new JSONWithMessage(404, "Loan not found");
+            return new ResponseEntity<JSONBody>(results, HttpStatus.NOT_FOUND);
+        } else {
+            Loan loan = optLoan.get();
+
+            loan.setHasCollected(dto.isHasCollected());
+            lRepository.save(loan);
+
+            JSONWithData<Loan> result = new JSONWithData<>(200, loan);
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(result, HttpStatus.OK);
+
+            return response;
+        }
+    }
+
+    public ResponseEntity<JSONBody> updateReturned(UpdateLoanDto dto){
+        Optional<Loan> optLoan = lRepository.findById(dto.getLoanId());
+
+        if (!optLoan.isPresent()) {
+            JSONWithMessage results = new JSONWithMessage(404, "Loan not found");
+            return new ResponseEntity<JSONBody>(results, HttpStatus.NOT_FOUND);
+        } else {
+            Loan loan = optLoan.get();
+
+            loan.setHasCollected(dto.isHasCollected());
+            loan.setHasReturned(dto.isHasReturned());
+            lRepository.save(loan);
+
+            JSONWithData<Loan> result = new JSONWithData<>(200, loan);
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(result, HttpStatus.OK);
+
+            return response;
         }
     }
 
