@@ -3,12 +3,13 @@
 import * as d3 from "d3";
 import { defineComponent} from "vue";
 const userData: any[] = []
+const filteredData: any[] = []
 export default defineComponent({
     data() {
         return {
             xAxisVariable: "day",
             graphWidth: document.documentElement.clientWidth * 60 / 100,
-            filteredData: [],
+            filteredData,
             userBorrowedPasses: [],
             calorieLimit: 0,
             numOfPasses: [

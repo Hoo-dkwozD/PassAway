@@ -80,7 +80,12 @@ export default defineComponent({
   padding: 0;
   margin: 0;
 }
-
+.header{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
 .header-nav {
   flex-grow: 1;
   padding-left: 3%;
@@ -164,7 +169,6 @@ export default defineComponent({
   padding: 20px 32px;
   width: 129px;
 }
-
 .topnav-right {
   float: right;
 }
