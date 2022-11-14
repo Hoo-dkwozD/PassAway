@@ -9,14 +9,12 @@
         @click="showCalendar = !showCalendar"
       >
         {{
-          selectedDay != null
-            ? selectedDay.toISOString().substring(0, 10)
-            : "No date selected"
+          selectedDay != null ? selectedDay.toDateString() : "No date selected"
         }}
       </button>
-      <div v-if="showCalendar" @click="showCalendar = !showCalendar">
+      <div v-if="showCalendar">
         <v-date-picker
-          v-model="selectedDay"
+          v-model="populateDate"
           :attributes="attributes"
         ></v-date-picker>
       </div>
@@ -27,6 +25,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import "v-calendar/dist/style.css";
+
 type ticketInformation = {
   description: string;
   isComplete: boolean;
@@ -41,7 +40,7 @@ type ticketInformation = {
 interface Data {
   //array of custom type Array<todos>
   ticketInformation: ticketInformation[];
-  selectedDay: any;
+  selectedDay: Date;
   showCalendar: boolean;
 }
 export default defineComponent({
@@ -85,28 +84,54 @@ export default defineComponent({
       showCalendar: false,
     };
   },
+  methods: {
+    //   closeDateMenu(){
+    //       this.selectedDay= this.selectedDay.format('dddd, MMMM Do YYYY');
+    // }
+  },
   props: ["date"],
   computed: {
-    attributes() {
-      return [
-        ...this.ticketInformation.map((ticketInfo) => ({
-          dates: ticketInfo.dates,
-          dot: {
-            color: ticketInfo.color,
-            class: ticketInfo.isComplete ? "opacity-75" : "",
-          },
-          popover: {
-            label: ticketInfo.description,
-          },
-          customData: ticketInfo,
-        })),
-      ];
+    populateDate: {
+      get() {
+        return this.date;
+      },
+      set(val: any) {
+        this.$emit("change", val);
+      },
     },
   },
-  methods: {},
+  attributes() {
+    return [
+      ...this.ticketInformation.map((ticketInfo) => ({
+        dates: ticketInfo.dates,
+        dot: {
+          color: ticketInfo.color,
+          class: ticketInfo.isComplete ? "opacity-75" : "",
+        },
+        popover: {
+          label: ticketInfo.description,
+        },
+        customData: ticketInfo,
+      })),
+    ];
+  },
 });
 </script>
 
 
 <style>
+#calendar-details {
+  left: 0;
+  letter-spacing: 0;
+  line-height: 24px;
+  top: 0;
+  white-space: nowrap;
+  padding-left: 20px;
+  width: 180px;
+  padding-right: 30px;
+}
+
+.shadow {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
 </style>

@@ -1,13 +1,13 @@
 <template>
   <div
-    class="imageDiv p-5 mb-5"
+    class="imageDiv p-5 mb-5 container-fluid"
     :style="{ backgroundImage: `url(${currentBackground})` }"
   >
     <div>
       <h1 class="text-center">{{ title }}</h1>
     </div>
 
-    <div class="table-responsive tableblock">
+    <div class="table-responsive tableblock col-6">
       <table class="table table-hover border shadow p-3 mb-5 bg-white rounded">
         <tbody>
           <thead class="table-active bookingfont">
@@ -40,17 +40,7 @@
       </table>
     </div>
 
-    <div class="text-center m-5 p-5">
-      <button
-        type="button"
-        class="btn btn-color btn-lg btn-block"
-        @click="showPreviousLoaner"
-      >
-        Check previous borrower
-      </button>
-    </div>
-
-    <div class="table-responsive tableblock">
+    <div class="table-responsive tableblock col-6">
       <table
         class="table table-hover border shadow p-3 mb-5 bg-white rounded"
         v-if="checkLoaner"
@@ -83,6 +73,17 @@
         </tbody>
       </table>
     </div>
+
+
+    <div class="text-center m-5 p-5">
+      <button
+        type="button"
+        class="btn btn-color btn-lg btn-block"
+        @click="showPreviousLoaner"
+      >
+        Check previous borrower
+      </button>
+    </div>
     <div class="py-5"></div>
   </div>
 </template>
@@ -108,16 +109,14 @@ export default {
   },
   created() {
     //test and see what's the issue
-    this.id = parseInt(this.$route.params.id);
+    console.log(id);
   },
   methods: {
     showPreviousLoaner() {
       this.checkLoaner = this.checkLoaner ? false : true;
     },
   },
-  props: {
-    loanDetails: Object,
-  },
+  props: ['id'],
 };
 </script>
 
@@ -147,8 +146,8 @@ h2 {
 }
 
 .tableblock {
-  margin-right: 500px;
-  margin-left: 500px;
+  margin-right: 400px;
+  margin-left: 400px;
   padding-left: 100px;
   padding-right: 100px;
 }

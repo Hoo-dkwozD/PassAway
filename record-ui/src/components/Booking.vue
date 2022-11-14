@@ -1,9 +1,9 @@
 <template>
-  <div class="container-fluid px-0">
+  <div class="container-fluid p-0 mx-0">
     <div
       id="sectionheader"
       :style="{ backgroundImage: `url(${currentBackground})` }"
-      class="row"
+      class="row mx-0"
     >
       <div class="main container-fluid">
         <h1 class="title row">{{ title }}</h1>
@@ -16,7 +16,7 @@
         </h3>
       </div>
 
-      <div class="bookingdetails container-fluid">
+      <div class="bookingdetails">
         <div class="dropdown" id="group-location">
           <select
             v-model="attractionDetails"
@@ -38,7 +38,27 @@
         </div>
 
         <div id="group-calendar">
-          <calendar-picker />
+          <div>
+            <div class="position-absolute">
+              <button
+                id="calendar-details"
+                class="form-select shadow"
+                @click="showCalendar = !showCalendar"
+              >
+                {{
+                  dateSelected != null
+                    ? dateSelected.toDateString()
+                    : "No date selected"
+                }}
+              </button>
+              <div v-if="showCalendar">
+                <v-date-picker
+                  v-model="dateSelected"
+                  :attributes="attributes"
+                ></v-date-picker>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="dropdown" id="group-date">
@@ -55,9 +75,9 @@
         </div>
 
         <div id="group-submit">
-          <!-- <router-link
-          to="{name: 'BookingConfirmation', params: {loanID}}"
-          > -->
+          <router-link
+            :to="{ name: 'Booking Confirmation', params: { loanID: loanID } }"
+          >
           <button
             type="submit"
             class="btn btn-submit btn-lg"
@@ -65,7 +85,7 @@
           >
             Book Now
           </button>
-          <!-- </router-link> -->
+          </router-link>
         </div>
       </div>
     </div>
@@ -74,9 +94,15 @@
 
 <script lang="ts">
 import axios from "axios";
-import { DatePicker } from "v-calendar";
 import { defineComponent } from "vue";
 import CalendarPicker from "./CalendarPicker.vue";
+
+type ticketInformation = {
+  description: string;
+  isComplete: boolean;
+  dates: Date;
+  color: string;
+};
 
 // Typings
 interface Data {
@@ -93,7 +119,8 @@ interface Data {
   currentBackground: string;
   loanID: number;
   attractionId: number;
-  staffId: string;
+  staffId: number;
+  ticketInformation: ticketInformation[];
 }
 
 export default defineComponent({
@@ -113,14 +140,29 @@ export default defineComponent({
         "https://www.sportsschool.edu.sg/qql/slot/u262/2021/News%20and%20Publications/News/2021/MAR21/What%20Makes%20Us%20Athlete-Friendly/Athlete-friendly%20environment%20at%20Singapore%20Sports%20School%20helps%20nurture%20champions.jpg",
       loanID: 0,
       attractionId: 0,
-      staffId: "",
+      staffId: 2,
+      ticketInformation: [
+        {
+          description: "2 Passes left",
+          isComplete: false,
+          dates: new Date(2022, 11, 11), // date should be array of objects where one object is one date, format month year and day into an object
+          color: "red",
+        },
+        {
+          description: "1 Pass left",
+          isComplete: false,
+          dates: new Date(2022, 11, 12), // date should be array of objects where one object is one date
+          color: "red",
+        },
+      ],
     };
   },
 
   async created() {
     this.staffId = document.cookie;
     const attractions = await axios.get(
-      import.meta.env.VITE_API_URL + "api/attraction/list"
+      // https://localhost:8080/api/attractions
+      import.meta.env.VITE_API_URL + "api/attractions"
     );
 
     for (const att of attractions.data.data) {
@@ -150,37 +192,38 @@ export default defineComponent({
     },
     async populateAttractionDetails(): Promise<any> {
       this.numOfAccompanyingGuests = this.attractionDetails["id"][3];
-      // this.currentBackground = this.attractionDetails.id[4];
       this.attractionId = this.attractionDetails["id"][1];
+      this.currentBackground = this.attractionDetails["id"][4];
       this.title = this.attractionDetails["id"][0];
     },
     async addLoan(): Promise<any> {
-      const staffId = this.staffId; //need to call api, json response that returns me {code: 200, data: {staffId: 1}}
+      const staffId = 1; //need to call api, json response that returns me {code: 200, data: {staffId: 1}}
       const attractionId = this.attractionId;
-      const numPassesSelected = this.numPassesSelected;
-      const dateArr = this.dateSelected
-        .toISOString()
-        .substring(0, 10)
-        .split("-");
-      const day = dateArr[2];
-      const month = dateArr[1];
-      const year = dateArr[0];
+      const numPassesSelected = this.numPassesSelected["pass"];
+      const day = this.dateSelected.getDate();
+      const month = this.dateSelected.getMonth() + 1;
+      const year = this.dateSelected.getFullYear();
 
       try {
         const res = await axios.post(
           import.meta.env.VITE_API_URL + "api/loan/add",
           {
-            staffId: parseInt("1"), //retrieve from cookie
+            staffId: staffId, //retrieve from cookie
             attractionId: attractionId,
             numPasses: parseInt(numPassesSelected),
-            yyyy: parseInt(year),
-            mm: parseInt(month),
-            dd: parseInt(day),
+            yyyy: year,
+            mm: month,
+            dd: day,
           }
         );
         this.loanID = res.data.loanId;
-        console.log(res.data);
+        console.log(res.data[0]["loanId"]);
         console.log("200");
+
+        this.$route.params.loanID = this.loanID.toString();
+        this.$router.push({
+          path: `/bookingconfirmation/${this.loanID}`,
+        });
         return res.data;
       } catch (err) {
         return {
@@ -188,9 +231,29 @@ export default defineComponent({
         };
       }
     },
-  },
-  components: {
-    "calendar-picker": CalendarPicker,
+    makeToast() {
+      let toast = document.createElement("div");
+      toast.innerHTML = `
+      <div id="hjvvhj" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <strong class="me-auto">Bootstrap</strong>
+          <small>11 mins ago</small>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          Hello, world! This is a toast message.
+        </div>
+      </div>
+      `;
+
+      let html = document.querySelector("#app");
+      html.appendChild(toast);
+
+      toast = document.querySelector("#hjvvhj");
+
+      toast = new bootstrap.Toast(toast);
+      toast.show();
+    },
   },
 });
 </script>
@@ -245,7 +308,7 @@ export default defineComponent({
   padding-top: 15px;
   background-color: white;
   border: 1px none;
-  width: 850px;
+  width: 100px;
   height: 90px;
 }
 

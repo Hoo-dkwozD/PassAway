@@ -11,26 +11,26 @@
     <div class="header-nav">
       <nav class="topnav-right">
         <RouterLink
+          :key="route.path"
           v-for="route in routes"
           class="place lato mx-auto"
           :to="route.path"
         >
-        <div class="auto-layout-horizontal display" v-if="route.name == 'Sign In'">
-          {{ route.name }}
-        </div>
-        <div v-else-if="role == 'Admin'" class="lato2 display">
-          {{ route.name }}
-        </div>
-
-
+          <div
+            class="auto-layout-horizontal display"
+            v-if="route.name == 'Sign In'"
+          >
+            {{ route.name }}
+          </div>
+          <div v-else-if="role == 'Admin'" class="lato2 display">
+            {{ route.name }}
+          </div>
         </RouterLink>
       </nav>
     </div>
-
   </div>
 
-    <RouterView />
-  
+  <RouterView />
 </template>
 
 
@@ -50,21 +50,29 @@ export default defineComponent({
     const role = "Admin";
     const routes: Route[] = [
       {
+        path: "/Home",
+        name: "Home",
+      },
+      {
+        path: "/Bookings",
+        name: "Bookings",
+      },
+      {
         path: "/Analytics",
-        name: "Analytics"
+        name: "Analytics",
       },
       {
         path: "/Admin",
-        name: "Admin"
+        name: "Admin",
       },
       {
         path: "/signin",
-        name: "Sign In"
+        name: "Sign In",
       },
     ];
     return {
       routes,
-      role
+      role,
     };
   },
   components: {
@@ -76,9 +84,11 @@ export default defineComponent({
 
 
 <style scoped>
-*{
-  padding: 0;
-  margin: 0;
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 .header{
   display: flex;
@@ -124,7 +134,7 @@ export default defineComponent({
 }
 
 .lato2 {
-  color: #F57921;
+  color: #f57921;
   font-family: "Lato", sans-serif;
   font-size: 17px;
   font-weight: bolder;
@@ -174,6 +184,6 @@ export default defineComponent({
 }
 
 .display {
-  display:inline-block;
+  display: inline-block;
 }
 </style>
