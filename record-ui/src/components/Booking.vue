@@ -55,9 +55,9 @@
         </div>
 
         <div id="group-submit">
-          <!-- <router-link
+          <router-link
           to="{name: 'BookingConfirmation', params: {loanID}}"
-          > -->
+          >
           <button
             type="submit"
             class="btn btn-submit btn-lg"
@@ -65,7 +65,7 @@
           >
             Book Now
           </button>
-          <!-- </router-link> -->
+          </router-link>
         </div>
       </div>
     </div>
