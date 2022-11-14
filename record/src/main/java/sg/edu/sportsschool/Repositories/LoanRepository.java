@@ -58,6 +58,11 @@ public interface LoanRepository extends JpaRepository<Loan, Integer> {
     List<Loan> getReminderDateLoans(Date reminderDate);
 
     @Query(value = """
+            SELECT * FROM Loan WHERE start_date >= :startDate AND start_date <= :endDate
+            """, nativeQuery = true)
+    List<Loan> getLoansBetweenDates(Date startDate, Date endDate);
+
+    @Query(value = """
             SELECT * FROM Loan WHERE start_date < :overdueDate AND has_returned = FALSE
             """, nativeQuery = true)
     List<Loan> getOverdueLoans(Date overdueDate);
