@@ -6,6 +6,7 @@ import BookingConfirmationView from "../views/BookingConfirmationView.vue"
 import Profile from '../views/Profile.vue'
 import ProfilePassword from '../views/ProfilePassword.vue'
 import GOPLandingPage from '../views/GOPLandingPage.vue'
+import AnalyticsView from '../views/AnalyticsView.vue'
 
 function requireAuth(to,from,next){
   console.log(this);
@@ -52,6 +53,11 @@ const router = createRouter({
       path: "/GOPLanding",
       name: 'GOPLanding',
       component: GOPLandingPage,
+    },
+    {
+      path: "/AnalyticsView",
+      name: 'AnalyticsView',
+      component: AnalyticsView,
     }
   ],
 });
