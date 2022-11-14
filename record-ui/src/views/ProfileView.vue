@@ -1,4 +1,5 @@
 <template>
+    <NavBar></NavBar>
     <div
       id="sectionheader"
       style="backgroundImage: `url(${currentBackground})`"
@@ -23,12 +24,13 @@
 import { defineComponent } from "vue"
 import { useCounterStore } from "../stores/counter";
 import ProfileGroup from '../components/ProfileGroup.vue'
-
+import NavBar from '../components/Navbar.vue' 
 interface Data{
     currentBackground: String,
 }
 
 export default defineComponent({
+    name: 'ProfileView',
     data(): Data {
         return {
             currentBackground: "",
@@ -36,7 +38,10 @@ export default defineComponent({
     },
     setup() {
     },
-    components: { ProfileGroup }
+    components: { 
+        ProfileGroup,
+        NavBar
+    }
 })
 </script>
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
-
+import Navbar from '../components/Navbar.vue'
 export default defineComponent({
     name: 'Profile',
     data() {
@@ -15,15 +15,14 @@ export default defineComponent({
             bookingStatus: "",
         }
     },
-    setup() {
-        return {
-            name: 'Profile'
-        }
+    components:{
+        Navbar
     }
 })
 
 </script>
 <template>
+    <Navbar></Navbar>
     <div class="content" style="margin-top: 80px;">
         <div class="container-fluid">
             <div class="row align-items-stretch">

@@ -1,4 +1,5 @@
 <template>
+    <Navbar></Navbar>
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
@@ -13,7 +14,14 @@
     </div>
 </template>
 <script lang="ts">
-
+import {defineComponent} from 'vue'
+import Navbar from '../components/Navbar.vue'
+export default defineComponent ({
+    name: 'Admin',
+    components:{
+        Navbar
+    }
+})
 </script>
 <style>
 

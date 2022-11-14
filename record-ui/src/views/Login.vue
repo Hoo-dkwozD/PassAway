@@ -1,4 +1,5 @@
 <template>
+    <Navbar></Navbar>
     <div class="content" style = "margin-top: 80px;">
       <div class="container-fluid">
         <div class="row align-items-stretch no-gutters contact-wrap">
@@ -42,9 +43,9 @@
   
   <script lang="ts">
   import { defineComponent } from "vue";
-  
+  import Navbar from '../components/Navbar.vue'
   export default defineComponent({
-    name: 'appLogin',
+    name: 'Login',
     data() {
       return {
         emailInvalid: false,
@@ -54,6 +55,9 @@
         emailMsg: "",
         passwordMsg: "",
       }
+    },
+    components:{
+      Navbar
     },
     methods:{
       

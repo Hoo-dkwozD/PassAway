@@ -1,4 +1,5 @@
 <template>
+  <NavBar></NavBar>
   <div
     class="imageDiv p-5 mb-5 container-fluid"
     :style="{ backgroundImage: `url(${currentBackground})` }"
@@ -89,6 +90,8 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
+import NavBar from "@/components/Navbar.vue";
 //get loan by id
 //pass the output from the api to the respective table rows
 interface Data {
@@ -97,7 +100,7 @@ interface Data {
   id: number;
   currentBackground: string;
 }
-export default {
+export default defineComponent({
   data(): Data {
     return {
       title: "Your booking is successful!",
@@ -117,7 +120,7 @@ export default {
     },
   },
   props: ['id'],
-};
+});
 </script>
 
 <style>

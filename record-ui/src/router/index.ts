@@ -1,11 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
 import BookView from '../views/BookView.vue'
-import BookingConfirmationView from "../views/BookingConfirmationView.vue"
+import BookingConfirmationView from '../views/BookingConfirmationView.vue'
 import Profile from '../views/Profile.vue'
 import ProfilePassword from '../views/ProfilePassword.vue'
 import GOPLandingPage from '../views/GOPLandingPage.vue'
 import AnalyticsView from '../views/AnalyticsView.vue'
 import Admin from '../views/Admin.vue'
+
 function requireAuth(to,from,next){
   console.log(this);
   console.log(this.$cookies.get('id'));

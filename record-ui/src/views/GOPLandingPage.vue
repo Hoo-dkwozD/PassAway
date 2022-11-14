@@ -1,13 +1,15 @@
 <script lang='ts'>
 import { defineComponent } from 'vue'
+import Navbar from '../components/Navbar.vue'
 export default defineComponent({
+    namee: 'GOPLandingPage',
     data(){
         return{
             isActive: false,
         }
     },
   components: {
-    
+        Navbar
   },
   methods:{
     searchBorrower(){
@@ -21,6 +23,7 @@ export default defineComponent({
 </script>
 
 <template>
+    <Navbar></Navbar>
     <div class="content" style="margin-top: 80px;">
         <div class="container-fluid">
             <div class="row">
