@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import sg.edu.sportsschool.DTO.Request.AddAttractionImageURLDto;
 import sg.edu.sportsschool.DTO.Request.CreateAttractionDto;
 import sg.edu.sportsschool.DTO.Request.UpdateAttractionDto;
 import sg.edu.sportsschool.Entities.Attraction;
@@ -209,6 +210,32 @@ public class AttractionService {
             new JSONWithMessage(200, imageResName + " image saved for attraction id: " + aId), 
             HttpStatus.OK
         );
+    }
+
+    public ResponseEntity<JSONBody> addImageURLToAttr(Integer aId, AddAttractionImageURLDto dto) {
+        try {
+            Optional<Attraction> optA = aRepository.findById(aId);
+            if (optA.isEmpty()) {
+                JSONWithMessage results = new JSONWithMessage(404, "Attraction not found. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NOT_FOUND);
+
+                return response;
+            }
+
+            Attraction a = optA.get();
+            a.setBackgroundImage(dto.getUrl());
+            aRepository.save(a);
+
+            return new ResponseEntity<JSONBody>(
+                new JSONWithMessage(200, dto.getUrl() + " image saved for attraction id: " + aId), 
+                HttpStatus.OK
+            );
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server unable to store image file URL.");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
+        }
     }
 
     public ResponseEntity<JSONBody> deleteAttraction(Integer aId) {
