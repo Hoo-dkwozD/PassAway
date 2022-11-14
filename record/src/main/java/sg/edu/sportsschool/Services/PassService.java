@@ -3,6 +3,7 @@ package sg.edu.sportsschool.Services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,79 +39,131 @@ public class PassService {
             pRepository.findAll().forEach(results::add);
 
             JSONWithData<List<Pass>> body = new JSONWithData<List<Pass>>(200, results);
-            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
 
+            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
         } catch (Exception e) {
-            throw new InternalServerException("Server unable to retrieve all passes");
+            JSONWithMessage results = new JSONWithMessage(500, "Server unable to retrieve all passes.");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
+        }
+    }
+
+    public ResponseEntity<JSONBody> getPassesByAttraction(Integer attractionId) {
+        try {
+            Attraction a = aService.returnAttraction(attractionId);
+
+            if (a == null) {
+                JSONWithMessage results = new JSONWithMessage(404, "Attraction not found.");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NOT_FOUND);
+
+                return response;
+            }
+
+            Set<Pass> results = pRepository.findAllPassesByAttrId(attractionId);
+
+            JSONWithData<Set<Pass>> body = new JSONWithData<>(200, results);
+
+            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server unable to retrieve target passes.");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
         }
     }
 
     public ResponseEntity<JSONBody> addPassesByCsv(Integer aId, MultipartFile cardNumbersCSVFile) {
-
         if (cardNumbersCSVFile == null || cardNumbersCSVFile.isEmpty()) {
-            throw new BadRequestException("Bad request. CSV file is null or CSV file is empty");
+            JSONWithMessage results = new JSONWithMessage(400, "Bad request. CSV file is null or CSV file is empty. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.BAD_REQUEST);
+
+            return response;
         }
 
         Attraction a = aService.returnAttraction(aId);
         if (a == null) {
-            throw new InternalServerException("Server unable to find attraction of id: " + aId + " from the database");
+            JSONWithMessage results = new JSONWithMessage(404, "Server unable to find attraction of id: " + aId + " from the database");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NOT_FOUND);
+
+            return response;
         }
 
         // Get all passIds from csv file, add a new pass for each passId
         List<String[]> passesList = new ArrayList<>();
         try {
             passesList = ReadCsv.read(cardNumbersCSVFile);
+
+            if (passesList == null) {
+                throw new InternalServerException("Exception occured when reading csv file");
+            }
         } catch (Exception e) {
-            // TODO
-            JSONWithMessage body = new JSONWithMessage(200, "Passes added successfully");
-            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+            JSONWithMessage results = new JSONWithMessage(500, "Server unable to read uploaded file.");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
         }
 
-        if (passesList == null) {
-            throw new InternalServerException("Exception occured when reading csv file");
-        }
-
+        List<Pass> newPasses = new ArrayList<>();
         for (String[] line : passesList) {
             for (String passId : line) {
                 if (!passId.equals("")) {
                     Pass pass = new Pass(passId, false, a);
                     pRepository.save(pass); // Add each passId for that attraction into passes table
+
+                    newPasses.add(pass);
                 }
             }
         }
 
-        JSONWithMessage body = new JSONWithMessage(200, "Passes added successfully");
-        return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+        JSONWithData<List<Pass>> body = new JSONWithData<>(201, newPasses);
+        return new ResponseEntity<JSONBody>(body, HttpStatus.CREATED);
     }
 
     public ResponseEntity<JSONBody> addPass(Integer aId, String passId) {
-
         if (passId.equals("")) {
-            throw new BadRequestException("Bad request. Pass number must not be empty.");
+            JSONWithMessage results = new JSONWithMessage(400, "Pass ID cannot be an empty string.");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.BAD_REQUEST);
+
+            return response;
         }
 
         Attraction a = aService.returnAttraction(aId);
         if (a == null) {
-            throw new InternalServerException("Server unable to find attraction of id: " + aId + " from the database");
+            JSONWithMessage results = new JSONWithMessage(404, "Invalid attraction ID.");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.BAD_REQUEST);
+
+            return response;
         }
 
         Pass pass = new Pass(passId, false, a);
 
         pRepository.save(pass); // Add each passId for that attraction into passes table
 
-        JSONWithMessage body = new JSONWithMessage(200, "Pass added successfully");
+        JSONWithData<Pass> body = new JSONWithData<>(200, pass);
         return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
     }
 
-    public ResponseEntity<JSONBody> getPassesByAttraction(Integer attractionId) {
-        try {
-            Set<Pass> results = pRepository.findAllPassesByAttrId(attractionId);
-            JSONWithData<Set<Pass>> body = new JSONWithData<>(200, results);
-            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+    public ResponseEntity<JSONBody> updatePassStatus(Integer aId, String passId, boolean isLost) {
+        Attraction a = aService.returnAttraction(aId);
 
-        } catch (Exception e) {
-            throw new InternalServerException("Server unable to retrieve all passes");
+        if (a == null) {
+            JSONWithMessage results = new JSONWithMessage(404, "Attraction not found.");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NOT_FOUND);
+
+            return response;
         }
+
+        Set<Pass> passes = pRepository.findAllPassesByAttrIdAndPassId(aId, passId);
+
+        for (Pass p : passes) {
+            p.setLost(isLost);
+
+            pRepository.save(p); 
+        }
+
+        JSONWithData<List<Pass>> body = new JSONWithData<>(200, passes.stream().collect(Collectors.toList()));
+        return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
     }
 
     // ------------------------------------------------------------------------------------------------
