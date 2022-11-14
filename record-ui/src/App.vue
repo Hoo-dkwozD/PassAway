@@ -33,6 +33,7 @@
   
 </template>
 
+
 <script lang="ts">
 import { defineComponent } from "vue";
 import { RouterLink, RouterView } from "vue-router";
@@ -61,7 +62,6 @@ export default defineComponent({
         name: "Sign In"
       },
     ];
-
     return {
       routes,
       role
@@ -74,12 +74,11 @@ export default defineComponent({
 });
 </script>
 
+
 <style scoped>
-.header {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
+*{
+  padding: 0;
+  margin: 0;
 }
 
 .header-nav {

@@ -33,6 +33,8 @@ type ticketInformation = {
   dates: Date;
   color: string;
 };
+
+
 // type date = {
 //   weekdays: number
 // }
@@ -46,6 +48,22 @@ export default defineComponent({
   name: "CalendarPicker",
   data(): Data {
     //contain dates where there are passes booked
+
+    let apiResponse = [{
+      date: "2022-11-1",
+      description: "some description"
+    }]
+
+    const ticketInformation2 = apiResponse.map( apiResponseElement => {
+      return {
+        description: apiResponseElement.description,
+        isComplete: false,
+        dates: new Date(apiResponseElement.date),
+        color: "red"
+      }
+    })
+
+
     const ticketInformation = [
       {
         description: "2 Passes left",
@@ -91,19 +109,4 @@ export default defineComponent({
 
 
 <style>
-
-  #calendar-details {
-    left: 0;
-    letter-spacing: 0;
-    line-height: 24px;
-    top: 0;
-    white-space: nowrap;
-    padding-left: 20px;
-    width: 180px;
-    padding-right: 30px;
-  }
-
-  .shadow {
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  }
 </style>
