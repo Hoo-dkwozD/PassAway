@@ -47,7 +47,8 @@ const router = createRouter({
     {
       path: "/bookingconfirmation/:loanID",
       name: "Booking Confirmation",
-      component: BookingConfirmationView
+      component: BookingConfirmationView,
+      props: true,
     },
     {
       path: "/profile",

@@ -109,16 +109,14 @@ export default {
   },
   created() {
     //test and see what's the issue
-    this.id = parseInt(this.$route.params.id);
+    console.log(id);
   },
   methods: {
     showPreviousLoaner() {
       this.checkLoaner = this.checkLoaner ? false : true;
     },
   },
-  props: {
-    loanDetails: Object,
-  },
+  props: ['id'],
 };
 </script>
 

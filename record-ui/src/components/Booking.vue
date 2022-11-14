@@ -1,9 +1,9 @@
 <template>
-  <div class="container-fluid px-0">
+  <div class="container-fluid p-0 mx-0">
     <div
       id="sectionheader"
       :style="{ backgroundImage: `url(${currentBackground})` }"
-      class="row"
+      class="row mx-0"
     >
       <div class="main container-fluid">
         <h1 class="title row">{{ title }}</h1>
@@ -16,7 +16,7 @@
         </h3>
       </div>
 
-      <div class="bookingdetails container-fluid">
+      <div class="bookingdetails">
         <div class="dropdown" id="group-location">
           <select
             v-model="attractionDetails"
@@ -75,9 +75,9 @@
         </div>
 
         <div id="group-submit">
-          <!-- <router-link
+          <router-link
             :to="{ name: 'Booking Confirmation', params: { loanID: loanID } }"
-          > -->
+          >
           <button
             type="submit"
             class="btn btn-submit btn-lg"
@@ -85,7 +85,7 @@
           >
             Book Now
           </button>
-          <!-- </router-link> -->
+          </router-link>
         </div>
       </div>
     </div>
@@ -94,7 +94,6 @@
 
 <script lang="ts">
 import axios from "axios";
-import { DatePicker } from "v-calendar";
 import { defineComponent } from "vue";
 import CalendarPicker from "./CalendarPicker.vue";
 
@@ -309,7 +308,7 @@ export default defineComponent({
   padding-top: 15px;
   background-color: white;
   border: 1px none;
-  width: 850px;
+  width: 100px;
   height: 90px;
 }
 

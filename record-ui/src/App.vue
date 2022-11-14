@@ -11,6 +11,7 @@
     <div class="header-nav">
       <nav class="topnav-right">
         <RouterLink
+          :key="route.path"
           v-for="route in routes"
           class="place lato mx-auto"
           :to="route.path"
@@ -83,9 +84,11 @@ export default defineComponent({
 
 
 <style scoped>
-*{
-  padding: 0;
-  margin: 0;
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
 .header-nav {
