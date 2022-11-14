@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import sg.edu.sportsschool.DTO.Request.CreateAttractionDto;
 import sg.edu.sportsschool.DTO.Request.UpdateAttractionDto;
 import sg.edu.sportsschool.Entities.Attraction;
+import sg.edu.sportsschool.Helper.ImageType;
 // import sg.edu.sportsschool.Exceptions.BadRequestException;
 // import sg.edu.sportsschool.Exceptions.InternalServerException;
 import sg.edu.sportsschool.Helper.Json.JSONBody;
@@ -30,7 +32,7 @@ import sg.edu.sportsschool.Repositories.AttractionRepository;
 @Service
 public class AttractionService {
     private AttractionRepository aRepository;
-    private final String STATIC_FOLDER = System.getProperty("user.dir") + "src/main/resources/static";
+    private final String STATIC_FOLDER = System.getProperty("user.dir") + "/src/main/resources/static";
 
     @Autowired
     public AttractionService(AttractionRepository aRepository) {
@@ -146,10 +148,10 @@ public class AttractionService {
         }
     }
 
-    // Add corporate barcode for an attraction
-    public ResponseEntity<JSONBody> addBarcodeToAttr(Integer aId, MultipartFile barcodeImage) {
-        // Check barcodeImage to be jpg ("image/jpeg") or png ("image/png")
-        String contentType = barcodeImage.getContentType();
+    // Add image (barcode, background image) for an attraction
+    public ResponseEntity<JSONBody> addImageToAttr(Integer aId, MultipartFile file, ImageType imageType) {
+        // Check file to be jpg ("image/jpeg") or png ("image/png")
+        String contentType = file.getContentType();
 
         if (contentType == null) {
             JSONWithMessage results = new JSONWithMessage(400, "No file was uploaded. ");
@@ -158,13 +160,15 @@ public class AttractionService {
             return response;
         }
 
-        if (!(contentType.equals("image/jpeg") || contentType.equals("image/png"))) {
-            JSONWithMessage results = new JSONWithMessage(400, "Incorrect image format. Please only upload barcode image of jpg/jpeg/png. ");
+        // Get file extension
+        String fileExt = getImageFileExt(contentType);
+        if (fileExt == null) {
+            JSONWithMessage results = new JSONWithMessage(400, "Incorrect image format. Please only upload image of jpg/jpeg/png.");
             ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.BAD_REQUEST);
 
             return response;
         }
-
+        
         Optional<Attraction> optA = aRepository.findById(aId);
         if (optA.isEmpty()) {
             JSONWithMessage results = new JSONWithMessage(404, "Attraction not found. ");
@@ -176,80 +180,33 @@ public class AttractionService {
         Attraction a = optA.get();
 
         // Save barcode image as a file
+        String imageResName = (imageType == ImageType.BARCODE) ? "barcode" : "background";
         try {
             String newFileName = a.getName();
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
-            newFileName += formatter.format(new Date(System.currentTimeMillis()));
-            Path newFilePath = Paths.get(STATIC_FOLDER, "attractionBarcodes", newFileName);
+            newFileName += formatter.format(new Date(System.currentTimeMillis())) + fileExt;
 
-            Files.write(newFilePath, barcodeImage.getBytes());
-
-            a.setBarcodeImage("attractionBarcodes/" + newFileName);
+            if (imageType == ImageType.BACKGROUND) {
+                Path newFilePath = Paths.get(STATIC_FOLDER, "staticAttractions", newFileName);
+                Files.write(newFilePath, file.getBytes());
+                a.setBackgroundImage("attractions/" + newFileName);
+            } else {
+                Path newFilePath = Paths.get(STATIC_FOLDER, "staticAttractionBarcodes", newFileName);
+                Files.write(newFilePath, file.getBytes());
+                a.setBarcodeImage("attractionBarcodes/" + newFileName);    
+            }
 
             aRepository.save(a);
+
         } catch (IOException e) {
-            JSONWithMessage results = new JSONWithMessage(500, "Server unable to store barcode image file.");
+            JSONWithMessage results = new JSONWithMessage(500, "Server unable to store " + imageResName + " image file.");
             ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
 
             return response;
         }
 
         return new ResponseEntity<JSONBody>(
-            new JSONWithMessage(200, "Barcode image saved for attraction id: " + aId), 
-            HttpStatus.OK
-        );
-    }
-
-    // Add corporate barcode for an attraction
-    public ResponseEntity<JSONBody> addImageToAttr(Integer aId, MultipartFile image) {
-        // Check barcodeImage to be jpg ("image/jpeg") or png ("image/png")
-        String contentType = image.getContentType();
-
-        if (contentType == null) {
-            JSONWithMessage results = new JSONWithMessage(400, "No file was uploaded. ");
-            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.BAD_REQUEST);
-
-            return response;
-        }
-
-        if (!(contentType.equals("image/jpeg") || contentType.equals("image/png"))) {
-            JSONWithMessage results = new JSONWithMessage(400, "Incorrect image format. Please only upload image of jpg/jpeg/png. ");
-            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.BAD_REQUEST);
-
-            return response;
-        }
-
-        Optional<Attraction> optA = aRepository.findById(aId);
-        if (optA.isEmpty()) {
-            JSONWithMessage results = new JSONWithMessage(404, "Attraction not found. ");
-            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NOT_FOUND);
-
-            return response;
-        }
-
-        Attraction a = optA.get();
-
-        // Save barcode image as a file
-        try {
-            String newFileName = a.getName();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
-            newFileName += formatter.format(new Date(System.currentTimeMillis()));
-            Path newFilePath = Paths.get(STATIC_FOLDER, "attractions", newFileName);
-
-            Files.write(newFilePath, image.getBytes());
-
-            a.setBarcodeImage("attractions/" + newFileName);
-
-            aRepository.save(a);
-        } catch (IOException e) {
-            JSONWithMessage results = new JSONWithMessage(500, "Server unable to store image file.");
-            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
-
-            return response;
-        }
-
-        return new ResponseEntity<JSONBody>(
-            new JSONWithMessage(200, "Image saved for attraction id: " + aId), 
+            new JSONWithMessage(200, imageResName + " image saved for attraction id: " + aId), 
             HttpStatus.OK
         );
     }
@@ -291,5 +248,21 @@ public class AttractionService {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private static String getImageFileExt(String contentType) {
+        String fileExt = null;
+        switch (contentType) {
+            case MediaType.IMAGE_JPEG_VALUE:
+                fileExt = ".jpeg";
+                break;
+            case MediaType.IMAGE_PNG_VALUE:
+                fileExt = ".png";
+                break;
+            default:
+                break;
+        }
+
+        return fileExt;
     }
 }

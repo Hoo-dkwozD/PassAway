@@ -179,6 +179,15 @@ public class PassService {
         }
     }
 
+    public Set<Pass> returnLostPassesByAttrId(Integer aId) {
+        Set<Pass> allPasses = returnAllPassesByAttrId(aId);
+        if (allPasses == null) {
+            return null;
+        }
+        return null;
+    }
+    
+
     // -- Following codes are used for testing only
 
     // ------------------------------------------------------------------------------------------------

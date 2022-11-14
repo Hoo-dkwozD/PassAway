@@ -66,6 +66,7 @@ public class LoanService {
             List<Loan> loans = lRepository.findAll();
             
             // TODO insert code to get previous borrower from kaiwei
+            
 
             for (Loan l : loans) {
                 Staff s = l.getStaff();
@@ -227,6 +228,7 @@ public class LoanService {
             for (Loan l : loans) {
                 Staff s = l.getStaff();
                 Pass p = l.getPass();
+                List<Loan> prevBorrowers = lRepository.getPrevBorrowers(p.getPassId(), s.getStaffId(), null);
                 response.add(new LoanResponseDto(l.getLoanId(), s.getFirstName(), s.getEmail(), l.getStartDate(),
                         p.getAttraction().getName(), l.isHasCollected(), l.isHasReturned(), p.getPassId(), p.isLost(),
                         "prevBorrowerName", "prevBorrowerContact"));
@@ -302,6 +304,7 @@ public class LoanService {
     }
 
     public ResponseEntity<JSONBody> cancelLoans(List<Integer> loanIds) {
+        // TODO Only can cancel up to 1 day before the loan
         try {
             lRepository.deleteAllById(loanIds);
             return new ResponseEntity<JSONBody>(new JSONWithMessage(200, "successfully deleted loans"), HttpStatus.OK);
@@ -322,6 +325,7 @@ public class LoanService {
 
     public Set<Pass> getAvailablePassesForDate(Integer aId, String yyyyString, String mmString, String ddString) {
         Set<Pass> availableAttrPasses = pService.returnAllPassesByAttrId(aId);
+        // get lost passes to be removed
 
         Set<Pass> currentLoansPasses = lRepository.getLoanedPassesByDate(aId, yyyyString, mmString, ddString);
 

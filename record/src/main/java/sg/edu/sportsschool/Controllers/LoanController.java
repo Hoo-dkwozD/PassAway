@@ -1,8 +1,10 @@
 package sg.edu.sportsschool.Controllers;
 
+import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,7 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import sg.edu.sportsschool.DTO.Request.LoanDTO;
+import sg.edu.sportsschool.Entities.Loan;
 import sg.edu.sportsschool.Helper.Json.JSONBody;
+import sg.edu.sportsschool.Helper.Json.JSONWithData;
+import sg.edu.sportsschool.Repositories.LoanRepository;
 import sg.edu.sportsschool.Services.LoanService;
 
 @RestController
@@ -24,6 +29,9 @@ import sg.edu.sportsschool.Services.LoanService;
 public class LoanController {
 
     private LoanService lService;
+
+    @Autowired
+    private LoanRepository lRepository;
 
     @Autowired
     public LoanController(LoanService lService) {
@@ -61,10 +69,19 @@ public class LoanController {
     public ResponseEntity<JSONBody> cancelLoans(@RequestParam List<Integer> loanIds) {
         return lService.cancelLoans(loanIds);
     }
+    
     // ------------------------------------------------------------------------------------------------
     // // -- Following codes are used for testing only
    
-
+    @GetMapping(path = "/test")
+    public ResponseEntity<JSONBody> getPrevBorrowers(@RequestParam String passId, @RequestParam Integer staffId, @RequestParam int yyyy,
+            @RequestParam int mm, @RequestParam int dd) {
+        Date startDate = Date.valueOf(String.format("%d-%d-%d", yyyy, mm, dd));
+        List<Loan> prevBorrowers = lRepository.getPrevBorrowers(passId, staffId, startDate);
+        JSONWithData<List<Loan>> body = new JSONWithData<>(200, prevBorrowers);
+        return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+    
+    }
     // //
     // ------------------------------------------------------------------------------------------------
 

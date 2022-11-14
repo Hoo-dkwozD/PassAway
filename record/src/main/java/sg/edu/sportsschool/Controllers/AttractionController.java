@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import sg.edu.sportsschool.DTO.Request.CreateAttractionDto;
 import sg.edu.sportsschool.DTO.Request.UpdateAttractionDto;
+import sg.edu.sportsschool.Helper.ImageType;
 import sg.edu.sportsschool.Helper.Json.JSONBody;
 import sg.edu.sportsschool.Services.AttractionService;
 
@@ -413,7 +414,7 @@ public class AttractionController {
     @PostMapping(path = "/attraction/{aId}/barcodeImage")
     public ResponseEntity<JSONBody> addBarcodeToAttraction(@PathVariable int aId,
             @RequestParam("file") MultipartFile barcodeImage) {
-        return aService.addBarcodeToAttr(aId, barcodeImage);
+        return aService.addImageToAttr(aId, barcodeImage, ImageType.BARCODE);
     }
 
     /**
@@ -477,7 +478,7 @@ public class AttractionController {
     @PostMapping(path = "/attraction/{aId}/image")
     public ResponseEntity<JSONBody> addImageToAttraction(@PathVariable int aId, 
             @RequestParam("file") MultipartFile image) {
-        return aService.addImageToAttr(aId, image);
+        return aService.addImageToAttr(aId, image, ImageType.BACKGROUND);
     }
 
     /**
