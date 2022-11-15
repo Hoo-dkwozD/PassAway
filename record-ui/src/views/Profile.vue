@@ -17,8 +17,8 @@ interface ProfileData {
 }
 
 interface LoginData {
-    staffId: Number;
-    role: String;
+    staffId: Number,
+    role: String,
 }
 
 export default defineComponent({
@@ -42,7 +42,7 @@ export default defineComponent({
             let role = localStorage.getItem("role");
 
             if (staffIdStr === null || role === null) {
-                this.$router.push("/signin");
+                this.$router.push({ name: 'Login' });
             } else {
                 let staffId = parseInt(staffIdStr);
 
@@ -67,7 +67,9 @@ export default defineComponent({
 
                 if (data.code === 200) {
                     this.$router.go(0);
-                } else {
+                } else if (data.code === 401) {
+                    this.$router.push({ name: 'Login' });
+                }else {
                     console.error(data.message);
                 }
             } catch (err) {

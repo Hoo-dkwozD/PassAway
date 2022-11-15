@@ -1,20 +1,92 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Navbar from '../components/Navbar.vue'
+import axios from 'axios';
+import { defineComponent } from 'vue';
+
+import Navbar from '../components/Navbar.vue';
+
+// Typings
+interface ProfilePasswordData {
+    staffId: Number | null,
+    role: String | null,
+    editPassword: Boolean,
+    oldPassword: String | null,
+    newPassword: String | null,
+    confirmNewPassword: String | null
+}
+
+interface LoginData {
+    staffId: Number,
+    role: String
+}
+
 export default defineComponent({
     name: 'ProfilePassword',
     components:{
         Navbar
     },
-    data() {
+    data(): ProfilePasswordData {
         return {
+            staffId: null,
+            role: null,
             editPassword: false,
-            oldPassword: '',
-            newPassword: '',
-            confirmNewPassword: '',
+            oldPassword: null,
+            newPassword: null,
+            confirmNewPassword: null,
+        }
+    },
+    created() {
+        const loginData: LoginData | undefined= this.checkLogin();
+
+        if (loginData === undefined) {
+            this.$router.push('/login');
+            return;
+        }
+
+        this.staffId = loginData.staffId;
+        this.role = loginData.role;
+    },
+    methods: {
+        checkLogin(): LoginData | undefined {
+            let staffIdStr = localStorage.getItem("staffId");
+            let role = localStorage.getItem("role");
+
+            if (staffIdStr === null || role === null) {
+                this.$router.push({ name: 'Login' });
+            } else {
+                let staffId = parseInt(staffIdStr);
+
+                return {
+                    staffId: staffId,
+                    role: role,
+                };
+            }
+        },
+        async changePassword() {
+            try {
+                const res = await axios.put(
+                    import.meta.env.VITE_API_URL + `api/staff/${this.staffId}/password`,
+                    {
+                        staffId: this.staffId,
+                        oldPassword: this.oldPassword,
+                        newPassword: this.newPassword,
+                        confirmPassword: this.confirmNewPassword,
+                    }
+                );
+                const data = await res.data;
+
+                if (data.code === 200) {
+                    this.$router.push({ name: 'Profile' });
+                } else if (data.code === 401) {
+                    this.$router.push({ name: 'Login' });
+                } else {
+                    console.error(data.message);
+                }
+            } catch (err) {
+                console.error(err);
+            }
         }
     }
-})
+});
 
 </script>
 <template>
@@ -41,24 +113,24 @@ export default defineComponent({
 
                                     <form>
                                         <div class="form-floating mb-2">
-                                            <input type="text" id="oldPassword" class="form-control">
+                                            <input v-model="oldPassword" type="password" id="oldPassword" class="form-control">
                                             <label for="oldPassword">Old Password</label>
                                         </div>
 
                                         <div class="form-floating mb-2">
-                                            <input type="text" id="newPassword" class="form-control">
+                                            <input v-model="newPassword" type="password" id="newPassword" class="form-control">
                                             <label for="newPassword">New Password</label>
                                         </div>
 
                                         <div class="form-floating">
-                                            <input type="text" id="confirmNewPassword" class="form-control">
+                                            <input v-model="confirmNewPassword" type="password" id="confirmNewPassword" class="form-control">
                                             <label for="confirmNewPassword">Confirm New Password</label>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                             <div class="text-center">
-                                <button type="submit"
+                                <button @click="changePassword()" type="submit"
                                     class="btn btn-outline-success text-uppercase fw-bold change-btn">Save</button>
                             </div>
                         </div>
