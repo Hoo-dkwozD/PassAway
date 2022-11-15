@@ -175,14 +175,7 @@ export default defineComponent({
       const attractions = await axios.get(
         import.meta.env.VITE_API_URL + "api/attractions"
       );
-    }
-    catch (err) {
-      if (err.response.status == 401) {
-        this.$router.push({ name: "Login" });
-      }
-    }
-
-    for (const att of attractions.data.data) {
+      for (const att of attractions.data.data) {
       const location = att.name;
       const attractionId = att.attractionId;
       const maxPassesPerLoan = att.maxPassesPerLoan;
@@ -196,6 +189,13 @@ export default defineComponent({
         photoURL,
       ];
     }
+    }
+    catch (err) {
+      if (err.response.status == 401) {
+        this.$router.push({ name: "Login" });
+      }
+    }
+
   },
   computed: {
     attributes() {
@@ -270,13 +270,14 @@ export default defineComponent({
         console.log(this.loanID);
 
         this.$router.push({
-          name: "Booking Confirmation",
+          name: "booking confirmation",
           params: {
             loanID: this.loanID,
           },
         });
         return res.data;
       } catch (err) {
+        console.log(err)
         if (err.response.status == 401) {
           this.$router.push({ name: "Login" });
         }

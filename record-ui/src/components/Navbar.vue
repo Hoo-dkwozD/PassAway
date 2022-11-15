@@ -1,73 +1,213 @@
 <template>
-<div class="header">
+  <div class="header">
     <RouterLink to="/">
+      <img
+        alt="Vue logo"
+        class="logo header-logo"
+        src="@/assets/logo.png"
+        width="160"
+        height="75" role="button"
+      />
+    </RouterLink>
 
-    <img
-      alt="Vue logo"
-      class="logo header-logo"
-      src="@/assets/logo.png"
-      width="160"
-      height="75" role="button"
-    />
-  </RouterLink>
-    
     <div class="header-nav">
-      <nav class="topnav-right">
-        <RouterLink
-          :key="route.path"
-          v-for="route in routes"
-          class="place lato mx-auto"
-          :to="route.path"
+      <nav v-if="role === '0'" class="topnav-right">
+        <a
+          v-for="route, idx in borrowerRoutes"
+          :key="idx"
+          @click="changeRoutes(route.path)"
+          class="place lato mx-auto route-link"
         >
           <div
+            v-if="route.name === 'Sign In'"
             class="auto-layout-horizontal display"
-            v-if="route.name == 'Sign In'"
           >
             {{ route.name }}
           </div>
-          <div v-else-if="role == 'Admin'" class="lato2 display">
+          <div 
+            v-else
+            class="lato2 display"
+          >
             {{ route.name }}
           </div>
-        </RouterLink>
+        </a>
+      </nav>
+      <nav v-if="role === '1'" class="topnav-right">
+        <a
+          v-for="route, idx in adminRoutes"
+          :key="idx"
+          @click="changeRoutes(route.path)"
+          class="place lato mx-auto route-link"
+        >
+          <div
+            v-if="route.name === 'Sign In'"
+            class="auto-layout-horizontal display"
+          >
+            {{ route.name }}
+          </div>
+          <div 
+            v-else
+            class="lato2 display"
+          >
+            {{ route.name }}
+          </div>
+        </a>
+      </nav>
+      <nav v-if="role === '2'" class="topnav-right">
+        <a
+          v-for="route, idx in gopRoutes"
+          :key="idx"
+          @click="changeRoutes(route.path)"
+          class="place lato mx-auto route-link"
+        >
+          <div
+            v-if="route.name === 'Sign In'"
+            class="auto-layout-horizontal display"
+          >
+            {{ route.name }}
+          </div>
+          <div 
+            v-else
+            class="lato2 display"
+          >
+            {{ route.name }}
+          </div>
+        </a>
       </nav>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-interface Route{
-    path: string,
-    name: string,
-}
-
 import { defineComponent } from "vue";
 import {RouterLink} from 'vue-router'
+
+// Typings
+interface Route{
+  path: string,
+  name: string,
+}
+
+interface LoginData {
+  staffId: Number,
+  role: String,
+}
+
+interface NavbarData {
+  adminRoutes: Route[],
+  gopRoutes: Route[],
+  borrowerRoutes: Route[],
+  role: String | null,
+  staffId: Number | null,
+}
+
 export default defineComponent({
-    name: 'NavBar',
-    data() {
-    const role = "Admin";
-    const routes: Route[] = [
+  name: 'NavBar',
+  data(): NavbarData {
+    const adminRoutes: Route[] = [
       {
-        path: "/Analytics",
-        name: "Analytics"
+        path: "/admin/attractions",
+        name: "Attractions",
       },
       {
-        path: "/Admin",
-        name: "Admin"
+        path: "/admin/passes",
+        name: "Passes",
       },
       {
-        path: "/Login",
-        name: 'Login',
+        path: "/admin/bookings",
+        name: "Loans",
       },
+      {
+        path: '/admin/staffs',
+        name: 'Staffs',
+      },
+      {
+        path: "/bookings",
+        name: "My Bookings"
+      },
+      {
+        path: "/profile",
+        name: 'My Profile',
+      },
+      {
+        path: "/login",
+        name: "Sign In",
+      }
     ];
+
+    const gopRoutes: Route[] = [
+      {
+        path: "/GOP/bookings",
+        name: "Loans"
+      },
+      {
+        path: "/bookings",
+        name: "My Bookings"
+      },
+      {
+        path: "/profile",
+        name: 'My Profile',
+      },
+      {
+        path: "/login",
+        name: "Sign In",
+      }
+    ];
+
+    const borrowerRoutes: Route[] = [
+      {
+        path: "/bookings",
+        name: "My Bookings"
+      },
+      {
+        path: "/profile",
+        name: 'My Profile',
+      },
+      {
+        path: "/login",
+        name: "Sign In",
+      }
+    ];
+
     return {
-      routes,
-      role
+      staffId: null,
+      role: null,
+      adminRoutes: adminRoutes,
+      gopRoutes: gopRoutes,
+      borrowerRoutes: borrowerRoutes,
     };
   },
   components: {
     RouterLink,
   },
+  created() {
+    const loginData: LoginData | undefined = this.checkLogin();
+
+    if (loginData !== undefined) {
+      this.staffId = loginData.staffId;
+      this.role = loginData.role;
+    }
+  },
+  methods: {
+    checkLogin(): LoginData | undefined {
+        let staffIdStr = localStorage.getItem("staffId");
+        let role = localStorage.getItem("role");
+
+        if (staffIdStr === null || role === null) {
+            this.$router.push({ name: 'Login' });
+        } else {
+            let staffId = parseInt(staffIdStr);
+
+            return {
+                staffId: staffId,
+                role: role,
+            };
+        }
+    },
+    changeRoutes(path: string) {
+      this.$router.push(path).then(() => this.$router.go(0));
+    },
+  }
 });
 </script>
 
@@ -134,7 +274,7 @@ export default defineComponent({
   gap: 10px;
   height: 55px;
   justify-content: center;
-  margin-left: 45px;
+  margin-left: 20px;
   margin-top: 1px;
   padding: 20px 32px;
   width: 129px;
@@ -167,11 +307,17 @@ export default defineComponent({
   padding: 20px 32px;
   width: 129px;
 }
+
 .topnav-right {
   float: right;
 }
 
 .display {
   display: inline-block;
+}
+
+.route-link:hover {
+  cursor: pointer;
+  color: white;
 }
 </style>

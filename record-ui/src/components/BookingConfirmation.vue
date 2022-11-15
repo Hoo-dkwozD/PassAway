@@ -23,14 +23,14 @@
         </thead>
         <tbody>
           <tr>
-            <th scope="col">{{ locationDetails[0] }}</th>
-            <td scope="col">{{ locationDetails[1] }}</td>
-            <td scope="col">{{ locationDetails[2] }}</td>
-            <td scope="col">{{ locationDetails[3] }}</td>
-            <td scope="col">{{ locationDetails[4] }}</td>
-            <td scope="col">{{ locationDetails[5] }}</td>
-            <td scope="col">{{ locationDetails[6] }}</td>
-            <td scope="col">{{ locationDetails[7] }}</td>
+            <th scope="col">{{ loans[0] }}</th>
+            <td scope="col">{{ loans[1] }}</td>
+            <td scope="col">{{ loans[2] }}</td>
+            <td scope="col">{{ loans[3] }}</td>
+            <td scope="col">{{ loans[4] }}</td>
+            <td scope="col">{{ loans[5] }}</td>
+            <td scope="col">{{ loans[6] }}</td>
+            <td scope="col">{{ loans[7] }}</td>
           </tr>
         </tbody>
       </table>
@@ -50,7 +50,7 @@ interface Data {
   checkLoaner: boolean;
   loanID: number;
   currentBackground: string;
-  locationDetails: [];
+  loans: [];
   staffId: number;
   role: string;
 }
@@ -65,7 +65,7 @@ export default defineComponent({
     return {
       title: "Your booking is successful!",
       checkLoaner: false,
-      locationDetails: [],
+      loans: [],
       loanID: parseInt(this.loanID),
       staffId: 0,
       role: "",
@@ -81,32 +81,31 @@ export default defineComponent({
       const loanDetails = await axios.get(
         import.meta.env.VITE_API_URL + "api/loan/" + this.$route.params.loanID
       );
-    }
-    catch (err) {
+      const detail = loanDetails.data.data[0];
+
+      const loanId = detail["loanId"];
+      const staffName = detail.staffName;
+      const staffEmail = detail.staffEmail;
+      const visitDate = detail.visitDate;
+      const attractionName = detail.attractionName;
+      const passId = detail.passId;
+      const prevBorrowerName = detail.prevBorrowerName;
+      const prevBorrowerContact = detail.prevBorrowerContact;
+      this.loans = [
+        loanId,
+        staffName,
+        staffEmail,
+        visitDate,
+        attractionName,
+        passId,
+        prevBorrowerName,
+        prevBorrowerContact,
+      ];
+    } catch (err) {
       if (err.response.status == 401) {
         this.$router.push({ name: "Login" });
       }
     }
-    const detail = loanDetails.data.data[0];
-
-    const loanId = detail["loanId"];
-    const staffName = detail.staffName;
-    const staffEmail = detail.staffEmail;
-    const visitDate = detail.visitDate;
-    const attractionName = detail.attractionName;
-    const passId = detail.passId;
-    const prevBorrowerName = detail.prevBorrowerName;
-    const prevBorrowerContact = detail.prevBorrowerContact;
-    this.locationDetails = [
-      loanId,
-      staffName,
-      staffEmail,
-      visitDate,
-      attractionName,
-      passId,
-      prevBorrowerName,
-      prevBorrowerContact,
-    ];
   },
   methods: {
     showPreviousLoaner() {

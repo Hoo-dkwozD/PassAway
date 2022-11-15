@@ -1,21 +1,19 @@
 <template>
-    <Navbar></Navbar>
-    <personal-bookings-view></personal-bookings-view>
-  </template>
+  <Navbar></Navbar>
+  <personal-bookings></personal-bookings>
+</template>
   
   <script lang="ts">
-  import PersonalBookingsView from '@/components/PersonalBookings.vue';
-  import {defineComponent} from 'vue'
-  import Navbar from '../components/Navbar.vue'
-  export default defineComponent({
-    name: 'BookingConfirmationView',
-    components: { PersonalBookingsView },
-    data() {
-      return {};
-    },
-    methods: {
-      
-    }
-  });
-  </script>
+import PersonalBookings from "@/components/PersonalBookings.vue";
+import { defineComponent } from "vue";
+import Navbar from "../components/Navbar.vue";
+export default defineComponent({
+  name: "PersonalBookingsView",
+  components: { PersonalBookings, Navbar },
+  data() {
+    return {};
+  },
+  methods: {},
+});
+</script>
   

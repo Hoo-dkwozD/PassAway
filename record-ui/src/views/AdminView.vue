@@ -4,7 +4,6 @@
         <div class="row">
             <div class="col-12">
                 <h1>Admin View</h1>
-
             </div>
         </div>
         <div class="row">
@@ -13,16 +12,18 @@
         </div>
     </div>
 </template>
+
 <script lang="ts">
-import {defineComponent} from 'vue'
-import Navbar from '../components/Navbar.vue'
+import {defineComponent} from 'vue';
+
+import Navbar from '../components/Navbar.vue';
+
 export default defineComponent ({
     name: 'Admin',
     components:{
         Navbar
     }
-})
+});
 </script>
-<style>
 
-</style>
+<style></style>
