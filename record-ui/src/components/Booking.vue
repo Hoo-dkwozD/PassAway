@@ -3,14 +3,14 @@
     <div
       id="sectionheader"
       :style="{ backgroundImage: `url(${currentBackground})` }"
-      class="row mx-0"
+      class="mx-0"
     >
-      <div class="main container-fluid">
-        <h1 class="title row">{{ title }}</h1>
-        <h3 class="titledescription row">
+      <div class="main">
+        <h1 class="title">{{ title }}</h1>
+        <h3 class="titledescription">
           You are entitled to 2 passes a month. {{}}
         </h3>
-        <h3 v-if="attractionDetails.length != 0" class="titledescription row">
+        <h3 v-if="attractionDetails.length != 0" class="titledescription">
           Each pass entitles you to {{ numOfAccompanyingGuests }} accompanying
           guests to {{ title }}
         </h3>
@@ -75,9 +75,6 @@
         </div>
 
         <div id="group-submit">
-          <router-link
-            :to="{ name: 'Booking Confirmation', params: { loanID: loanID } }"
-          >
           <button
             type="submit"
             class="btn btn-submit btn-lg"
@@ -85,7 +82,6 @@
           >
             Book Now
           </button>
-          </router-link>
         </div>
       </div>
     </div>
@@ -123,6 +119,11 @@ interface Data {
   ticketInformation: ticketInformation[];
 }
 
+interface LoginData {
+  staffId: number;
+  role: string;
+}
+
 export default defineComponent({
   data(): Data {
     return {
@@ -140,7 +141,7 @@ export default defineComponent({
         "https://www.sportsschool.edu.sg/qql/slot/u262/2021/News%20and%20Publications/News/2021/MAR21/What%20Makes%20Us%20Athlete-Friendly/Athlete-friendly%20environment%20at%20Singapore%20Sports%20School%20helps%20nurture%20champions.jpg",
       loanID: 0,
       attractionId: 0,
-      staffId: 2,
+      staffId: 0,
       ticketInformation: [
         {
           description: "2 Passes left",
@@ -157,11 +158,17 @@ export default defineComponent({
       ],
     };
   },
+  watch: {
+    loanID: function (value) {
+      // Whenever the prop "name" changes, then we will console log its value.
+      console.log(value);
+    },
+  },
 
   async created() {
+    this.checkLogin();
     this.staffId = document.cookie;
     const attractions = await axios.get(
-      // https://localhost:8080/api/attractions
       import.meta.env.VITE_API_URL + "api/attractions"
     );
 
@@ -180,7 +187,23 @@ export default defineComponent({
       ];
     }
   },
-  computed: {},
+  computed: {
+    attributes() {
+      return [
+        ...this.ticketInformation.map((ticketInfo) => ({
+          dates: ticketInfo.dates,
+          dot: {
+            color: ticketInfo.color,
+            class: ticketInfo.isComplete ? "opacity-75" : "",
+          },
+          popover: {
+            label: ticketInfo.description,
+          },
+          customData: ticketInfo,
+        })),
+      ];
+    },
+  },
   methods: {
     async populateNoOfTickets(): Promise<any> {
       this.numberofPasses = [];
@@ -196,8 +219,23 @@ export default defineComponent({
       this.currentBackground = this.attractionDetails["id"][4];
       this.title = this.attractionDetails["id"][0];
     },
+    checkLogin(): LoginData | undefined {
+      let staffIdStr = localStorage.getItem("staffId");
+      let role = localStorage.getItem("role");
+
+      if (staffIdStr === null || role === null) {
+        this.$router.push("/signin");
+      } else {
+        this.staffId = parseInt(staffIdStr);
+
+        return {
+          staffId: this.staffId,
+          role: role,
+        };
+      }
+    },
     async addLoan(): Promise<any> {
-      const staffId = 1; //need to call api, json response that returns me {code: 200, data: {staffId: 1}}
+      const staffId = this.staffId;
       const attractionId = this.attractionId;
       const numPassesSelected = this.numPassesSelected["pass"];
       const day = this.dateSelected.getDate();
@@ -216,11 +254,11 @@ export default defineComponent({
             dd: day,
           }
         );
-        this.loanID = res.data.loanId;
-        console.log(res.data[0]["loanId"]);
+        console.log(res);
         console.log("200");
+        this.loanID = res.data.data[0]["loanId"];
+        console.log(this.loanID);
 
-        this.$route.params.loanID = this.loanID.toString();
         this.$router.push({
           path: `/bookingconfirmation/${this.loanID}`,
         });
@@ -246,7 +284,7 @@ export default defineComponent({
       </div>
       `;
 
-      let html = document.querySelector("#app");
+      const html = document.querySelector("#app");
       html.appendChild(toast);
 
       toast = document.querySelector("#hjvvhj");
@@ -308,7 +346,7 @@ export default defineComponent({
   padding-top: 15px;
   background-color: white;
   border: 1px none;
-  width: 100px;
+  width: 900px;
   height: 90px;
 }
 

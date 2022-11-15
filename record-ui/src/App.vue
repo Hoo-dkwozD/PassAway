@@ -33,7 +33,6 @@
   <RouterView />
 </template>
 
-
 <script lang="ts">
 import { defineComponent } from "vue";
 import { RouterLink, RouterView } from "vue-router";
@@ -50,7 +49,7 @@ export default defineComponent({
     const role = "Admin";
     const routes: Route[] = [
       {
-        path: "/Home",
+        path: "/",
         name: "Home",
       },
       {
@@ -81,7 +80,6 @@ export default defineComponent({
   },
 });
 </script>
-
 
 <style scoped>
 .header {

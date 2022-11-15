@@ -18,7 +18,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/Home",
+      path: "/",
       name: "Home",
       component: BookView,
       props: true,
