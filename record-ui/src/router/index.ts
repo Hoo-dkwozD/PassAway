@@ -8,6 +8,7 @@ import GOPLandingPage from '../views/GOPLandingPage.vue';
 import LoginView from '../views/LoginView.vue';
 import Profile from '../views/Profile.vue';
 import ProfilePassword from '../views/ProfilePassword.vue';
+import EditBarCode from '../views/EditBarCode.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,6 +42,11 @@ const router = createRouter({
       props: true,
     },
     {
+      path: '/EditBarCode',
+      name: 'EditBarCode',
+      component: EditBarCode
+    },
+    {
       path: "/GOPLanding",
       name: 'GOPLanding',
       component: GOPLandingPage,
@@ -60,7 +66,7 @@ const router = createRouter({
       name: 'ProfilePassword',
       component: ProfilePassword,
     },
-  ]
+  ],
 });
 
 export default router;
