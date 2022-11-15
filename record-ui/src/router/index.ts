@@ -6,20 +6,28 @@ import singleAttractionView from "../views/singleAttractionView.vue"
 import CreateAttraction from "../components/CreateAttraction.vue"
 import PassesView from "../views/PassesView.vue";
 import AdminView from '../views/AdminView.vue';
-import AdminAllBookings from "../views/adminAllBookings.vue";
-import BookingConfirmationView from '../views/BookingConfirmationView.vue';
-import BookView from '../views/BookView.vue';
 import EditBarCodeView from "../views/EditBarCodeView.vue";
 import GOPLandingPageView from "../views/GOPLandingPageView.vue";
 import LoginView from "../views/LoginView.vue";
 import PersonalBookingsView from "../views/PersonalBookingsView.vue";
 import ProfileView from "../views/ProfileView.vue";
 import ProfilePasswordView from "../views/ProfilePasswordView.vue";
-import SignupView from "../views/SignupView.vue";
 import AdminStaffsView from "../views/AdminStaffsView.vue";
 import StaffUpdateProfileView from "../views/StaffUpdateProfileView.vue";
 import SignupRedirectView from "../views/SignupRedirectView.vue";
 import CreateAttractionView from "../views/CreateAttractionView.vue";
+import BookView from '../views/BookView.vue'
+import BookingConfirmationView from '../views/BookingConfirmationView.vue'
+import Profile from '../views/ProfileView.vue'
+import ProfilePassword from '../views/ProfilePasswordView.vue'
+import GOPLandingPage from '../views/GOPLandingPageView.vue'
+import AnalyticsView from '../views/AnalyticsView.vue'
+import Admin from '../views/AdminView.vue'
+import EditBarCode from '../views/EditBarCodeView.vue'
+import SignUp from '../views/SignupView.vue'
+import SignupRedirect from '../views/SignupRedirectView.vue'
+import AdminAllBookings from '../views/adminAllBookings.vue'
+import SignupView from '../views/SignupView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
