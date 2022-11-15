@@ -76,7 +76,7 @@ public class AuthService {
 
                 SignInReponseDto resDto = new SignInReponseDto(
                     targetStaff.getStaffId(), 
-                    targetStaff.getRole().ordinal() + ""
+                    targetStaff.getRole()
                 );
 
                 JSONWithData<SignInReponseDto> results = new JSONWithData<>(200, resDto);

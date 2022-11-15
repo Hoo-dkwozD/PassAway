@@ -855,19 +855,18 @@ public class StaffController {
         return staffService.unlockStaff(staffId);
     }
 
-    @GetMapping("/staff/admin")
+    @GetMapping("/staffs/status/admin")
     public ResponseEntity<JSONBody> getAdmin() {
         return staffService.getAdmin();
     }
 
-    @PutMapping("/staff/addAdmin/{staffId}")
+    @PutMapping("/staff/{staffId}/status/admin")
     public ResponseEntity<JSONBody> addAdmin(@PathVariable int staffId) {
         return staffService.addAdmin(staffId);
     }
 
-    @PutMapping("/staff/removeAdmin/{staffId}")
+    @PutMapping("/staff/{staffId}/status/borrower")
     public ResponseEntity<JSONBody> removeAdmin(@PathVariable int staffId) {
         return staffService.removeAdmin(staffId);
     }
-    
 }

@@ -1,11 +1,13 @@
 package sg.edu.sportsschool.DTO.Response;
 
+import sg.edu.sportsschool.Helper.StaffRole;
+
 public class SignInReponseDto {
 
     private Integer staffId;
-    private String role;
+    private StaffRole role;
 
-    public SignInReponseDto(Integer staffId, String role) {
+    public SignInReponseDto(Integer staffId, StaffRole role) {
         this.staffId = staffId;
         this.role = role;
     }
@@ -18,11 +20,11 @@ public class SignInReponseDto {
         this.staffId = staffId;
     }
 
-    public String getRole() {
+    public StaffRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(StaffRole role) {
         this.role = role;
     }
 }
