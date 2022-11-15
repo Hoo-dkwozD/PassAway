@@ -11,6 +11,8 @@ import PersonalBookingsView from "../views/PersonalBookingsView.vue";
 import ProfileView from "../views/ProfileView.vue";
 import ProfilePasswordView from "../views/ProfilePasswordView.vue";
 import SignupView from "../views/SignupView.vue";
+import AdminStaffsView from "../views/AdminStaffsView.vue";
+import StaffUpdateProfileView from "../views/StaffUpdateProfileView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -93,6 +95,16 @@ const router = createRouter({
       name: "AdminAllBookings",
       component: AdminAllBookings,
     },
+    {
+      path: "/admin/staffs",
+      name: "AdminStaffs",
+      component: AdminStaffsView,
+    },
+    {
+      path: "/admin/updateStaff/:staffId",
+      name: "AdminUpdateStaff",
+      component: StaffUpdateProfileView
+    }
   ],
 });
 

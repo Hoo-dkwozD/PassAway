@@ -665,16 +665,6 @@ public class LoanController {
 
     // ------------------------------------------------------------------------------------------------
     // // -- Following codes are used for testing only
-    @GetMapping(path = "/test")
-    public String test() {
-        List<Staff> res = sRepository.findByRole(0);
-        System.out.println("Borrower: " + res);
-        List<Staff> res2 = sRepository.findByRole(1);
-        System.out.println("Admin: " + res2);
-        List<Staff> res3 = sRepository.findByRole(2);
-        System.out.println("GOP: " + res3);
-        return "ok";
-    }
     // //
     // ------------------------------------------------------------------------------------------------
 

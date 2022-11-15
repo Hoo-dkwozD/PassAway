@@ -9,7 +9,7 @@ import {defineComponent} from 'vue'
 import Navbar from '../components/Navbar.vue'
 export default defineComponent({
   name: 'BookingConfirmationView',
-  components: { BookingConfirmation },
+  components: { BookingConfirmation, Navbar },
   data() {
     return {};
   },
