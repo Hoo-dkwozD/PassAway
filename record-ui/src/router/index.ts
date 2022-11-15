@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
-
+import AttractionView from "../views/AttractionView.vue"
+import singleAttractionView from "../views/singleAttractionView.vue"
+import EditAttractionView from "../views/EditAttractionView.vue"
+import CreateAttractionView from "../views/CreateAttractionView.vue"
 import AdminView from '../views/AdminView.vue';
 import AdminAllBookings from "../views/adminAllBookings.vue";
 import AnalyticsView from '../views/AnalyticsView.vue';
@@ -32,6 +35,26 @@ const router = createRouter({
       path: "/analytics",
       name: "analytics",
       component: AnalyticsView,
+    },
+    {
+      path:"/Attract",
+      name:"Attract",
+      component: AttractionView
+    },
+    {
+      path:'/Attract/:id',
+      name : 'singleAttraction',
+      component: singleAttractionView
+    },
+    {
+      path:'/Attract/edit/:id',
+      name : 'EditAttraction',
+      component: EditAttractionView
+    },
+    {
+      path:'/create',
+      name : 'CreateAttraction',
+      component: CreateAttractionView
     },
     {
       path: "/admin/bookings",
