@@ -1,5 +1,6 @@
 
 <template>
+  <Navbar></Navbar>
   <div class="container align-middle">
     <h4>List of administrators</h4>
 
@@ -88,11 +89,16 @@
   
   <script>
   import axios from "axios";
+  import Navbar from '../components/Navbar.vue';
   export default{
+    components:{
+      Navbar
+    },
     data(){
       return{
         adminData : "",
         allStaff : "",
+        URL: "http://localhost:8000/"
       }
     },
     methods:{
@@ -102,7 +108,7 @@
         // var submit = await axios.put("http://localhost:8080/api/staff/removeAdmin/" + test);
 
         axios({
-            url: "http://localhost:8080/api/staff/removeAdmin/" + buttonVal,
+            url: this.URL + "api/staff/removeAdmin/" + buttonVal,
             method: 'put',
         })
        .then(res => {
@@ -121,7 +127,7 @@
         // var submit = await axios.put("http://localhost:8080/api/staff/removeAdmin/" + test);
 
         axios({
-            url: "http://localhost:8080/api/staff/addAdmin/" + buttonValue,
+            url: this.URL + "api/staff/addAdmin/" + buttonValue,
             method: 'put',
         })
        .then(res => {
@@ -138,10 +144,10 @@
   
     },
     async created(){
-      const dataAdmin = await axios.get("http://localhost:8080/api/staff/admin");
+      const dataAdmin = await axios.get(this.URL + "api/staff/admin");
       this.adminData = dataAdmin.data.data;
 
-      const dataAllStaff = await axios.get("http://localhost:8080/api/staffs");
+      const dataAllStaff = await axios.get(this.URL + "api/staffs");
       this.allStaff = dataAllStaff.data.data;
       console.log(dataAllStaff);
     }
