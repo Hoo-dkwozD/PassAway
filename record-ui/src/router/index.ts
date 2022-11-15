@@ -7,6 +7,7 @@ import GOPLandingPage from '../views/GOPLandingPage.vue'
 import AnalyticsView from '../views/AnalyticsView.vue'
 import Admin from '../views/Admin.vue'
 import AdminView from "../views/AdminView.vue";
+import EditBarCode from '../views/EditBarCode.vue'
 
 function requireAuth(to, from, next){
   console.log(this);
@@ -64,6 +65,11 @@ const router = createRouter({
       path: "/Analytics",
       name: 'Analytics',
       component: AnalyticsView,
+    },
+    {
+      path: '/EditBarCode',
+      name: 'EditBarCode',
+      component: EditBarCode
     }
   ],
 });
