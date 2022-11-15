@@ -99,7 +99,7 @@ public class StaffService {
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.CREATED);
 
                 return response;
-            } else if (csvData.get(0).length != 2) {
+            } else if (csvData.get(0).length < 2) {
                 JSONWithMessage results = new JSONWithMessage(400, "The uploaded CSV file is not valid. ");
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.BAD_REQUEST);
 
@@ -109,9 +109,9 @@ public class StaffService {
                         .stream()
                         .map(
                                 arr -> new Staff(
-                                        arr[1],
-                                        arr[0].split(" ")[0],
-                                        arr[0].split(" ")[1],
+                                        arr[csvData.get(0).length - 1],
+                                        arr[csvData.get(0).length - 2].split(" ")[0],
+                                        arr[csvData.get(0).length - 2].split(" ")[1],
                                         StaffRole.BORROWER))
                         .collect(Collectors.toList());
 
