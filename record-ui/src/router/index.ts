@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-// import AdminView from '../views/AdminView.vue';
+import AdminView from '../views/AdminView.vue';
 import AnalyticsView from '../views/AnalyticsView.vue';
 import BookingConfirmationView from '../views/BookingConfirmationView.vue';
 import BookView from '../views/BookView.vue';
@@ -19,6 +19,11 @@ const router = createRouter({
       name: "home",
       component: BookView,
       props: true,
+    },
+    {
+      path: "/staffs/admin",
+      name: "update admin",
+      component: AdminView
     },
     {
       path: "/analytics",

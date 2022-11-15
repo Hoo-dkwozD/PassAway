@@ -42,7 +42,7 @@ export default defineComponent({
             let role = localStorage.getItem("role");
 
             if (staffIdStr === null || role === null) {
-                this.$router.push({ name: 'Login' });
+                this.$router.push({ name: 'login' });
             } else {
                 let staffId = parseInt(staffIdStr);
 
@@ -68,7 +68,7 @@ export default defineComponent({
                 if (data.code === 200) {
                     this.$router.go(0);
                 } else if (data.code === 401) {
-                    this.$router.push({ name: 'Login' });
+                    this.$router.push({ name: 'login' });
                 }else {
                     console.error(data.message);
                 }
