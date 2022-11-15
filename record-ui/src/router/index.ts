@@ -1,12 +1,18 @@
 import { createRouter, createWebHistory } from "vue-router";
-
-// import AdminView from '../views/AdminView.vue';
-import AnalyticsView from '../views/AnalyticsView.vue';
-import BookingConfirmationView from '../views/BookingConfirmationView.vue';
-import BookView from '../views/BookView.vue';
+import BookView from '../views/BookView.vue'
+import BookingConfirmationView from '../views/BookingConfirmationView.vue'
+import Profile from '../views/Profile.vue'
+import ProfilePassword from '../views/ProfilePassword.vue'
+import GOPLandingPage from '../views/GOPLandingPageView.vue'
+import AnalyticsView from '../views/AnalyticsView.vue'
+import Admin from '../views/AdminView.vue'
+import EditBarCode from '../views/EditBarCodeView.vue'
+import LoginView from '../views/LoginView.vue'
+import SignUp from '../views/SignupView.vue'
+import SignupRedirect from '../views/SignupRedirect.vue'
+import AdminAllBookings from '../views/adminAllBookings.vue'
 import EditBarCodeView from '../views/EditBarCodeView.vue';
 import GOPLandingPageView from '../views/GOPLandingPageView.vue';
-import LoginView from '../views/LoginView.vue';
 import ProfileView from '../views/ProfileView.vue';
 import ProfilePasswordView from '../views/ProfilePasswordView.vue';
 import SignupView from '../views/SignupView.vue';
@@ -64,8 +70,18 @@ const router = createRouter({
     },
     {
       path: '/signup',
-      name: 'signup',
+      name: 'Signup',
       component: SignupView
+    },
+    {
+      path: '/signupredirect',
+      name: 'SignupRedirect',
+      component: SignupRedirect
+    },
+    {
+      path:'/adminAllBookings',
+      name: 'AdminAllBookings',
+      component: AdminAllBookings
     }
   ],
 });
