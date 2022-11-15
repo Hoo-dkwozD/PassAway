@@ -23,7 +23,7 @@
             <button @click="signin()" class="btn btn-outline-success col-5 btn-login text-uppercase fw-bold signin-btn m-1">Sign in</button>
             
             <div class="d-grid" style="align-items: center;"> 
-              <router-link to="/signupinit">
+              <router-link to="/signup">
                 <p style = "margin-top: 20px; text-decoration: underline; color: blue;">
                   Don't Have An Account? Sign Up
                 </p>

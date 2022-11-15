@@ -100,12 +100,11 @@ import { defineComponent } from "vue";
                 <div class="col-md-12">
                     <div class="h-100">
                         <router-link to="/">
-                            <img src="../assets/fflogo.png" class="img mx auto" style="width: 30%;">
+                            <img src="../assets/SSSlogo.png" class="img mx auto" style="width: 10%;">
                         </router-link>
                         <p class="h4 mb-3">
                             First, tell us about yourself:
                         </p>
-                        <!-- !!! -->
 
                         <div class="form-floating mx-auto mb-3 col-6">
                             <input class="form-control" id="name" placeholder="Name" v-model="name">
@@ -132,14 +131,6 @@ import { defineComponent } from "vue";
                             <div id="genderHelpBlock" class="form-text text-danger" v-if="genderInvalid">
                                 Gender field cannot be left empty.
                             </div>
-                        </div>
-
-                        <div class="form-floating mx-auto mb-3 col-6">
-                            <input class="form-control" id="familyId" placeholder="Input your family ID (optional)" />
-                            <label for="familyId">Family ID (optional)</label>
-                            <img src="/info-svgrepo-com.svg" alt="info" class="icon-image" data-bs-delay="0"
-                                data-bs-trigger="click" data-bs-toggle="tooltip" data-bs-placement="top" role="button"
-                                title="If you are a new user, please leave this field blank. You can retrieve your family referral code on your profile">
                         </div>
 
                         <!-- <hr> -->
@@ -171,7 +162,7 @@ import { defineComponent } from "vue";
                         </div>
 
                         <div class="d-grid" style="align-items: center;">
-                            <router-link to="/login">
+                            <router-link to="/signup">
                                 <p style="margin-top: 20px; text-decoration: underline; color: blue;">
                                     Have an account? Log in here!
                                 </p>
