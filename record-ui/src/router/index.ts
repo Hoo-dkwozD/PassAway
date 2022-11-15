@@ -1,81 +1,71 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-import Admin from '../views/Admin.vue';
+// import AdminView from '../views/AdminView.vue';
 import AnalyticsView from '../views/AnalyticsView.vue';
 import BookingConfirmationView from '../views/BookingConfirmationView.vue';
 import BookView from '../views/BookView.vue';
-import EditBarCode from '../views/EditBarCode.vue';
-import GOPLandingPage from '../views/GOPLandingPage.vue';
+import EditBarCodeView from '../views/EditBarCodeView.vue';
+import GOPLandingPageView from '../views/GOPLandingPageView.vue';
 import LoginView from '../views/LoginView.vue';
-import Profile from '../views/Profile.vue';
-import ProfilePassword from '../views/ProfilePassword.vue';
-import Signup from '../views/Signup.vue';
+import ProfileView from '../views/ProfileView.vue';
+import ProfilePasswordView from '../views/ProfilePasswordView.vue';
+import SignupView from '../views/SignupView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/editadmin",
-      name: "AdminView",
-      component: AdminView,
-    },
-    {
       path: "/",
-      name: "Home",
+      name: "home",
       component: BookView,
       props: true,
     },
     {
-      path: "/Admin",
-      name: "Admin",
-      component: Admin,
-    },
-    {
-      path: "/Analytics",
-      name: 'Analytics',
+      path: "/analytics",
+      name: 'analytics',
       component: AnalyticsView,
     },
     {
-      path: "/Bookings",
-      name: "Bookings",
+      path: "/bookings",
+      name: "bookings",
       component: BookView,
       props: true,
     },
     {
-      path: "/bookingconfirmation/:loanID",
-      name: "Booking Confirmation",
+      path: "/booking/:loanID/confirmation",
+      name: "booking confirmation",
       component: BookingConfirmationView,
       props: true,
     },
     {
-      path: '/EditBarCode',
-      name: 'EditBarCode',
-      component: EditBarCode
+      path: '/attraction/barcode',
+      name: 'edit bar code',
+      component: EditBarCodeView
     },
     {
-      path: "/GOPLanding",
-      name: 'GOPLanding',
-      component: GOPLandingPage,
+      path: "/GOP",
+      name: 'GOP landing',
+      component: GOPLandingPageView,
     },
     {
       path: "/login",
-      name: "Login",
+      name: "login",
       component: LoginView,
     },
     {
       path: "/profile",
-      name: 'Profile',
-      component: Profile,
+      name: 'profile',
+      component: ProfileView,
     },
     {
-      path: "/profilepassword",
-      name: 'ProfilePassword',
-      component: ProfilePassword,
+      path: "/profile/password",
+      name: 'profile password',
+      component: ProfilePasswordView,
     },
     {
       path: '/signup',
-      name: 'Signup',
-      component: Signup
+      name: 'signup',
+      component: SignupView
     }
   ],
 });

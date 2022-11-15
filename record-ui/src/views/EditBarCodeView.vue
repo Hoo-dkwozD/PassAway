@@ -1,6 +1,6 @@
 <template>
     <Navbar></Navbar>
-  
+
         <div class="container-fluid">
             <div class="row">
                 <div class="h-100">
@@ -38,16 +38,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Navbar from '../components/Navbar.vue'
+import { defineComponent } from 'vue';
+
+import Navbar from '../components/Navbar.vue';
 
 export default defineComponent({
     name: 'EditBarCode',
     components: {
         Navbar
     }
-})
-
+});
 </script>
 
 <style>
