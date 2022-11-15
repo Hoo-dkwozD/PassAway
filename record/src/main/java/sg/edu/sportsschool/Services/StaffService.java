@@ -567,4 +567,54 @@ public class StaffService {
         return result;
     }
 
+    public ResponseEntity<JSONBody> getAdmin() {
+        try {
+            List<Staff> adminStaff = new ArrayList<>();
+            sRepository.findByRole(StaffRole.ADMINISTRATOR).forEach(adminStaff::add);
+            JSONWithData<List<Staff>> body = new JSONWithData<List<Staff>>(200, adminStaff);
+            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server unable to retrieve staff detail. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
+        }
+    }
+
+    public ResponseEntity<JSONBody> addAdmin(Integer staffId) {
+        try {
+            Staff s = sRepository.findById(staffId).get();
+
+            s.setRole(StaffRole.ADMINISTRATOR);
+
+            sRepository.save(s);
+
+            JSONWithData<Staff> body = new JSONWithData<>(200, s);
+            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server unable to retrieve staff detail. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
+        }
+    }
+
+    public ResponseEntity<JSONBody> removeAdmin(Integer staffId) {
+        try {
+            Staff s = sRepository.findById(staffId).get();
+
+            s.setRole(StaffRole.BORROWER);
+
+            sRepository.save(s);
+
+            JSONWithData<Staff> body = new JSONWithData<>(200, s);
+            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server unable to retrieve staff detail. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
+        }
+    }
+
 }

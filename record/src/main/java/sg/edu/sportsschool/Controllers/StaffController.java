@@ -854,4 +854,20 @@ public class StaffController {
     public ResponseEntity<JSONBody> unlockStaff(@PathVariable int staffId) {
         return staffService.unlockStaff(staffId);
     }
+
+    @GetMapping("/staff/admin")
+    public ResponseEntity<JSONBody> getAdmin() {
+        return staffService.getAdmin();
+    }
+
+    @PutMapping("/staff/addAdmin/{staffId}")
+    public ResponseEntity<JSONBody> addAdmin(@PathVariable int staffId) {
+        return staffService.addAdmin(staffId);
+    }
+
+    @PutMapping("/staff/removeAdmin/{staffId}")
+    public ResponseEntity<JSONBody> removeAdmin(@PathVariable int staffId) {
+        return staffService.removeAdmin(staffId);
+    }
+    
 }
