@@ -5,6 +5,10 @@ import { defineComponent} from "vue";
 import NavBar from '../components/Navbar.vue';
 const userData: any[] = []
 const filteredData: any[] = []
+interface Data{
+    showCalendar: boolean
+}
+
 export default defineComponent({
     data() {
         return {
@@ -22,6 +26,7 @@ export default defineComponent({
             userId:1,
             userData,
             currDate: new Date(),
+            showCalendar: false,
         }
     },
     components:{
@@ -330,17 +335,17 @@ export default defineComponent({
     <NavBar></NavBar>
     <div class="row box">
         <div style="width:90%" class="p-3 mx-auto col-6">
-            <h2 style="text-align:left">Overview</h2>
+            <h2 class="text-center">Overview</h2>
+            <div class="text-start">
+                <div class="col-2 mb-3">
+                    <span class="mx-2">Select</span>
+                        <input type="image" src="@/assets/calendar-svgrepo-com.svg" style="width:20%"
+                        @click="showCalendar = !showCalendar">
+                </div>
+            </div>
+                
             <div style="border:1px solid black;" class="mb-3">
                 <svg :width="graphWidth" height="600" id="dashboard"></svg>
-
-                <div class="row d-flex justify-content-end m-4">
-                    <label for="colFormLabelSm" class="col-1 col-form-label col-form-label-sm"
-                        style="text-align: end">Select</label>
-                    <div class="dropdown col-2">
-                        <img src="../assets/calendar-svgrepo-com.svg"/>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
