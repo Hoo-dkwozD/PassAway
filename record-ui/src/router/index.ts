@@ -9,6 +9,8 @@ import Admin from '../views/Admin.vue'
 import EditBarCode from '../views/EditBarCode.vue'
 import LoginView from '../views/LoginView.vue'
 import SignUp from '../views/Signup.vue'
+import SignupRedirect from '../views/SignupRedirect.vue'
+import AdminAllBookings from '../views/adminAllBookings.vue'
 
 function requireAuth(to, from, next){
   console.log(this);
@@ -76,6 +78,16 @@ const router = createRouter({
       path: '/signup',
       name: 'Signup',
       component: SignUp
+    },
+    {
+      path: '/signupredirect',
+      name: 'SignupRedirect',
+      component: SignupRedirect
+    },
+    {
+      path:'/adminAllBookings',
+      name: 'AdminAllBookings',
+      component: AdminAllBookings
     }
   ],
 });

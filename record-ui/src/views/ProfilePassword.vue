@@ -36,16 +36,15 @@ export default defineComponent({
                         </h1>
                         <div class="form-information">
 
-                            <div class="mx-auto col-6 mb-5">
-                                <div class="row">
-
+                            <div class="d-flex mb-5">
+                                <div class="row flex-grow-1">
                                     <form>
-                                        <div class="form-floating mb-2">
+                                        <div class="form-floating mb-3">
                                             <input type="text" id="oldPassword" class="form-control">
                                             <label for="oldPassword">Old Password</label>
                                         </div>
 
-                                        <div class="form-floating mb-2">
+                                        <div class="form-floating mb-3">
                                             <input type="text" id="newPassword" class="form-control">
                                             <label for="newPassword">New Password</label>
                                         </div>
@@ -59,7 +58,7 @@ export default defineComponent({
                             </div>
                             <div class="text-center">
                                 <button type="submit"
-                                    class="btn btn-outline-success text-uppercase fw-bold change-btn">Save</button>
+                                    class="w-100 btn btn-outline-success text-uppercase fw-bold">Save</button>
                             </div>
                         </div>
 
@@ -74,8 +73,9 @@ export default defineComponent({
 </template>
 
 <style scoped>
-.change-btn {
-    margin: auto;
+
+.content {
+    padding: 20px;
 }
 
 .image-style {
@@ -86,14 +86,16 @@ export default defineComponent({
 .form-information {
     margin-top: 5px;
     margin-bottom: 30px;
+    border: 2px solid black;
     border-radius: 10px;
     margin-left: 30%;
     margin-right: 30%;
-    padding: 10px;
+    padding: 30px;
 }
 
-.hr-block {
-    margin-left: 5%;
-    margin-right: 5%;
+@media screen and (max-width: 700px){
+    .form-information {
+        margin: 0;
+    }
 }
 </style>
