@@ -40,6 +40,7 @@ import sg.edu.sportsschool.Exceptions.BadRequestException;
 import sg.edu.sportsschool.Exceptions.InternalServerException;
 import sg.edu.sportsschool.Helper.PassComparator;
 import sg.edu.sportsschool.Helper.PassType;
+import sg.edu.sportsschool.Helper.StaffRole;
 import sg.edu.sportsschool.Helper.Json.JSONBody;
 import sg.edu.sportsschool.Helper.Json.JSONWithData;
 import sg.edu.sportsschool.Helper.Json.JSONWithMessage;
@@ -396,7 +397,7 @@ public class LoanService {
 
         List<Loan> lostLoans = lRepository.findAllById(loanIds);
 
-        List<Staff> admin = sRepository.findByRole(1); // 0 - borrower, 1 - admin, 2 - GOP
+        List<Staff> admin = sRepository.findByRole(StaffRole.ADMINISTRATOR); // 0 - borrower, 1 - admin, 2 - GOP
             String[] adminEmails = new String[admin.size()];
             admin.stream()
                     .map(s -> s.getEmail())
