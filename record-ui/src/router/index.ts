@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 
+import PassesView from "../views/PassesView.vue";
 import AdminView from '../views/AdminView.vue';
 import AdminAllBookings from "../views/adminAllBookings.vue";
 import AnalyticsView from '../views/AnalyticsView.vue';
@@ -17,6 +18,16 @@ import SignupRedirect from "../views/SignupRedirect.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: "/passes",
+      name: "PassesView",
+      component: PassesView,
+    },
+    {
+      path: "/editadmin",
+      name: "AdminView",
+      component: AdminView,
+    },
     {
       path: "/",
       name: "home",
