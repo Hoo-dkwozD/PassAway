@@ -17,8 +17,8 @@
         </h3>
       </div>
 
-      <div class="bookingdetails">
-        <div class="dropdown" id="group-location">
+      <div class="bookingdetails d-flex flex-column flex-md-row gap-3 px-3">
+        <div class="dropdown col-12 col-md-3 flex-grow-1" id="group-location">
           <select
             v-model="attractionDetails"
             class="form-select shadow"
@@ -38,12 +38,10 @@
           </select>
         </div>
 
-        <div id="group-calendar">
-          <div>
-            <div class="position-absolute">
+        <div id="group-calendar" class="col-12 col-md-3 flex-grow-1">
               <button
                 id="calendar-details"
-                class="form-select shadow"
+                class="form-select shadow text-start"
                 @click="showCalendar = !showCalendar"
               >
                 {{
@@ -52,17 +50,15 @@
                     : "No date selected"
                 }}
               </button>
-              <div v-if="showCalendar">
-                <v-date-picker
+              <div class="position-absolute" style="z-index: 5" v-if="showCalendar">
+                <v-date-picker @change="showCalendar = !showCalendar"
                   v-model="dateSelected"
                   :attributes="attributes"
                 ></v-date-picker>
               </div>
-            </div>
-          </div>
         </div>
 
-        <div class="dropdown" id="group-date">
+        <div class="dropdown col-12 col-md-3 flex-grow-1" id="group-date">
           <select v-model="numPassesSelected" class="form-select shadow">
             <option disabled value="">Passes</option>
             <option
@@ -75,10 +71,10 @@
           </select>
         </div>
 
-        <div id="group-submit">
+        <div id="group-submit" class="w-100">
           <button
             type="submit"
-            class="btn btn-submit btn-md"
+            class="btn btn-submit btn-md w-100"
             @click="addLoan()"
           >
             Book Now
@@ -323,16 +319,16 @@ export default defineComponent({
 
 <style>
 #sectionheader {
-  width: 100%;
   background-size: cover;
+  background-repeat: no-repeat !important;
+  background-position: center;
   padding-top: 300px;
   padding-bottom: 300px;
-  background-size: 100%;
-  position:absolute;
 }
 
 .main {
-  margin-bottom: 10px;
+  margin: 40px;
+
 }
 .title {
   color: rgb(247, 247, 132);
@@ -343,8 +339,21 @@ export default defineComponent({
   margin-bottom: 10px;
   padding-bottom: 10px;
   line-height: 1.4;
-  margin-left: 100px;
+  text-align: left;
 }
+
+@media only screen and (max-width: 768px){
+  .title {
+    font-size: 80px;
+  }
+}
+
+@media only screen and (max-width: 400px){
+  .title {
+    font-size: 50px;
+  }
+}
+
 .toast {
   z-index: 9998;
   position: absolute;
@@ -358,10 +367,10 @@ export default defineComponent({
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.6;
-  margin-left: 100px;
-  padding-left: 50px;
+  text-align: left;
   min-height: 54px;
-  width: 1500px;
+  margin: 0 20px;
+  padding: 0 40px;
 }
 
 .calendarStyle {
@@ -370,61 +379,19 @@ export default defineComponent({
 }
 .bookingdetails {
   align-items: center;
-  display: flex;
-  margin-left: 150px;
   border-radius: 30px;
   box-shadow: 0px 12px 14px;
-  padding: 5px;
-  padding-top: 15px;
   background-color: white;
   border: 1px none;
-  width: 900px;
   height: 90px;
+  margin: 0 60px;
 }
 
-#group-location {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 50px;
-  min-height: 56px;
-  width: 450px;
-  margin-left: 20px;
-  margin-right: 10px;
-}
-
-#group-calendar {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 50px;
-  min-height: 56px;
-  width: 300px;
-  padding-left: 10px;
-  margin-right: 30px;
-}
-
-#group-date {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 50px;
-  min-height: 56px;
-  width: 250px;
-  padding-left: 5px;
-  margin-right: 40px;
-}
-
-#group-submit {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 50px;
-  min-height: 56px;
-  width: 200px;
-  padding-left: 20px;
-  margin-right: 20px;
+@media only screen and (max-width: 767px){
+  .bookingdetails{
+    padding: 40px;
+    height: auto;
+  }
 }
 
 #location-details {
@@ -442,7 +409,6 @@ export default defineComponent({
   line-height: 24px;
   top: 0;
   white-space: nowrap;
-  padding-left: 20px;
 }
 
 #date-details {

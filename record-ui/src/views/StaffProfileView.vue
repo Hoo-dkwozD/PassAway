@@ -127,7 +127,6 @@ export default defineComponent({
                             </router-link>
                         </div>
 
-
                         <h1 class="h2 text-center">
                             Staff Personal Information
                         </h1>

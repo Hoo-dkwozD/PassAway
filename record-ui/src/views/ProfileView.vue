@@ -118,153 +118,152 @@ export default defineComponent({
 
 <template>
   <Navbar></Navbar>
-  <div
-    id="top"
-    class="h-100"
-    :style="{ backgroundImage: `url(${currentBackground})` }"
-  >
+  <div id="top" class="h-100" :style="{ backgroundImage: `url(${currentBackground})` }">
     <div class="content" style="margin-top: 80px">
       <div class="container-fluid">
         <div class="row align-items-stretch">
           <div class="col-12">
-            <div class="h-100">
+            <div class="h-100 content">
               <div class="text-center">
                 <router-link to="/">
-                  <img
-                    src="../assets/SSSlogo.png"
-                    class="img mx-auto image-style"
-                  />
+                  <img src="../assets/SSSlogo.png" class="img mx-auto image-style" />
                 </router-link>
               </div>
 
               <h1 class="h2 text-center">Personal Information</h1>
-              <div v-if="!bookingStatus" class="form-information">
-                <div class="mx-auto mb-5 col-6">
-                  <h3 class="text-danger text-center">Account Locked!</h3>
-                </div>
-              </div>
-              <div v-else class="form-information">
-                <div class="mx-auto col-6">
-                  <div class="row">
-                    <div class="col-7">
+              <div class="form-information">
+                <div class="d-flex">
+                  <div class="row flex-grow-1">
+                    <div>
                       <div class="align-items">
-                        <div id="personal-details">Legal Name</div>
+                        <div id="personal-details">
+                          <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                            Legal Name
+                            <div>
+                              <div id="edit">
+                                <button class="btn btn-link p-0" @click="editName = !editName">
+                                  Edit
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                         <div v-if="!editName">
-                          <span>{{ fullName }}</span>
+                          <div class="d-flex border rounded p-2">
+                            {{ firstName }}
+                          </div>
                         </div>
                         <div v-else>
                           <form>
                             <div class="form-floating firstName mb-2">
-                              <input
-                                type="text"
-                                id="firstName"
-                                class="form-control"
-                                v-model="firstName"
-                              />
+                              <input type="text" id="firstName" class="form-control" :value="firstName" />
                               <label for="firstName">First Name</label>
                             </div>
 
                             <div class="form-floating lastName">
-                              <input
-                                type="text"
-                                id="lastname"
-                                class="form-control"
-                                v-model="lastName"
-                              />
+                              <input type="text" id="lastname" class="form-control" :value="lastName" />
                               <label for="lastname">Last Name</label>
                             </div>
                           </form>
                         </div>
                       </div>
                     </div>
-                    <div class="col-5">
-                      <div id="edit">
-                        <button
-                          class="btn btn-link"
-                          @click="() => (editName = !editName)"
-                        >
-                          Edit
-                        </button>
-                      </div>
-                    </div>
                   </div>
                 </div>
                 <hr class="hr-block" />
 
-                <div class="mx-auto col-6">
-                  <div class="row">
-                    <div class="col-7">
-                      <div id="personal-details">Email</div>
+                <div class="d-flex">
+                  <div class="row flex-grow-1">
+                    <div>
+                      <div class="align-items">
+                        <div id="personal-details">
+                          <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                            Email
+                            <div>
+                              <div id="edit">
+                                <button class="btn btn-link p-0" @click="editEmail = !editEmail">
+                                  Edit
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                       <div v-if="!editEmail">
-                        <span>{{ email }}</span>
+                        <div v-if="email != ''" class="d-flex border rounded p-2">
+                          {{ email }}
+                        </div>
                       </div>
                       <div v-else>
                         <form class="form-floating">
-                          <input
-                            type="text"
-                            id="name"
-                            class="form-control"
-                            v-model="email"
-                          />
+                          <input type="text" id="name" class="form-control" :value="email" />
                           <label for="name">Email</label>
                         </form>
                       </div>
                     </div>
-                    <div class="col-5">
-                      <div id="edit">
-                        <button
-                          class="btn btn-link"
-                          @click="() => (editEmail = !editEmail)"
-                        >
-                          Edit
-                        </button>
+                  </div>
+                </div>
+
+                <hr class="hr-block" />
+
+                <div class="d-flex">
+                  <div class="row flex-grow-1">
+                    <div>
+                      <div class="align-items">
+                        <div id="personal-details">
+                          <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                            Contact Number
+                            <div>
+                              <div id="edit">
+                                <button class="btn btn-link p-0" @click="editNumber = !editNumber">
+                                  Edit
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div v-if="!editNumber">
+                        <span class="d-flex border rounded p-2">{{
+                            contactNumber
+                        }}</span>
+                      </div>
+                      <div v-else>
+                        <form class="form-floating">
+                          <input type="text" id="name" class="form-control" :value="contactNumber" />
+                          <label for="name">Contact Number</label>
+                        </form>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <hr class="hr-block" />
-
-                <div class="mx-auto col-6">
-                  <div class="row">
-                    <div class="col-7">
-                      <div id="personal-details">Contact Number</div>
-                      <div v-if="!editNumber">
-                        <span>{{ contactNumber }}</span>
+                <div class="d-flex">
+                  <div class="row flex-grow-1">
+                    <div>
+                      <div class="align-items">
+                        <div id="personal-details">
+                          <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                            Booking Status
+                          </div>
+                        </div>
                       </div>
-                      <div v-else>
-                        <form class="form-floating">
-                          <input
-                            type="text"
-                            id="name"
-                            class="form-control"
-                            v-model="contactNumber"
-                          />
-                          <label for="name">Contact Number</label>
-                        </form>
-                      </div>
-                    </div>
-                    <div class="col-5">
-                      <div id="edit">
-                        <button
-                          class="btn btn-link"
-                          @click="() => (editNumber = !editNumber)"
-                        >
-                          Edit
-                        </button>
+                      <div>
+                        <span class="d-flex border rounded p-2 mb-3">{{
+                            bookingStatus
+                        }}</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <div class="text-center">
-                  <button
-                    @click="updateProfile()"
-                    type="submit"
-                    class="btn btn-outline-success text-uppercase fw-bold change-btn"
-                  >
-                    Save
-                  </button>
+                  <div>
+                    <button type="submit" class="w-100 btn btn-outline-success text-uppercase fw-bold">
+                      Save
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -298,6 +297,7 @@ export default defineComponent({
 #top {
   background-image: "https://img.freepik.com/free-vector/white-desktop-background-modern-minimal-design-vector_53876-140226.jpg?w=1800&t=st=1668366952~exp=1668367552~hmac=a23687ccfe071f6c28017a514a3380e222e62d36894545fc6ff4f9ad24033935";
 }
+
 .hr-block {
   margin-left: 5%;
   margin-right: 5%;

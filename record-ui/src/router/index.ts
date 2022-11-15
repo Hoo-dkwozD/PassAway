@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-
 import AdminView from '../views/AdminView.vue';
 import AdminAllBookings from "../views/adminAllBookings.vue";
 import AnalyticsView from '../views/AnalyticsView.vue';
@@ -13,6 +12,7 @@ import ProfileView from "../views/ProfileView.vue";
 import ProfilePasswordView from "../views/ProfilePasswordView.vue";
 import SignupView from "../views/SignupView.vue";
 import SignupRedirectView from "../views/SignupRedirectView.vue";
+import StaffAddView from "../views/StaffAddView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +27,11 @@ const router = createRouter({
       path: "/staffs/admin",
       name: "update admin",
       component: AdminView
+    },
+    {
+      path: "/staffs/add",
+      name: "add staff",
+      component: StaffAddView
     },
     {
       path: "/analytics",
@@ -89,7 +94,7 @@ const router = createRouter({
       path: "/adminAllBookings",
       name: "admin all bookings",
       component: AdminAllBookings,
-    },
+    }
   ],
 });
 
