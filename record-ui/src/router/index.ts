@@ -21,13 +21,13 @@ import BookingConfirmationView from '../views/BookingConfirmationView.vue'
 import Profile from '../views/ProfileView.vue'
 import ProfilePassword from '../views/ProfilePasswordView.vue'
 import GOPLandingPage from '../views/GOPLandingPageView.vue'
-import AnalyticsView from '../views/AnalyticsView.vue'
 import Admin from '../views/AdminView.vue'
 import EditBarCode from '../views/EditBarCodeView.vue'
 import SignUp from '../views/SignupView.vue'
 import SignupRedirect from '../views/SignupRedirectView.vue'
 import AdminAllBookings from '../views/adminAllBookings.vue'
 import SignupView from '../views/SignupView.vue';
+import StaffAddView from "../views/StaffAddView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -57,6 +57,11 @@ const router = createRouter({
       path:"/Attract",
       name:"Attract",
       component: AttractionView
+    },
+    {
+      path: "/staffs/add",
+      name: "add staff",
+      component: StaffAddView
     },
     {
       path:'/Attract/:id',
