@@ -46,7 +46,6 @@ export default defineComponent({
 
     const ticketInformation = [
       {
-<<<<<<< HEAD
         description: "2 Passes left",
         isComplete: false,
         dates: new Date(2022, 11, 11), // date should be array of objects where one object is one date, format month year and day into an object
@@ -58,19 +57,6 @@ export default defineComponent({
         dates: new Date(2022, 11, 12), // date should be array of objects where one object is one date
         color: "red",
       },
-=======
-        description: '2 Passes left',
-        isComplete: true,
-        dates: new Date(2022, 10, 1), // date should be array of objects where one object is one date, format month year and day into an object
-        color: 'red',
-      },
-      {
-        description: '1 Pass left',
-        isComplete: true,
-        dates: new Date(2022, 10, 2), // date should be array of objects where one object is one date
-        color: 'red',
-      }
->>>>>>> 2f11ef0 (calendar fix2)
     ];
     const selectedDay = null;
     return {

@@ -1,8 +1,7 @@
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid p-0 h-100" :style="{ backgroundImage: `url(${currentBackground})` }">
     <div
-      class="imageDiv p-5 mb-5 row"
-      :style="{ backgroundImage: `url(${currentBackground})` }"
+      class="pt-3 px-5"
     >
       <div>
         <h1 class="text-center">{{ title }}</h1>
@@ -42,14 +41,13 @@
 import axios from "axios";
 import { defineComponent } from "vue";
 
-
 //pass the output from the api to the respective table rows
 interface Data {
   title: string;
   checkLoaner: boolean;
   loanID: number;
   currentBackground: string;
-  loans: [];
+  loans: Loan[];
   staffId: number;
   role: string;
 }
@@ -57,6 +55,17 @@ interface Data {
 interface LoginData {
   staffId: number;
   role: string;
+}
+
+interface Loan {
+  loanId: number,
+  staffName: string,
+  staffEmail: string,
+  visitDate: string,
+  attractionName: string,
+  passId: string,
+  prevBorrowerName: string,
+  prevBorrowerContact: string
 }
 
 export default defineComponent({
@@ -82,7 +91,7 @@ export default defineComponent({
       );
       const detail = loanDetails.data.data[0];
 
-      const loanId = detail["loanId"];
+      const loanId = detail.loanId;
       const staffName = detail.staffName;
       const staffEmail = detail.staffEmail;
       const visitDate = detail.visitDate;
@@ -100,7 +109,7 @@ export default defineComponent({
         prevBorrowerName,
         prevBorrowerContact,
       ];
-    } catch (err) {
+    } catch (err: any) {
       if (err.response.status == 401) {
         this.$router.push({ name: "Login" });
       }
@@ -131,13 +140,6 @@ export default defineComponent({
 </script>
 
 <style>
-.imageDiv {
-  width: 100%;
-  background-size: cover;
-  padding-top: 300px;
-  padding-bottom: 300px;
-  background-size: 100%;
-}
 
 h1 {
   font-size: 60px;

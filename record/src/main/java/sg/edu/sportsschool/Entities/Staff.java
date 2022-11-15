@@ -139,4 +139,11 @@ public class Staff {
     public void setDisabled(boolean isDisabled) {
         this.isDisabled = isDisabled;
     }
+
+    @Override
+    public String toString() {
+        return "Staff [staffId=" + staffId + ", firstName=" + firstName + ", role=" + role + "]";
+    }
+
+    
 }

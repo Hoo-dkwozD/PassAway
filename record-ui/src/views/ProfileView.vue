@@ -67,7 +67,6 @@ export default defineComponent({
           }
         );
         const data = await res.data;
-
         if (data.code === 200) {
           this.$router.go(0);
         } else if (data.code === 401) {

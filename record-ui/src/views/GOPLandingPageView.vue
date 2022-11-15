@@ -2,6 +2,8 @@
 import { defineComponent } from 'vue';
 import axios from 'axios';
 
+import Navbar from '../components/Navbar.vue';
+
 // Typings
 interface GopLandingPageData {
     loans: any[],
@@ -30,6 +32,9 @@ export default defineComponent({
             displayLoans: [],
             queryString: null
         }
+    },
+    components: {
+        Navbar
     },
     async created() {
         try {

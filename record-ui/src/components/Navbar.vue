@@ -11,15 +11,15 @@
     </RouterLink>
 
     <div class="header-nav">
-      <nav v-if="role === '0'" class="topnav-right">
+      <nav v-if="role === 'BORROWER'" class="topnav-right">
         <a
           v-for="route, idx in borrowerRoutes"
           :key="idx"
-          @click="changeRoutes(route.path)"
+          @click="changeRoutes(route.path, route.name)"
           class="place lato mx-auto route-link"
         >
           <div
-            v-if="route.name === 'Sign In'"
+            v-if="route.name === 'Log Out'"
             class="auto-layout-horizontal display"
           >
             {{ route.name }}
@@ -32,15 +32,15 @@
           </div>
         </a>
       </nav>
-      <nav v-if="role === '1'" class="topnav-right">
+      <nav v-if="role === 'ADMINISTRATOR'" class="topnav-right">
         <a
           v-for="route, idx in adminRoutes"
           :key="idx"
-          @click="changeRoutes(route.path)"
+          @click="changeRoutes(route.path, route.name)"
           class="place lato mx-auto route-link"
         >
           <div
-            v-if="route.name === 'Sign In'"
+            v-if="route.name === 'Log Out'"
             class="auto-layout-horizontal display"
           >
             {{ route.name }}
@@ -53,15 +53,15 @@
           </div>
         </a>
       </nav>
-      <nav v-if="role === '2'" class="topnav-right">
+      <nav v-if="role === 'GOP'" class="topnav-right">
         <a
           v-for="route, idx in gopRoutes"
           :key="idx"
-          @click="changeRoutes(route.path)"
+          @click="changeRoutes(route.path, route.name)"
           class="place lato mx-auto route-link"
         >
           <div
-            v-if="route.name === 'Sign In'"
+            v-if="route.name === 'Log Out'"
             class="auto-layout-horizontal display"
           >
             {{ route.name }}
@@ -130,8 +130,8 @@ export default defineComponent({
         name: 'My Profile',
       },
       {
-        path: "/login",
-        name: "Sign In",
+        path: "/",
+        name: "Log Out",
       }
     ];
 
@@ -149,8 +149,8 @@ export default defineComponent({
         name: 'My Profile',
       },
       {
-        path: "/login",
-        name: "Sign In",
+        path: "/",
+        name: "Log Out",
       }
     ];
 
@@ -164,8 +164,8 @@ export default defineComponent({
         name: 'My Profile',
       },
       {
-        path: "/login",
-        name: "Sign In",
+        path: "/",
+        name: "Log Out",
       }
     ];
 
@@ -194,7 +194,7 @@ export default defineComponent({
         let role = localStorage.getItem("role");
 
         if (staffIdStr === null || role === null) {
-            this.$router.push({ name: 'Login' });
+            this.$router.push({ name: 'login' });
         } else {
             let staffId = parseInt(staffIdStr);
 
@@ -204,8 +204,15 @@ export default defineComponent({
             };
         }
     },
-    changeRoutes(path: string) {
-      this.$router.push(path).then(() => this.$router.go(0));
+    changeRoutes(path: string, name: string) {
+      if (name === "Log Out") {
+        localStorage.removeItem("staffId");
+        localStorage.removeItem("role");
+
+        this.$router.push({ name: 'login' }).then(() => this.$router.go(0));
+      } else {
+        this.$router.push(path).then(() => this.$router.go(0));
+      }
     },
   }
 });
