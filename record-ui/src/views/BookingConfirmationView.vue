@@ -1,15 +1,20 @@
 <template>
+  <Navbar></Navbar>
   <booking-confirmation></booking-confirmation>
 </template>
 
-<script>
+<script lang="ts">
 import BookingConfirmation from "../components/BookingConfirmation.vue"
-export default {
-  components: { BookingConfirmation },
+import {defineComponent} from 'vue'
+import Navbar from '../components/Navbar.vue'
+export default defineComponent({
+  name: 'BookingConfirmationView',
+  components: { BookingConfirmation, Navbar },
   data() {
-    return {
-    };
+    return {};
   },
-  methods: {},
-};
+  methods: {
+    
+  }
+});
 </script>

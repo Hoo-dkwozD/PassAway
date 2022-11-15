@@ -1,37 +1,23 @@
 <template>
-  <div class="header">
-    <img
-      alt="Vue logo"
-      class="logo header-logo"
-      src="@/assets/logo.png"
-      width="160"
-      height="75"
-    />
-
-    <div class="header-nav">
-      <nav class="topnav-right">
-        <RouterLink
-          v-for="route in routes"
-          class="place lato mx-auto"
-          :to="route.path"
-        >
-        <div class="auto-layout-horizontal display" v-if="route.name == 'Sign In'">
-          {{ route.name }}
-        </div>
-        <div v-else-if="role == 'Admin'" class="lato2 display">
-          {{ route.name }}
-        </div>
-
-
-        </RouterLink>
-      </nav>
-    </div>
-
-  </div>
-
-    <RouterView />
-  
+  <router-view />
 </template>
+
+<style>
+*{
+padding: 0;
+margin: 0;
+box-sizing: border-box;
+}
+#app {
+font-family: Avenir, Helvetica, Arial, sans-serif;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+text-align: center;
+color: #2c3e50;
+}
+</style>
+
+
 
 <script lang="ts">
 import { defineComponent } from "vue";
@@ -45,26 +31,34 @@ interface Route {
 }
 
 export default defineComponent({
+  name: 'App',
   data() {
     const role = "Admin";
     const routes: Route[] = [
       {
+        path: "/",
+        name: "Home",
+      },
+      {
+        path: "/Bookings",
+        name: "Bookings",
+      },
+      {
         path: "/Analytics",
-        name: "Analytics"
+        name: "Analytics",
       },
       {
         path: "/Admin",
-        name: "Admin"
+        name: "Admin",
       },
       {
         path: "/signin",
-        name: "Sign In"
+        name: "Sign In",
       },
     ];
-
     return {
       routes,
-      role
+      role,
     };
   },
   components: {
@@ -120,7 +114,7 @@ export default defineComponent({
 }
 
 .lato2 {
-  color: #F57921;
+  color: #f57921;
   font-family: "Lato", sans-serif;
   font-size: 17px;
   font-weight: bolder;
@@ -171,6 +165,6 @@ export default defineComponent({
 }
 
 .display {
-  display:inline-block;
+  display: inline-block;
 }
 </style>

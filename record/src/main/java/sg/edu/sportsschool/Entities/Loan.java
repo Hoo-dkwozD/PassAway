@@ -29,7 +29,8 @@ public class Loan {
     @JoinColumn(name = "pass_id")
     private Pass pass;
 
-    public Loan() {}
+    public Loan() {
+    }
 
     public Loan(Staff staff, Pass pass, Date startDate, boolean hasCollected, boolean hasReturned) {
         this.staff = staff;
@@ -41,6 +42,10 @@ public class Loan {
 
     public Integer getLoanId() {
         return loanId;
+    }
+
+    public void setLoanId(Integer loanId) {
+        this.loanId = loanId;
     }
 
     public Staff getStaff() {
@@ -82,4 +87,11 @@ public class Loan {
     public void setHasReturned(boolean hasReturned) {
         this.hasReturned = hasReturned;
     }
+
+    @Override
+    public String toString() {
+      return loanId + "";
+    }
+
+    
 }

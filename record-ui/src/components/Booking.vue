@@ -1,22 +1,23 @@
 <template>
-  <div class="container-fluid px-0">
+  <NavBar></NavBar>
+  <div class="container-fluid p-0 mx-0 position-relative w-100 d-flex flex-column" id="top">
     <div
       id="sectionheader"
       :style="{ backgroundImage: `url(${currentBackground})` }"
-      class="row"
+      class="mx-0"
     >
-      <div class="main container-fluid">
-        <h1 class="title row">{{ title }}</h1>
-        <h3 class="titledescription row">
+      <div class="main">
+        <h1 class="title">{{ title }}</h1>
+        <h3 class="titledescription">
           You are entitled to 2 passes a month. {{}}
         </h3>
-        <h3 v-if="attractionDetails.length != 0" class="titledescription row">
+        <h3 v-if="attractionDetails.length != 0" class="titledescription">
           Each pass entitles you to {{ numOfAccompanyingGuests }} accompanying
           guests to {{ title }}
         </h3>
       </div>
 
-      <div class="bookingdetails container-fluid">
+      <div class="bookingdetails">
         <div class="dropdown" id="group-location">
           <select
             v-model="attractionDetails"
@@ -38,7 +39,27 @@
         </div>
 
         <div id="group-calendar">
-          <calendar-picker />
+          <div>
+            <div class="position-absolute">
+              <button
+                id="calendar-details"
+                class="form-select shadow"
+                @click="showCalendar = !showCalendar"
+              >
+                {{
+                  dateSelected != null
+                    ? dateSelected.toDateString()
+                    : "No date selected"
+                }}
+              </button>
+              <div v-if="showCalendar">
+                <v-date-picker
+                  v-model="dateSelected"
+                  :attributes="attributes"
+                ></v-date-picker>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="dropdown" id="group-date">
@@ -55,17 +76,13 @@
         </div>
 
         <div id="group-submit">
-          <!-- <router-link
-          to="{name: 'BookingConfirmation', params: {loanID}}"
-          > -->
           <button
             type="submit"
-            class="btn btn-submit btn-lg"
+            class="btn btn-submit btn-md"
             @click="addLoan()"
           >
             Book Now
           </button>
-          <!-- </router-link> -->
         </div>
       </div>
     </div>
@@ -74,9 +91,16 @@
 
 <script lang="ts">
 import axios from "axios";
-import { DatePicker } from "v-calendar";
 import { defineComponent } from "vue";
-import CalendarPicker from "./CalendarPicker.vue";
+import NavBar from "../components/Navbar.vue";
+import "v-calendar/dist/style.css";
+
+type ticketInformation = {
+  description: string;
+  isComplete: boolean;
+  dates: Date;
+  color: string;
+};
 
 // Typings
 interface Data {
@@ -93,7 +117,14 @@ interface Data {
   currentBackground: string;
   loanID: number;
   attractionId: number;
-  staffId: string;
+  staffId: number;
+  ticketInformation: ticketInformation[];
+  errorMsg: string;
+}
+
+interface LoginData {
+  staffId: number;
+  role: string;
 }
 
 export default defineComponent({
@@ -113,17 +144,38 @@ export default defineComponent({
         "https://www.sportsschool.edu.sg/qql/slot/u262/2021/News%20and%20Publications/News/2021/MAR21/What%20Makes%20Us%20Athlete-Friendly/Athlete-friendly%20environment%20at%20Singapore%20Sports%20School%20helps%20nurture%20champions.jpg",
       loanID: 0,
       attractionId: 0,
-      staffId: "",
+      errorMsg: "",
+      staffId: 0,
+      ticketInformation: [
+        {
+          description: "2 Passes left",
+          isComplete: false,
+          dates: new Date(2022, 11, 11), // date should be array of objects where one object is one date, format month year and day into an object
+          color: "red",
+        },
+        {
+          description: "1 Pass left",
+          isComplete: false,
+          dates: new Date(2022, 11, 12), // date should be array of objects where one object is one date
+          color: "red",
+        },
+      ],
     };
+  },
+  watch: {
+    loanID: function (value) {
+      // Whenever the prop "name" changes, then we will console log its value.
+      console.log(value);
+    },
   },
 
   async created() {
-    this.staffId = document.cookie;
-    const attractions = await axios.get(
-      import.meta.env.VITE_API_URL + "api/attraction/list"
-    );
-
-    for (const att of attractions.data.data) {
+    this.checkLogin();
+    try {
+      const attractions = await axios.get(
+        import.meta.env.VITE_API_URL + "api/attractions"
+      );
+      for (const att of attractions.data.data) {
       const location = att.name;
       const attractionId = att.attractionId;
       const maxPassesPerLoan = att.maxPassesPerLoan;
@@ -137,8 +189,31 @@ export default defineComponent({
         photoURL,
       ];
     }
+    }
+    catch (err) {
+      if (err.response.status == 401) {
+        this.$router.push({ name: "Login" });
+      }
+    }
+
   },
-  computed: {},
+  computed: {
+    attributes() {
+      return [
+        ...this.ticketInformation.map((ticketInfo) => ({
+          dates: ticketInfo.dates,
+          dot: {
+            color: ticketInfo.color,
+            class: ticketInfo.isComplete ? "opacity-75" : "",
+          },
+          popover: {
+            label: ticketInfo.description,
+          },
+          customData: ticketInfo,
+        })),
+      ];
+    },
+  },
   methods: {
     async populateNoOfTickets(): Promise<any> {
       this.numberofPasses = [];
@@ -150,47 +225,98 @@ export default defineComponent({
     },
     async populateAttractionDetails(): Promise<any> {
       this.numOfAccompanyingGuests = this.attractionDetails["id"][3];
-      // this.currentBackground = this.attractionDetails.id[4];
       this.attractionId = this.attractionDetails["id"][1];
+      this.currentBackground = this.attractionDetails["id"][4];
       this.title = this.attractionDetails["id"][0];
     },
+    checkLogin(): LoginData | undefined {
+      const staffIdStr = localStorage.getItem("staffId");
+      const role = localStorage.getItem("role");
+
+      if (staffIdStr === null || role === null) {
+        this.$router.push({ name: "Login" });
+      } else {
+        this.staffId = parseInt(staffIdStr);
+
+        return {
+          staffId: this.staffId,
+          role: role,
+        };
+      }
+    },
     async addLoan(): Promise<any> {
-      const staffId = this.staffId; //need to call api, json response that returns me {code: 200, data: {staffId: 1}}
+      const staffId = this.staffId;
       const attractionId = this.attractionId;
-      const numPassesSelected = this.numPassesSelected;
-      const dateArr = this.dateSelected
-        .toISOString()
-        .substring(0, 10)
-        .split("-");
-      const day = dateArr[2];
-      const month = dateArr[1];
-      const year = dateArr[0];
+      const numPassesSelected = this.numPassesSelected["pass"];
+      const day = this.dateSelected.getDate();
+      const month = this.dateSelected.getMonth() + 1;
+      const year = this.dateSelected.getFullYear();
 
       try {
         const res = await axios.post(
           import.meta.env.VITE_API_URL + "api/loan/add",
           {
-            staffId: parseInt("1"), //retrieve from cookie
+            staffId: staffId, //retrieve from cookie
             attractionId: attractionId,
             numPasses: parseInt(numPassesSelected),
-            yyyy: parseInt(year),
-            mm: parseInt(month),
-            dd: parseInt(day),
+            yyyy: year,
+            mm: month,
+            dd: day,
           }
         );
-        this.loanID = res.data.loanId;
-        console.log(res.data);
+        console.log(res);
         console.log("200");
+        this.loanID = res.data.data[0]["loanId"];
+        console.log(this.loanID);
+
+        this.$router.push({
+          name: "booking confirmation",
+          params: {
+            loanID: this.loanID,
+          },
+        });
         return res.data;
       } catch (err) {
+        console.log(err)
+        if (err.response.status == 401) {
+          this.$router.push({ name: "Login" });
+        }
+        if (err.response.status == 500) {
+          this.errorMsg = "Please check all input fields and ensure you have not exceed the maximum number of passes per month.";
+        } else if (err.response.status == 400) {
+          this.errorMsg = "You are not allowed to book pass, please check with the HR for access rights."
+        }
+        else {
+          this.errorMsg = "An error has occured. Please try again later.";
+        }
+        this.makeToast(this.errorMsg);
         return {
           code: err,
         };
       }
     },
-  },
-  components: {
-    "calendar-picker": CalendarPicker,
+    makeToast(errorMsg: string) {
+      let toast = document.createElement("sectionheader");
+      toast.innerHTML = `
+      <div id="hjvvhj" class="toast mb-3 me-2" style="z-index:999" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
+        <div class="toast-header" data-bs-delay="10000">
+          <strong class="me-auto">Error Message</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">` + errorMsg +
+          `
+        </div>
+      </div>
+      `;
+
+      const html = document.querySelector("#sectionheader");
+      html.appendChild(toast);
+
+      toast = document.querySelector("#hjvvhj");
+
+      toast = new bootstrap.Toast(toast);
+      toast.show();
+    },
   },
 });
 </script>
@@ -202,6 +328,7 @@ export default defineComponent({
   padding-top: 300px;
   padding-bottom: 300px;
   background-size: 100%;
+  position:absolute;
 }
 
 .main {
@@ -217,6 +344,12 @@ export default defineComponent({
   padding-bottom: 10px;
   line-height: 1.4;
   margin-left: 100px;
+}
+.toast {
+  z-index: 9998;
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
 .titledescription {
@@ -245,7 +378,7 @@ export default defineComponent({
   padding-top: 15px;
   background-color: white;
   border: 1px none;
-  width: 850px;
+  width: 900px;
   height: 90px;
 }
 
@@ -326,16 +459,15 @@ export default defineComponent({
 }
 
 .btn-submit {
-  background-color: #f37931;
+  background-color: #f37931!important;
   letter-spacing: 0;
   line-height: 24px;
-  color: black;
+  color: white!important;;
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   padding-left: 20px;
 }
-
 .btn-submit:hover {
-  background-color: #d72255;
+  background-color: #d72255!important;
   color: white;
 }
 </style>

@@ -9,7 +9,7 @@ COPY ./entry/. ./entry/
 COPY ./dist/. ./spa-server/public/
 COPY ./.env ./
 
-RUN rm ./spa-server/public/.keep
+# RUN rm ./spa-server/public/.keep
 RUN mkdir ./spa-server/logs/
 RUN touch ./spa-server/logs/access.log
 RUN touch ./spa-server/logs/error.log

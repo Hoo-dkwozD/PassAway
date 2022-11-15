@@ -11,9 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import sg.edu.sportsschool.DTO.Request.AddPassDto;
+import sg.edu.sportsschool.DTO.Response.PassResponseDto;
 import sg.edu.sportsschool.Entities.Attraction;
 import sg.edu.sportsschool.Entities.Pass;
-import sg.edu.sportsschool.Exceptions.BadRequestException;
 import sg.edu.sportsschool.Exceptions.InternalServerException;
 import sg.edu.sportsschool.Helper.ReadCsv;
 import sg.edu.sportsschool.Helper.Json.JSONBody;
@@ -35,10 +36,10 @@ public class PassService {
 
     public ResponseEntity<JSONBody> getAllPasses() {
         try {
-            List<Pass> results = new ArrayList<>();
-            pRepository.findAll().forEach(results::add);
+            List<Pass> results = pRepository.findAll();
+            List<PassResponseDto> response = createPassResponseDto(results);
 
-            JSONWithData<List<Pass>> body = new JSONWithData<List<Pass>>(200, results);
+            JSONWithData<List<PassResponseDto>> body = new JSONWithData<>(200, response);
 
             return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
         } catch (Exception e) {
@@ -61,8 +62,8 @@ public class PassService {
             }
 
             Set<Pass> results = pRepository.findAllPassesByAttrId(attractionId);
-
-            JSONWithData<Set<Pass>> body = new JSONWithData<>(200, results);
+            List<PassResponseDto> response = createPassResponseDto(new ArrayList<>(results));
+            JSONWithData<List<PassResponseDto>> body = new JSONWithData<>(200, response);
 
             return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
         } catch (Exception e) {
@@ -115,12 +116,14 @@ public class PassService {
                 }
             }
         }
-
-        JSONWithData<List<Pass>> body = new JSONWithData<>(201, newPasses);
+        List<PassResponseDto> response = createPassResponseDto(newPasses);
+        JSONWithData<List<PassResponseDto>> body = new JSONWithData<>(201, response);
         return new ResponseEntity<JSONBody>(body, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<JSONBody> addPass(Integer aId, String passId) {
+    public ResponseEntity<JSONBody> addPass(AddPassDto dto) {
+        Integer aId = dto.getAttractionId();
+        String passId = dto.getPassId();
         if (passId.equals("")) {
             JSONWithMessage results = new JSONWithMessage(400, "Pass ID cannot be an empty string.");
             ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.BAD_REQUEST);
@@ -139,32 +142,32 @@ public class PassService {
         Pass pass = new Pass(passId, false, a);
 
         pRepository.save(pass); // Add each passId for that attraction into passes table
-
-        JSONWithData<Pass> body = new JSONWithData<>(200, pass);
+        PassResponseDto response = createPassResponseDto(pass);
+        JSONWithData<PassResponseDto> body = new JSONWithData<>(200, response);
         return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
     }
 
-    public ResponseEntity<JSONBody> updatePassStatus(Integer aId, String passId, boolean isLost) {
-        Attraction a = aService.returnAttraction(aId);
+    // public ResponseEntity<JSONBody> updatePassStatus(Integer aId, String passId, boolean isLost) {
+    //     Attraction a = aService.returnAttraction(aId);
 
-        if (a == null) {
-            JSONWithMessage results = new JSONWithMessage(404, "Attraction not found.");
-            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NOT_FOUND);
+    //     if (a == null) {
+    //         JSONWithMessage results = new JSONWithMessage(404, "Attraction not found.");
+    //         ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NOT_FOUND);
 
-            return response;
-        }
+    //         return response;
+    //     }
 
-        Set<Pass> passes = pRepository.findAllPassesByAttrIdAndPassId(aId, passId);
+    //     Set<Pass> passes = pRepository.findAllPassesByAttrIdAndPassId(aId, passId);
 
-        for (Pass p : passes) {
-            p.setLost(isLost);
+    //     for (Pass p : passes) {
+    //         p.setLost(isLost);
 
-            pRepository.save(p); 
-        }
+    //         pRepository.save(p); 
+    //     }
 
-        JSONWithData<List<Pass>> body = new JSONWithData<>(200, passes.stream().collect(Collectors.toList()));
-        return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
-    }
+    //     JSONWithData<List<Pass>> body = new JSONWithData<>(200, passes.stream().collect(Collectors.toList()));
+    //     return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
+    // }
 
     // ------------------------------------------------------------------------------------------------
     // -- Non-JSON response Methods
@@ -187,6 +190,18 @@ public class PassService {
         return null;
     }
     
+    public PassResponseDto createPassResponseDto(Pass p) {
+        return new PassResponseDto(p.getPassId(), p.getAttraction().getAttractionId(), p.getAttraction().getName(), p.getAttraction().getPassType().toString(), p.isLost());
+    }
+
+    public List<PassResponseDto> createPassResponseDto(List<Pass> passes) {
+        List<PassResponseDto> res = new ArrayList<>();
+        for (Pass p : passes) {
+            res.add(new PassResponseDto(p.getPassId(), p.getAttraction().getAttractionId(), p.getAttraction().getName(),
+                    p.getAttraction().getPassType().toString(), p.isLost()));
+        }
+        return res;
+    }
 
     // -- Following codes are used for testing only
 

@@ -9,14 +9,12 @@ import java.io.IOException;
 import java.sql.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.opencsv.CSVWriter;
 
 import sg.edu.sportsschool.DTO.Request.AnalyticsDto;
 import sg.edu.sportsschool.Entities.Loan;
-import sg.edu.sportsschool.Helper.Json.JSONBody;
 import sg.edu.sportsschool.Repositories.LoanRepository;
 
 @Service
@@ -28,9 +26,27 @@ public class AnalyticsService {
         this.loanRepository = loanRepository;
     }
 
-    public ResponseEntity<JSONBody> loanTrend(AnalyticsDto dto) {
-        return null;
-    }
+    // public ResponseEntity<JSONBody> loanTrend(AnalyticsDto dto) {
+    //     String startDateString = toProperDateString(
+    //         dto.getFromYear(), 
+    //         dto.getFromMonth(), 
+    //         dto.getFromDay()
+    //     );
+
+    //     Date startDate = Date.valueOf(startDateString);
+
+    //     String endDateString = toProperDateString(
+    //         dto.getToYear(), 
+    //         dto.getToMonth(), 
+    //         dto.getToDay()
+    //     );
+
+    //     Date endDate = Date.valueOf(endDateString);
+
+    //     List<Loan> loans = loanRepository.getLoansBetweenDates(startDate, endDate);
+
+    //     List<String[]> csv = loansToCSV(loans);
+    // }
 
     public void getLoanCSV(AnalyticsDto dto, HttpServletResponse response) {
         response.setContentType("text/csv; charset=utf-8");
