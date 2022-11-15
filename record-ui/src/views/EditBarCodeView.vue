@@ -17,10 +17,13 @@
                   <select
                     class="form-select"
                     id="attraction-name"
+                    v-model="selectedAttr"
                   >
-                    <option selected disabled>Attraction Name</option>
-                    <option value="gardensbytheway">Gardens By the Way</option>
-                    <option value="singaporezoo">Singapore Zoo</option>
+                    <option 
+                      v-for="attr, idx in attractions" :value="attr.attractionId" :key="idx"
+                    >
+                      {{ attr.name }}
+                    </option>
                   </select>
                 </div>
   
@@ -28,7 +31,7 @@
                   <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3 w-100">
                       <label id="barCode" class="text-start w-25" style="margin-right: 10px"> Barcode Image </label>
                       <label for="formFile" class="form-label"></label>
-                      <input class="form-control" type="file" id="formFile">
+                      <input @change="changeImage" class="form-control" type="file" accept="image/jpeg,image/jpg,image/png" id="formFile">
                   </div>
                 </div>
               </div>
@@ -36,6 +39,7 @@
                 <button
                   type="submit"
                   class="w-100 btn btn-outline-success text-uppercase fw-bold"
+                  @click="uploadBarcodeImage"
                 >
                   Save
                 </button>
@@ -49,13 +53,110 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import axios from 'axios';
+
 import Navbar from "../components/Navbar.vue";
+
+// Typings
+interface LoginData {
+  staffId: number;
+  role: string;
+}
+
+interface EditBarCodeView {
+  staffId: number | null;
+  role: string | null;
+  attractions: Attraction[],
+  selectedAttr: number | null,
+  uploadedImg: File | null
+}
+
+interface Attraction {
+  attractionId: number;
+  name: string;
+}
 
 export default defineComponent({
   name: "EditBarCode",
   components: {
     Navbar,
   },
+  data(): EditBarCodeView {
+    return {
+      staffId: null,
+      role: null,
+      attractions: [],
+      selectedAttr: null,
+      uploadedImg: null
+    };
+  },
+  methods: {
+    checkLogin(): LoginData | undefined {
+      const staffIdStr = localStorage.getItem("staffId");
+      const role = localStorage.getItem("role");
+
+      if (staffIdStr === null || role === null) {
+        this.$router.push({ name: "login" }).then(() => this.$router.go(0));
+      } else {
+        const staffId = parseInt(staffIdStr);
+
+        return {
+          staffId: staffId,
+          role: role,
+        };
+      }
+    },
+    changeImage(e: Event) {
+      this.uploadedImg = e.target.files[0];
+    },
+    async uploadBarcodeImage() {
+      const reqData = new FormData();
+
+      if (this.uploadedImg !== null) {
+        reqData.append("file", this.uploadedImg);
+
+        try {
+          const res = await axios.post(
+            import.meta.env.VITE_API_URL + `api/attraction/${this.selectedAttr}/barcodeImage`,
+            reqData,
+            {
+              headers: {
+                'Content-Type': this.uploadedImg.type
+              }
+            }
+          );
+          const data = await res.data;
+
+          if (data.code === 200) {
+            this.$router.push({ name: 'home' }).then(() => this.$router.go(0));
+          }
+        } catch (err: any) {
+          console.error(err);
+        }
+      }
+    }
+  },
+  async created() {
+    const loginData: LoginData | undefined = this.checkLogin();
+
+    if (loginData !== undefined) {
+      if (loginData.role !== "ADMINISTRATOR") {
+        this.$router.push({ name: "home" }).then(() => this.$router.go(0));
+      } else {
+        this.staffId = loginData.staffId;
+        this.role = loginData.role;
+
+        try {
+          const attrRes = await axios.get(
+            import.meta.env.VITE_API_URL + `api/attractions`,
+          );
+          this.attractions = await attrRes.data.data;
+        } catch (err: any) {
+          console.error(err.message);
+        }
+      }
+    }
+  }
 });
 </script>
 
