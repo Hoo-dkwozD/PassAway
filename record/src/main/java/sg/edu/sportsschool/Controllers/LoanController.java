@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import sg.edu.sportsschool.DTO.Request.CollectPassDto;
 import sg.edu.sportsschool.DTO.Request.LoanDTO;
 import sg.edu.sportsschool.DTO.Request.LoanIdsDto;
 import sg.edu.sportsschool.DTO.Request.UpdateLoanDto;
