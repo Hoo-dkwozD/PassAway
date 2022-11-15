@@ -1,4 +1,5 @@
 <template>
+  <NavBar></NavBar>
   <div
     class="imageDiv p-5 mb-5 container-fluid"
     :style="{ backgroundImage: `url(${currentBackground})` }"
@@ -102,7 +103,7 @@ interface Data {
   currentBackground: string;
   locationDetails: [];
 }
-export default {
+export default defineComponent({
   data(): Data {
     return {
       title: "Your booking is successful!",

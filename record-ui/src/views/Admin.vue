@@ -3,26 +3,26 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <h1>Confirmation</h1>
+                <h1>Admin View</h1>
 
-                <p>Thank you for your booking</p>
-                
             </div>
         </div>
-
+        <div class="row">
+            <div class="col-12">
+            </div>
+        </div>
     </div>
-
 </template>
-
 <script lang="ts">
 import {defineComponent} from 'vue'
 import Navbar from '../components/Navbar.vue'
-export default defineComponent({
-    name: 'Confirmation',
+export default defineComponent ({
+    name: 'Admin',
     components:{
         Navbar
     }
 })
 </script>
+<style>
 
-
+</style>

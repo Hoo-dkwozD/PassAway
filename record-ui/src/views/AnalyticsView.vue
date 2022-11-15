@@ -2,21 +2,50 @@
 <script lang="ts">
 import * as d3 from "d3";
 import { defineComponent} from "vue";
-export default defineComponent{
+import NavBar from '../components/Navbar.vue';
+const userData: any[] = []
+const filteredData: any[] = []
+export default defineComponent({
     data() {
         return {
             xAxisVariable: "day",
             graphWidth: document.documentElement.clientWidth * 60 / 100,
-            filteredData: [],
+            filteredData,
             userBorrowedPasses: [],
             calorieLimit: 0,
+            numOfPasses: [
+                {
+                "Singapore Zoo": 1,
+                "Sentosa Island": 2
+                }
+            ],
+            userId:1,
+            userData,
+            currDate: new Date(),
         }
+    },
+    components:{
+        NavBar
     },
     methods: {
         //takes in the userId and specified from and to date
         calculatePassesAndUpdate(userId, numOfPasses) {
+            this.userId = userId
+            this.numOfPasses = numOfPasses
+            this.renderGraph(this.xAxisVariable)
 
-        }
+        },
+        getUserDetails(userId){
+            const maxDate = new Date(Math.max(...Object.values(user.calorieDetails).map(element => {
+                return new Date(element.date);
+            })));
+            let currDate = maxDate.getDate() + " " + maxDate.getMonth() + " " + maxDate.getFullYear();
+            this.userData.push({
+                date: currDate,
+                numofPasses: this.numOfPasses
+            })
+            this.renderGraph(this.xAxisVariable)
+        },
         //mouseover event handler function
         onMouseOver(d, i) {
             console.log("this is d", d)
@@ -149,7 +178,7 @@ export default defineComponent{
                     10: "November",
                     11: "December"
                 }
-                let data = this.userCaloriesData
+                let data = this.userData
                 var filteredData = [{ date: "Sunday", calories: 0 }, { date: "Monday", calories: 0 }, { date: "Tuesday", calories: 0 }, { date: "Wednesday", calories: 0 }, { date: "Thursday", calories: 0 }, { date: "Friday", calories: 0 }, { date: "Saturday", calories: 0 }]
                 if (variable == "day") {
                     for (let obj of data) {
@@ -202,7 +231,7 @@ export default defineComponent{
                     10: "Nov",
                     11: "Dec"
                 }
-                let data = this.userCaloriesData
+                let data = this.userData
                 var filteredData = [{ date: "Sun", calories: 0 }, { date: "Mon", calories: 0 }, { date: "Tue", calories: 0 }, { date: "Wed", calories: 0 }, { date: "Thu", calories: 0 }, { date: "Fri", calories: 0 }, { date: "Sat", calories: 0 }]
                 if (variable == "day") {
                     for (let obj of data) {
@@ -285,9 +314,9 @@ export default defineComponent{
                     return i * 50;
                 })
                 .attr("height", function (d) { return height - yScale(d.calories); });
-        },
+        }
     }
-}
+})
 </script>
 
 <style scoped>
@@ -298,6 +327,7 @@ export default defineComponent{
 </style>
 
 <template>
+    <NavBar></NavBar>
     <div class="row box">
         <div style="width:90%" class="p-3 mx-auto col-6">
             <h2 style="text-align:left">Overview</h2>

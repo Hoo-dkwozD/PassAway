@@ -1,4 +1,5 @@
 <template>
+  <NavBar></NavBar>
   <div class="container-fluid p-0 mx-0">
     <div
       id="sectionheader"
@@ -92,7 +93,7 @@
 import axios from "axios";
 import { defineComponent } from "vue";
 import CalendarPicker from "./CalendarPicker.vue";
-
+import NavBar from '../components/Navbar.vue';
 type ticketInformation = {
   description: string;
   isComplete: boolean;

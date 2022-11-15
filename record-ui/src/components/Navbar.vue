@@ -1,87 +1,89 @@
 <template>
-  <router-view />
+<div class="header">
+    <RouterLink to="/">
+
+    <img
+      alt="Vue logo"
+      class="logo header-logo"
+      src="@/assets/logo.png"
+      width="160"
+      height="75" role="button"
+    />
+  </RouterLink>
+    
+    <div class="header-nav">
+      <nav class="topnav-right">
+        <RouterLink
+          :key="route.path"
+          v-for="route in routes"
+          class="place lato mx-auto"
+          :to="route.path"
+        >
+          <div
+            class="auto-layout-horizontal display"
+            v-if="route.name == 'Sign In'"
+          >
+            {{ route.name }}
+          </div>
+          <div v-else-if="role == 'Admin'" class="lato2 display">
+            {{ route.name }}
+          </div>
+        </RouterLink>
+      </nav>
+    </div>
+  </div>
 </template>
 
-<style>
-*{
-padding: 0;
-margin: 0;
-box-sizing: border-box;
-}
-#app {
-font-family: Avenir, Helvetica, Arial, sans-serif;
--webkit-font-smoothing: antialiased;
--moz-osx-font-smoothing: grayscale;
-text-align: center;
-color: #2c3e50;
-
-}
-</style>
-
-
-
 <script lang="ts">
-import { defineComponent } from "vue";
-import { RouterLink, RouterView } from "vue-router";
-import VCalendar from "v-calendar";
-import NavBar from '@/components/Navbar.vue'
-export default defineComponent({
-    name: 'App',
-    components: {
-    NavBar
-}
-})
-// Typings
-interface Route {
-  path: string;
-  name: string;
+interface Route{
+    path: string,
+    name: string,
 }
 
+import { defineComponent } from "vue";
+import {RouterLink} from 'vue-router'
 export default defineComponent({
-  data() {
+    name: 'NavBar',
+    data() {
     const role = "Admin";
     const routes: Route[] = [
       {
-        path: "/",
-        name: "Home",
-      },
-      {
-        path: "/Bookings",
-        name: "Bookings",
-      },
-      {
         path: "/Analytics",
-        name: "Analytics",
+        name: "Analytics"
       },
       {
         path: "/Admin",
-        name: "Admin",
+        name: "Admin"
       },
       {
         path: "/signin",
-        name: "Sign In",
+        name: "Sign In"
       },
     ];
     return {
       routes,
-      role,
+      role
     };
   },
   components: {
     RouterLink,
-    RouterView,
   },
 });
 </script>
 
-<style scoped>
+<style>
 .header {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
 }
-
+.header{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
 .header-nav {
   flex-grow: 1;
   padding-left: 3%;
@@ -165,7 +167,6 @@ export default defineComponent({
   padding: 20px 32px;
   width: 129px;
 }
-
 .topnav-right {
   float: right;
 }

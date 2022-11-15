@@ -271,9 +271,9 @@ public class StaffService {
         }
     }
 
-    public ResponseEntity<JSONBody> updateStaffProfileAdmin(UpdateProfileDto dto) {
+    public ResponseEntity<JSONBody> updateStaffProfileAdmin(Integer staffId, UpdateProfileDto dto) {
         try {
-            Staff staff = sRepository.findByStaffId(dto.getStaffId());
+            Staff staff = sRepository.findByStaffId(staffId);
 
             if (staff == null) {
                 JSONWithMessage results = new JSONWithMessage(404, "User not found. ");
@@ -316,9 +316,9 @@ public class StaffService {
         }
     }
 
-    public ResponseEntity<JSONBody> updateStaffProfile(UpdateProfileDto dto) {
+    public ResponseEntity<JSONBody> updateStaffProfile(Integer staffId, UpdateProfileDto dto) {
         try {
-            Staff staff = sRepository.findByStaffId(dto.getStaffId());
+            Staff staff = sRepository.findByStaffId(staffId);
 
             if (staff == null) {
                 JSONWithMessage results = new JSONWithMessage(404, "User not found. ");
