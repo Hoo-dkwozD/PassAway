@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import BookView from '../views/BookView.vue'
 import BookingConfirmationView from '../views/BookingConfirmationView.vue'
-import Profile from '../views/Profile.vue'
-import ProfilePassword from '../views/ProfilePassword.vue'
+import Profile from '../views/ProfileView.vue'
+import ProfilePassword from '../views/ProfilePasswordView.vue'
 import GOPLandingPage from '../views/GOPLandingPageView.vue'
 import AnalyticsView from '../views/AnalyticsView.vue'
 import Admin from '../views/AdminView.vue'
