@@ -4,11 +4,12 @@ import Admin from '../views/Admin.vue';
 import AnalyticsView from '../views/AnalyticsView.vue';
 import BookingConfirmationView from '../views/BookingConfirmationView.vue';
 import BookView from '../views/BookView.vue';
+import EditBarCode from '../views/EditBarCode.vue';
 import GOPLandingPage from '../views/GOPLandingPage.vue';
 import LoginView from '../views/LoginView.vue';
 import Profile from '../views/Profile.vue';
 import ProfilePassword from '../views/ProfilePassword.vue';
-import EditBarCode from '../views/EditBarCode.vue'
+import Signup from '../views/Signup.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -66,6 +67,11 @@ const router = createRouter({
       name: 'ProfilePassword',
       component: ProfilePassword,
     },
+    {
+      path: '/signup',
+      name: 'Signup',
+      component: Signup
+    }
   ],
 });
 
