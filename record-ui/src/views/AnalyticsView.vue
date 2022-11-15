@@ -1,13 +1,17 @@
 <!-- As a administrator, I want to be able to view & download the statistics of the passes borrowed -->
 <script lang="ts">
-import * as d3 from "d3";
 import { defineComponent} from "vue";
+import * as d3 from "d3";
+
 import NavBar from '../components/Navbar.vue';
-const userData: any[] = []
-const filteredData: any[] = []
-interface Data{
+
+// Typings
+interface Data {
     showCalendar: boolean
 }
+
+const userData: any[] = []
+const filteredData: any[] = []
 
 export default defineComponent({
     data() {
@@ -321,7 +325,7 @@ export default defineComponent({
                 .attr("height", function (d) { return height - yScale(d.calories); });
         }
     }
-})
+});
 </script>
 
 <style scoped>
@@ -350,4 +354,3 @@ export default defineComponent({
         </div>
     </div>
 </template>
-

@@ -3,81 +3,75 @@ import BookView from '../views/BookView.vue'
 import BookingConfirmationView from '../views/BookingConfirmationView.vue'
 import Profile from '../views/Profile.vue'
 import ProfilePassword from '../views/ProfilePassword.vue'
-import GOPLandingPage from '../views/GOPLandingPage.vue'
+import GOPLandingPage from '../views/GOPLandingPageView.vue'
 import AnalyticsView from '../views/AnalyticsView.vue'
-import Admin from '../views/Admin.vue'
-import EditBarCode from '../views/EditBarCode.vue'
+import Admin from '../views/AdminView.vue'
+import EditBarCode from '../views/EditBarCodeView.vue'
 import LoginView from '../views/LoginView.vue'
-import SignUp from '../views/Signup.vue'
+import SignUp from '../views/SignupView.vue'
 import SignupRedirect from '../views/SignupRedirect.vue'
 import AdminAllBookings from '../views/adminAllBookings.vue'
-
-function requireAuth(to, from, next){
-  console.log(this);
-  console.log(this.$cookies.get('id'));
-  next();
-}
+import EditBarCodeView from '../views/EditBarCodeView.vue';
+import GOPLandingPageView from '../views/GOPLandingPageView.vue';
+import ProfileView from '../views/ProfileView.vue';
+import ProfilePasswordView from '../views/ProfilePasswordView.vue';
+import SignupView from '../views/SignupView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
-      name: "Home",
+      name: "home",
       component: BookView,
       props: true,
     },
     {
-      path: "/Bookings",
-      name: "Bookings",
+      path: "/analytics",
+      name: 'analytics',
+      component: AnalyticsView,
+    },
+    {
+      path: "/bookings",
+      name: "bookings",
       component: BookView,
       props: true,
     },
     {
-      path: "/Admin",
-      name: "Admin",
-      component: Admin,
-    },
-    {
-      path: "/bookingconfirmation/:loanID",
-      name: "Booking Confirmation",
+      path: "/booking/:loanID/confirmation",
+      name: "booking confirmation",
       component: BookingConfirmationView,
       props: true,
     },
     {
+      path: '/attraction/barcode',
+      name: 'edit bar code',
+      component: EditBarCodeView
+    },
+    {
+      path: "/GOP",
+      name: 'GOP landing',
+      component: GOPLandingPageView,
+    },
+    {
+      path: "/login",
+      name: "login",
+      component: LoginView,
+    },
+    {
       path: "/profile",
-      name: 'Profile',
-      component: Profile,
+      name: 'profile',
+      component: ProfileView,
     },
     {
-      path: "/profilepassword",
-      name: 'ProfilePassword',
-      component: ProfilePassword,
-    },
-    {
-      path: "/GOPLanding",
-      name: 'GOPLanding',
-      component: GOPLandingPage,
-    },
-    {
-      path: "/Analytics",
-      name: 'Analytics',
-      component: AnalyticsView,
-    },
-    {
-      path: '/EditBarCode',
-      name: 'EditBarCode',
-      component: EditBarCode
-    },
-    {
-      path: '/Login',
-      name: 'Login',
-      component: LoginView
+      path: "/profile/password",
+      name: 'profile password',
+      component: ProfilePasswordView,
     },
     {
       path: '/signup',
       name: 'Signup',
-      component: SignUp
+      component: SignupView
     },
     {
       path: '/signupredirect',
