@@ -3,7 +3,6 @@ package sg.edu.sportsschool.DTO.Request;
 import sg.edu.sportsschool.Helper.StaffRole;
 
 public class UpdateProfileDto {
-    private Integer staffId;
     private String email;
     private String firstName;
     private String lastName;
@@ -14,9 +13,8 @@ public class UpdateProfileDto {
 
     public UpdateProfileDto() {}
 
-    public UpdateProfileDto(Integer staffId, String email, String firstName, String lastName, String contactNumber,
+    public UpdateProfileDto(String email, String firstName, String lastName, String contactNumber,
             String role, boolean cannotBook, boolean isDisabled) {
-        this.staffId = staffId;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -39,16 +37,11 @@ public class UpdateProfileDto {
         }
     }
 
-    public UpdateProfileDto(Integer staffId, String email, String firstName, String lastName, String contactNumber) {
-        this.staffId = staffId;
+    public UpdateProfileDto(String email, String firstName, String lastName, String contactNumber) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.contactNumber = contactNumber;
-    }
-
-    public Integer getStaffId() {
-        return staffId;
     }
 
     public String getEmail() {

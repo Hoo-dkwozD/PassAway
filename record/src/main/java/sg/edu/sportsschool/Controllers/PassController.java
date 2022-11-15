@@ -5,11 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import sg.edu.sportsschool.DTO.Request.AddPassDto;
 import sg.edu.sportsschool.Helper.Json.JSONBody;
 import sg.edu.sportsschool.Services.PassService;
 
@@ -31,8 +33,8 @@ public class PassController {
     }
 
     @PostMapping(path = "/add")
-    public ResponseEntity<JSONBody> addPass(@RequestParam Integer attractionId, @RequestParam String passId) {
-        return pService.addPass(attractionId, passId);
+    public ResponseEntity<JSONBody> addPass(@RequestBody AddPassDto dto) {
+        return pService.addPass(dto);
     }
 
     @PostMapping(path = "/add-csv")
@@ -41,20 +43,9 @@ public class PassController {
         return pService.addPassesByCsv(attractionId, cardNumbersCSVFile);
     }
 
-    // @GetMapping(path = "/list-by-attraction")
-    // public ResponseEntity<JSONBody> getPassesByAttraction(@RequestParam Integer attractionId) {
-    //     return pService.getPassesByAttraction(attractionId);
-    // }
-
-    // @PostMapping(path="/add-barcode", consumes={MediaType.MULTIPART_FORM_DATA_VALUE})
-    // public ResponseEntity<JSONBody> addBarcodeToPasses(@RequestParam List<String> passIds,
-    //         @RequestParam(name = "file") MultipartFile barcodeImageFile) {
-    //     return pService.addBarcodeToPasses(passIds, barcodeImageFile);
-    // }
-
-    // TODO Generic Put request to Update pass given a Pass object in request body
-    // e.g. for lost passes
-
-    // TODO Return of passes
+    @GetMapping(path = "/list-by-attraction")
+    public ResponseEntity<JSONBody> getPassesByAttraction(@RequestParam Integer attractionId) {
+        return pService.getPassesByAttraction(attractionId);
+    }
 
 }

@@ -11,9 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import sg.edu.sportsschool.DTO.Request.AddPassDto;
 import sg.edu.sportsschool.Entities.Attraction;
 import sg.edu.sportsschool.Entities.Pass;
-import sg.edu.sportsschool.Exceptions.BadRequestException;
 import sg.edu.sportsschool.Exceptions.InternalServerException;
 import sg.edu.sportsschool.Helper.ReadCsv;
 import sg.edu.sportsschool.Helper.Json.JSONBody;
@@ -120,7 +120,9 @@ public class PassService {
         return new ResponseEntity<JSONBody>(body, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<JSONBody> addPass(Integer aId, String passId) {
+    public ResponseEntity<JSONBody> addPass(AddPassDto dto) {
+        Integer aId = dto.getAttractionId();
+        String passId = dto.getPassId();
         if (passId.equals("")) {
             JSONWithMessage results = new JSONWithMessage(400, "Pass ID cannot be an empty string.");
             ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.BAD_REQUEST);

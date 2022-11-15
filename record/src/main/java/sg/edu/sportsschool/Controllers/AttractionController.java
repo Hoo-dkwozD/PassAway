@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import sg.edu.sportsschool.DTO.Request.AddAttractionImageURLDto;
 import sg.edu.sportsschool.DTO.Request.CreateAttractionDto;
 import sg.edu.sportsschool.DTO.Request.UpdateAttractionDto;
 import sg.edu.sportsschool.Helper.ImageType;
@@ -181,22 +182,20 @@ public class AttractionController {
      * @apiName CreateAttraction
      * @apiGroup Attraction
      * 
-     * @apiBody {Number} code HTTP status code.
-     * @apiBody {Object} data JSON object representing attractions.
-     * @apiBody {String} data[name] Attraction name.
-     * @apiBody {String} data[description] Attraction description.
-     * @apiBody {String} data[passType] Attraction pass type. ("0": PHYSICAL, "1": DIGITAL)
-     * @apiBody {Number} data[replacementFee] Attraction replacement fee in SGD.
-     * @apiBody {Number} data[numAccompanyingGuests] Attraction number of accompanying guests.
-     * @apiBody {Number} data[maxPassesPerLoan] Attraction maximum passes per loan.
-     * @apiBody {Number} data[maxLoansPerMonth] Attraction maximum loans per month.
-     * @apiBody {String} data[address] Attraction address.
-     * @apiBody {String} data[membershipId] Attraction membership ID.
-     * @apiBody {Number} data[expiryDateYYYY] Attraction expiry date's year.
-     * @apiBody {Number} data[expiryDateMM] Attraction expiry date's month.
-     * @apiBody {Number} data[expiryDateDD] Attraction expiry date's day.
-     * @apiBody {String} data[benefits] Attraction benefits.
-     * @apiBody {String} data[termsConditions] Attraction terms and conditions.
+     * @apiBody {String} name Attraction name.
+     * @apiBody {String} description Attraction description.
+     * @apiBody {String} passType Attraction pass type. ("0": PHYSICAL, "1": DIGITAL)
+     * @apiBody {Number} replacementFee Attraction replacement fee in SGD.
+     * @apiBody {Number} numAccompanyingGuests Attraction number of accompanying guests.
+     * @apiBody {Number} maxPassesPerLoan Attraction maximum passes per loan.
+     * @apiBody {Number} maxLoansPerMonth Attraction maximum loans per month.
+     * @apiBody {String} address Attraction address.
+     * @apiBody {String} membershipId Attraction membership ID.
+     * @apiBody {Number} expiryDateYYYY Attraction expiry date's year.
+     * @apiBody {Number} expiryDateMM Attraction expiry date's month.
+     * @apiBody {Number} expiryDateDD Attraction expiry date's day.
+     * @apiBody {String} benefits Attraction benefits.
+     * @apiBody {String} termsConditions Attraction terms and conditions.
      * 
      * @apiSuccess {Number} code HTTP status code.
      * @apiSuccess {Object} data JSON object representing attraction.
@@ -265,23 +264,21 @@ public class AttractionController {
      * 
      * @apiParam {Number} aId Attraction ID.
      * 
-     * @apiBody {Number} code HTTP status code.
-     * @apiBody {Object} data JSON object representing attractions.
-     * @apiBody {Number} data[attractionId] Attraction ID.
-     * @apiBody {String} data[name] Attraction name.
-     * @apiBody {String} data[description] Attraction description.
-     * @apiBody {String} data[passType] Attraction pass type. ("0": PHYSICAL, "1": DIGITAL)
-     * @apiBody {Number} data[replacementFee] Attraction replacement fee in SGD.
-     * @apiBody {Number} data[numAccompanyingGuests] Attraction number of accompanying guests.
-     * @apiBody {Number} data[maxPassesPerLoan] Attraction maximum passes per loan.
-     * @apiBody {Number} data[maxLoansPerMonth] Attraction maximum loans per month.
-     * @apiBody {String} data[address] Attraction address.
-     * @apiBody {String} data[membershipId] Attraction membership ID.
-     * @apiBody {Number} data[expiryDateYYYY] Attraction expiry date's year.
-     * @apiBody {Number} data[expiryDateMM] Attraction expiry date's month.
-     * @apiBody {Number} data[expiryDateDD] Attraction expiry date's day.
-     * @apiBody {String} data[benefits] Attraction benefits.
-     * @apiBody {String} data[termsConditions] Attraction terms and conditions.
+     * @apiBody {Number} attractionId Attraction ID.
+     * @apiBody {String} name Attraction name.
+     * @apiBody {String} description Attraction description.
+     * @apiBody {String} passType Attraction pass type. ("0": PHYSICAL, "1": DIGITAL)
+     * @apiBody {Number} replacementFee Attraction replacement fee in SGD.
+     * @apiBody {Number} numAccompanyingGuests Attraction number of accompanying guests.
+     * @apiBody {Number} maxPassesPerLoan Attraction maximum passes per loan.
+     * @apiBody {Number} maxLoansPerMonth Attraction maximum loans per month.
+     * @apiBody {String} address Attraction address.
+     * @apiBody {String} membershipId Attraction membership ID.
+     * @apiBody {Number} expiryDateYYYY Attraction expiry date's year.
+     * @apiBody {Number} expiryDateMM Attraction expiry date's month.
+     * @apiBody {Number} expiryDateDD Attraction expiry date's day.
+     * @apiBody {String} benefits Attraction benefits.
+     * @apiBody {String} termsConditions Attraction terms and conditions.
      * 
      * @apiSuccess {Number} code HTTP status code.
      * @apiSuccess {Object} data JSON object representing attraction.
@@ -479,6 +476,53 @@ public class AttractionController {
     public ResponseEntity<JSONBody> addImageToAttraction(@PathVariable int aId, 
             @RequestParam("file") MultipartFile image) {
         return aService.addImageToAttr(aId, image, ImageType.BACKGROUND);
+    }
+
+    /**
+     * @api {post} /attraction/:aId/imageURL Upload attraction background image's URL
+     * @apiName UploadAttractionImageURL
+     * @apiGroup Attraction
+     * 
+     * @apiParam {Number} aId Attraction ID.
+     * 
+     * @apiBody {String} imageURL URL of the image to upload. 
+     * 
+     * @apiSuccess {Number} code HTTP status code.
+     * @apiSuccess {String} message Informs that URL was uploaded successfully.
+     * 
+     * @apiSuccessExample {json} Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *         "code": 200,
+     *         "message": "Image saved for attraction id: 1"
+     *     }
+     * 
+     * @apiError (Error 404) {Number} code HTTP status code.
+     * @apiError (Error 404) {String} message Error message.
+     * 
+     * @apiErrorExample {json} Error-Response:
+     *     HTTP/1.1 404 Not Found
+     *     {
+     *         "code": 404,
+     *         "message": "Attraction not found. "
+     *     }
+     * 
+     * @apiError (Error 500) {Number} code HTTP status code.
+     * @apiError (Error 500) {String} message Error message.
+     * 
+     * @apiErrorExample {json} Error-Response:
+     *     HTTP/1.1 500 Internal Server Error
+     *     {
+     *         "code": 500,
+     *         "message": "Server unable to store image file URL. "
+     *     }
+     * 
+     * @apiDescription Uploads the URL of the attraction's background image. 
+     */
+    @PostMapping(path = "/attraction/{aId}/imageURL")
+    public ResponseEntity<JSONBody> addImageURLToAttraction(@PathVariable int aId, 
+            @RequestBody AddAttractionImageURLDto dto) {
+        return aService.addImageURLToAttr(aId, dto);
     }
 
     /**

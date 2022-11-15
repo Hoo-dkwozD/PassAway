@@ -431,16 +431,6 @@ public class StaffController {
         return staffService.completeStaffRegistration(dto);
     }
 
-    // @PostMapping("/signup")
-    // public ResponseEntity<JSONBody> signup(@RequestBody RegisterStaffDto signupDto) {
-    //     return staffService.signUp(signupDto);
-    // }
-
-    // @PostMapping("/signin")
-    // public ResponseEntity<JSONBody> signIn(@RequestBody SignInDto signInDto) {
-    //     return staffService.signIn(signInDto);
-    // }
-
     /**
      * @api {put} /staff/:staffId Update staff information
      * @apiName UpdateStaffDetails
@@ -448,7 +438,6 @@ public class StaffController {
      * 
      * @apiParam {Number} staffId Staff ID.
      * 
-     * @apiBody {Number} staffId Staff ID.
      * @apiBody {String} email Email of new staff.
      * @apiBody {String} firstName First name of new staff.
      * @apiBody {String} lastName Last name of new staff.
@@ -512,8 +501,8 @@ public class StaffController {
      * @apiDescription Updates staff's details. If email is changed, an email with a new password will be sent to the new email. 
      */
     @PutMapping("/staff/{staffId}")
-    public ResponseEntity<JSONBody> updateStaffProfile(@PathVariable String staffId, @RequestBody UpdateProfileDto dto) {
-        return staffService.updateStaffProfile(dto);
+    public ResponseEntity<JSONBody> updateStaffProfile(@PathVariable Integer staffId, @RequestBody UpdateProfileDto dto) {
+        return staffService.updateStaffProfile(staffId, dto);
     }
 
     /**

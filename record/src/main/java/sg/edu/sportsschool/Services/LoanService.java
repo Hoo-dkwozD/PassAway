@@ -26,7 +26,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import sg.edu.sportsschool.DTO.Request.CollectPassDto;
 import sg.edu.sportsschool.DTO.Request.LoanDTO;
+import sg.edu.sportsschool.DTO.Request.LoanIdsDto;
+import sg.edu.sportsschool.DTO.Request.UpdateLoanDto;
 import sg.edu.sportsschool.DTO.Response.LoanResponseDto;
 import sg.edu.sportsschool.Entities.Attraction;
 import sg.edu.sportsschool.Entities.Loan;
@@ -180,7 +183,8 @@ public class LoanService {
                 // System.out.println(Paths.get(STATIC_FOLDER, barcodeImagePath));
                 barcodeImage = Files.readAllBytes(Paths.get(STATIC_FOLDER, barcodeImagePath));
             } catch (Exception e) {
-                throw new InternalServerException("Server unable to read barcode image at path: " + Paths.get(STATIC_FOLDER, barcodeImagePath));
+                throw new InternalServerException(
+                        "Server unable to read barcode image at path: " + Paths.get(STATIC_FOLDER, barcodeImagePath));
             }
 
             try {
@@ -271,58 +275,6 @@ public class LoanService {
         }
     }
 
-    public ResponseEntity<JSONBody> collectPasses(String emailTo, List<Integer> loanIds) {
-        try {
-            Iterator<Loan> loans = lRepository.findAllById(loanIds).iterator();
-            if (!loans.hasNext()) {
-                throw new BadRequestException(
-                        "There are no loan passes for collection");
-            }
-
-            List<Loan> loanPassesToCollect = new ArrayList<>();
-            while (loans.hasNext()) {
-                Loan loan = loans.next();
-                loan.setHasCollected(true);
-                loanPassesToCollect.add(loan);
-            }
-
-            // save(update) back to db after updating the has_collected
-            lRepository.saveAll(loanPassesToCollect);
-
-            // get staff name, attraction names
-            String staffName = null;
-            boolean nameSet = false;
-            Set<String> uniqueAttractions = new HashSet<>();
-            for (Loan loan : loanPassesToCollect) {
-                if (!nameSet) {
-                    staffName = loan.getStaff().getFirstName();
-                    nameSet = true;
-                }
-
-                String attrName = loan.getPass().getAttraction().getName();
-                if (!(uniqueAttractions.contains(attrName))) {
-                    uniqueAttractions.add(attrName);
-                }
-            }
-
-            try {
-                // Send collection email (asynchronous)
-                emailService.sendCollectionEmail(emailTo, staffName, uniqueAttractions.toString());
-
-            } catch (MessagingException e) {
-                throw new InternalServerException("Server unable to send collection email to " + staffName
-                        + " for collection of " + uniqueAttractions.toString());
-            }
-
-            JSONWithMessage body = new JSONWithMessage(200, "Loan passes marked as collected.");
-            System.out.println("Returning JSON body in collectPasses service");
-            return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
-
-        } catch (Exception e) {
-            throw new InternalServerException("Server unable to update collection status of loans");
-        }
-    }
-
     public List<Loan> getReminderDateLoans(Date reminderDate) {
         try {
             List<Loan> loans = lRepository.getReminderDateLoans(reminderDate);
@@ -333,11 +285,70 @@ public class LoanService {
         }
     }
 
-    public ResponseEntity<JSONBody> cancelLoans(List<Integer> loanIds) {
-        if (loanIds == null) {
-            throw new BadRequestException("Please select loan(s) to cancel.");
+    public ResponseEntity<JSONBody> updateCollected(UpdateLoanDto dto) {
+        Optional<Loan> optLoan = lRepository.findById(dto.getLoanId());
+
+        if (!optLoan.isPresent()) {
+            JSONWithMessage results = new JSONWithMessage(404, "Loan not found");
+            return new ResponseEntity<JSONBody>(results, HttpStatus.NOT_FOUND);
         }
 
+        Loan loan = optLoan.get();
+        loan.setHasCollected(dto.isHasCollected());
+        lRepository.save(loan);
+        Staff s = loan.getStaff();
+        String emailTo = s.getEmail();
+        String staffName = s.getFirstName();
+
+        try {
+            // Send collection email (asynchronous) if pass is marked as collected
+            if (dto.isHasCollected()) {
+                emailService.sendCollectionEmail(emailTo, staffName, loan.getPass().getAttraction().getName());
+            }
+
+        } catch (MessagingException e) {
+            throw new InternalServerException("Server unable to send collection email to " + staffName
+                    + " for collection of " + loan.getPass().getAttraction().getName());
+        }
+
+        JSONWithData<Loan> result = new JSONWithData<>(200, loan);
+        ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(result, HttpStatus.OK);
+
+        return response;
+    }
+
+    public ResponseEntity<JSONBody> updateReturned(UpdateLoanDto dto) {
+        Optional<Loan> optLoan = lRepository.findById(dto.getLoanId());
+        if (!optLoan.isPresent()) {
+            JSONWithMessage results = new JSONWithMessage(404, "Loan not found");
+            return new ResponseEntity<JSONBody>(results, HttpStatus.NOT_FOUND);
+        }
+        Loan loan = optLoan.get();
+
+        loan.setHasCollected(dto.isHasCollected());
+        loan.setHasReturned(dto.isHasReturned());
+        lRepository.save(loan);
+
+        List<Loan> prevBorrowers = lRepository.getPrevBorrowers(loan.getPass().getPassId(),
+                loan.getStaff().getStaffId(), loan.getStartDate());
+        for (Loan l : prevBorrowers) {
+            l.setHasCollected(true);
+            l.setHasReturned(true);
+        }
+        lRepository.saveAll(prevBorrowers);
+
+        JSONWithData<Loan> result = new JSONWithData<>(200, loan);
+        ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(result, HttpStatus.OK);
+
+        return response;
+
+    }
+
+    public ResponseEntity<JSONBody> cancelLoans(LoanIdsDto dto) {
+        List<Integer> loanIds = dto.getLoanIds();
+        if (loanIds == null || loanIds.size() == 0) {
+            throw new BadRequestException("Please select loan(s) to cancel.");
+        }
         List<Integer> canCancelLoanIds = new ArrayList<>();
         List<Integer> cannotCancelLoanIds = new ArrayList<>();
         List<Loan> allLoans = lRepository.findAllById(loanIds);
@@ -366,14 +377,15 @@ public class LoanService {
         }
     }
 
-    public ResponseEntity<JSONBody> reportLostPass(List<Integer> loanIds) {
-        // List<Integer> loanIds = dto.getLoanIds();
+    public ResponseEntity<JSONBody> reportLostPass(LoanIdsDto dto) {
+        List<Integer> loanIds = dto.getLoanIds();
         if (loanIds == null || loanIds.size() == 0) {
             throw new BadRequestException("Please select loan(s) to report lost passes.");
         }
 
         List<Loan> lostLoans = lRepository.findAllById(loanIds);
-        // write all passes belonging to lost loans as being lost to prevent further borrowing
+        // write all passes belonging to lost loans as being lost to prevent further
+        // borrowing
         for (Loan lostLoan : lostLoans) {
             Pass p = lostLoan.getPass();
             p.setLost(true);
@@ -386,15 +398,16 @@ public class LoanService {
         }
 
         for (Loan lostLoan : lostLoans) {
-            
-            List<Loan> affectedLoans = lRepository.getAffectedLoansOfLostPass(lostLoan.getPass().getPassId(), lostLoan.getStaff().getStaffId(),
+
+            List<Loan> affectedLoans = lRepository.getAffectedLoansOfLostPass(lostLoan.getPass().getPassId(),
+                    lostLoan.getStaff().getStaffId(),
                     lostLoan.getStartDate());
             System.out.println("affectedLoans" + affectedLoans);
-            
+
             for (Loan affectedLoan : affectedLoans) {
                 lRepository.deleteById(affectedLoan.getLoanId());
                 Staff affectedLoanStaff = affectedLoan.getStaff();
-                
+
                 String yyyyString = String.valueOf(affectedLoan.getStartDate().toLocalDate().getYear());
                 int mm = affectedLoan.getStartDate().toLocalDate().getMonthValue();
                 String mmString = (mm < 10) ? "0" + mm : mm + "";
@@ -409,13 +422,13 @@ public class LoanService {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, d MMM YYYY");
                     String visitDate = dateFormat.format(affectedLoan.getStartDate());
                     try {
-                        emailService.sendRebookLoanEmail(affectedLoanStaff.getEmail(), affectedLoanStaff.getFirstName(),affectedLoan.getPass().getAttraction().getName(), visitDate);
-                        
+                        emailService.sendRebookLoanEmail(affectedLoanStaff.getEmail(), affectedLoanStaff.getFirstName(),
+                                affectedLoan.getPass().getAttraction().getName(), visitDate);
+
                     } catch (MessagingException e) {
                         // TODO: Log the error
                         System.out.println("Error sending email to " + affectedLoanStaff.getEmail());
                     }
-                    
 
                 } else {
                     // reassign their passes (add new loans but dont send email)
@@ -427,10 +440,10 @@ public class LoanService {
                 }
             }
 
-
         }
-        
-        return new ResponseEntity<JSONBody>(new JSONWithMessage(200, "successfully reported lost passes: " + loanIds), HttpStatus.OK);
+
+        return new ResponseEntity<JSONBody>(new JSONWithMessage(200, "successfully reported lost passes: " + loanIds),
+                HttpStatus.OK);
     }
 
     // ------------------------------------------------------------------------------------------------
