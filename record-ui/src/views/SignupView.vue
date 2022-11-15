@@ -1,39 +1,55 @@
 <script lang="ts">
 import { defineComponent } from "vue";
+import axios from 'axios';
+
+// Typings
 interface SignupData {
-    email: String | null,
-    emailInvalid: Boolean | null
-    emailCaptured: Boolean | null
+    canSignup: boolean,
+    hasSent: boolean,
+    email: string,
+    invalidEmail: boolean
 }
 
 export default defineComponent({
     name: 'Signup',
     data() {
         return {
-            email: null,
-            emailCaptured: null,
-            emailInvalid: false,
-            useremail: '',
-            userpass: '',
-            name: '',
-            age: '',
-            gender: 'Gender',
-            emailText: ""
-        }
+            canSignup: false,
+            hasSent: false,
+            email: '',
+            invalidEmail: false
+        };
     },
     methods: {
-    },
-    computed: {
-        checkEmail() {
-            if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.useremail)) {
-                this.emailInvalid = true
-
+        async checkEmail() {
+            if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email)) {
+                this.invalidEmail = true
             } else {
-                this.emailInvalid = false
+                this.invalidEmail = false
+
+                try {
+                    const res = await axios.post(
+                        import.meta.env.VITE_API_URL + 'api/staff/register',
+                        {
+                            email: this.email
+                        }
+                    );
+                    if (res.status === 204) {
+                        this.hasSent = true;
+                        this.canSignup = true;
+                    }
+                } catch (err: any) {
+                    if (err.response) {
+                        this.hasSent = true;
+                        this.canSignup = false;
+                    } else {
+                        console.error(err.message);
+                    }
+                }
             }
-        },
+        }
     }
-})
+});
 </script>
 
 <template>
@@ -50,23 +66,21 @@ export default defineComponent({
                         </p>
 
                         <div class="mt-5">
-
-                            <div class="form-floating mx-auto mb-3 col-6">
-                                <input type="email" th:field class="form-control" id="email" v-model="useremail">
+                            <div v-if="hasSent && canSignup" id="emailNotification">
+                                <div class="alert alert-success" role="alert">
+                                    <strong>Success!</strong> You have successfully registered an account! A
+                                    registration email has been sent to {{ email }}. Please check your email to
+                                    verify your account.
+                                </div>
+                            </div>
+                            <div v-else class="form-floating mx-auto mb-3 col-6">
+                                <input type="email" th:field class="form-control" id="email" v-model="email">
                                 <label for="email">Email address</label>
-                                <div id="emailHelpBlock" class="form-text text-danger" v-if="emailInvalid">
+                                <div id="emailHelpBlock" class="form-text text-danger" v-if="invalidEmail">
                                     Email address is invalid! Please key in a valid email address
                                 </div>
 
-                                <div v-if="emailCaptured" id="emailNotification">
-                                    <div class="alert alert-success" role="alert">
-                                        <strong>Success!</strong> You have successfully registered an account! A
-                                        registration email has been sent to {{ useremail }}. Please check your email to
-                                        verify your account.
-                                    </div>
-                                </div>
-
-                                <div v-else id="emailNotification">
+                                <div v-if="hasSent && !canSignup" id="emailNotification">
                                     <div class="alert alert-danger" role="alert">
                                         <strong>Failed!</strong> Email address already exists! Please contact the
                                         General Office Personnel for assistance.

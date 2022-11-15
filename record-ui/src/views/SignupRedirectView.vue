@@ -1,5 +1,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
+import axios from 'axios';
+
 interface SignupData {
     firstName: String | null,
     firstNameInvalid: Boolean | null,
@@ -12,11 +14,12 @@ interface SignupData {
     userPassword: String,
     userPasswordInvalid : Boolean | null,
     confirmUserPassword: String,
-    confirmUserPasswordInvalid: Boolean | null
+    confirmUserPasswordInvalid: Boolean | null,
+    hasFailedSent: Boolean
 }
 
 export default defineComponent({
-    name: 'Signup',
+    name: 'SignupRedirectView',
     data(): SignupData {
         return {
             firstName: null,
@@ -35,12 +38,13 @@ export default defineComponent({
             userPasswordInvalid: false,
             
             confirmUserPassword: "",
-            confirmUserPasswordInvalid: false
-            
+            confirmUserPasswordInvalid: false,
+
+            hasFailedSent: false
         }
     },
     methods: {
-        checkFields() {
+        async checkFields() {
             if(this.email === null){
                 this.emailInvalid = true
             }
@@ -83,8 +87,55 @@ export default defineComponent({
                 && !this.contactNumberInvalid && !this.emailInvalid 
                 && !this.userPasswordInvalid && !this.confirmUserPasswordInvalid){
                 //insert java code to register
+                const queryParams = new URLSearchParams(window.location.search);
+                const registerKey = queryParams.get('key') === null ? '' : queryParams.get('key');
+
+                try {
+                    const res = await axios.post(
+                        import.meta.env.VITE_API_URL + `api/staff/register/complete`,
+                        {
+                            email: this.email,
+                            firstName: this.firstName,
+                            lastName: this.lastName,
+                            contactNumber: this.contactNumber,
+                            password: this.userPassword,
+                            registerKey: registerKey
+                        }
+                    )
+                    const data = await res.data;
+
+                    if (data.code === 201) {
+                        await this.signin();
+                    }
+                } catch (err: any) {
+                    if (err.response) {
+                        this.hasFailedSent = true;
+                    } else {
+                        console.error(err.message);
+                    }
+                }
             }
-},
+        },
+        async signin() {
+            try {
+                const res = await axios.post(
+                    import.meta.env.VITE_API_URL + "api/auth/signin", 
+                    {
+                        email: this.email,
+                        password: this.userPassword,
+                    }
+                );
+                const data = await res.data;
+
+                if (data.code === 200) {
+                    localStorage.setItem("staffId", data.data.staffId);
+                    localStorage.setItem("role", data.data.role);
+                    this.$router.push({ name: 'home'});
+                } 
+            } catch (err) {
+                console.error(err);
+            }
+        }
     },
     computed: {
         checkEmail() {
@@ -149,8 +200,6 @@ export default defineComponent({
                     this.confirmUserPasswordInvalid = false
                 }
             },
-
-
     }
 })
 </script>
