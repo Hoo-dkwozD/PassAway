@@ -13,7 +13,7 @@
               </div>
             </div>
             <div class="form-floating mx-auto mb-3 col-6">
-              <input v-model="password" type="password" th:field="*{password}" class="form-control" id="password" placeholder="Password">
+              <input v-model="password" @keyup.enter="signin()" type="password" th:field="*{password}" class="form-control" id="password" placeholder="Password">
               <label for="password">Password</label>
               <div id="passwordHelpBlock" class="form-text text-danger" v-if="passwordInvalid">
                 {{passwordMsg}}
@@ -23,10 +23,8 @@
             <button @click="signin()" class="btn btn-outline-success col-5 btn-login text-uppercase fw-bold signin-btn m-1">Sign in</button>
             
             <div class="d-grid" style="align-items: center;"> 
-              <router-link to="/signup">
-                <p style = "margin-top: 20px; text-decoration: underline; color: blue;">
-                  Don't Have An Account? Sign Up
-                </p>
+              <router-link to="/signup" style = "margin-top: 20px; text-decoration: underline; color: blue;">
+                Don't Have An Account? Sign Up
               </router-link>
             </div>
           </div>

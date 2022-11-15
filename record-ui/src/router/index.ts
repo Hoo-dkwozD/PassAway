@@ -51,7 +51,7 @@ const router = createRouter({
       component: EditBarCodeView,
     },
     {
-      path: "/GOP",
+      path: "/GOP/bookings",
       name: "GOP landing",
       component: GOPLandingPageView,
     },
