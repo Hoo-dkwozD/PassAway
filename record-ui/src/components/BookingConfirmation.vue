@@ -140,13 +140,6 @@ export default defineComponent({
 </script>
 
 <style>
-.imageDiv {
-  width: 100%;
-  /* background-size: cover; */
-  /* padding-top: 300px;
-  padding-bottom: 300px; */
-  /* background-size: 100%; */
-}
 
 h1 {
   font-size: 60px;
