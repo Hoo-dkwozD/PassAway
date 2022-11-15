@@ -56,8 +56,8 @@ export default defineComponent({
         name: "Admin"
       },
       {
-        path: "/signin",
-        name: "Sign In"
+        path: "/Login",
+        name: 'Login',
       },
     ];
     return {

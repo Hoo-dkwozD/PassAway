@@ -1,6 +1,6 @@
 <!-- As a administrator, I want to be able to view & download the statistics of the passes borrowed -->
 <script lang="ts">
-import * as d3 from "d3";
+// import * as d3 from "d3";
 import { defineComponent} from "vue";
 import NavBar from '../components/Navbar.vue';
 const userData: any[] = []

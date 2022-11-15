@@ -1,6 +1,6 @@
 <template>
   <NavBar></NavBar>
-  <div class="container-fluid p-0 mx-0">
+  <div class="container-fluid p-0 mx-0 position-relative w-100 d-flex flex-column" id="top">
     <div
       id="sectionheader"
       :style="{ backgroundImage: `url(${currentBackground})` }"
@@ -78,7 +78,7 @@
         <div id="group-submit">
           <button
             type="submit"
-            class="btn btn-submit btn-lg"
+            class="btn btn-submit btn-md"
             @click="addLoan()"
           >
             Book Now
@@ -92,8 +92,9 @@
 <script lang="ts">
 import axios from "axios";
 import { defineComponent } from "vue";
-import CalendarPicker from "./CalendarPicker.vue";
-import NavBar from '../components/Navbar.vue';
+import NavBar from "../components/Navbar.vue";
+import "v-calendar/dist/style.css";
+
 type ticketInformation = {
   description: string;
   isComplete: boolean;
@@ -118,6 +119,7 @@ interface Data {
   attractionId: number;
   staffId: number;
   ticketInformation: ticketInformation[];
+  errorMsg: string;
 }
 
 interface LoginData {
@@ -142,6 +144,7 @@ export default defineComponent({
         "https://www.sportsschool.edu.sg/qql/slot/u262/2021/News%20and%20Publications/News/2021/MAR21/What%20Makes%20Us%20Athlete-Friendly/Athlete-friendly%20environment%20at%20Singapore%20Sports%20School%20helps%20nurture%20champions.jpg",
       loanID: 0,
       attractionId: 0,
+      errorMsg: "",
       staffId: 0,
       ticketInformation: [
         {
@@ -168,10 +171,16 @@ export default defineComponent({
 
   async created() {
     this.checkLogin();
-    this.staffId = document.cookie;
-    const attractions = await axios.get(
-      import.meta.env.VITE_API_URL + "api/attractions"
-    );
+    try {
+      const attractions = await axios.get(
+        import.meta.env.VITE_API_URL + "api/attractions"
+      );
+    }
+    catch (err) {
+      if (err.response.status == 401) {
+        this.$router.push({ name: "Login" });
+      }
+    }
 
     for (const att of attractions.data.data) {
       const location = att.name;
@@ -221,11 +230,11 @@ export default defineComponent({
       this.title = this.attractionDetails["id"][0];
     },
     checkLogin(): LoginData | undefined {
-      let staffIdStr = localStorage.getItem("staffId");
-      let role = localStorage.getItem("role");
+      const staffIdStr = localStorage.getItem("staffId");
+      const role = localStorage.getItem("role");
 
       if (staffIdStr === null || role === null) {
-        this.$router.push("/signin");
+        this.$router.push({ name: "Login" });
       } else {
         this.staffId = parseInt(staffIdStr);
 
@@ -261,31 +270,45 @@ export default defineComponent({
         console.log(this.loanID);
 
         this.$router.push({
-          path: `/bookingconfirmation/${this.loanID}`,
+          name: "Booking Confirmation",
+          params: {
+            loanID: this.loanID,
+          },
         });
         return res.data;
       } catch (err) {
+        if (err.response.status == 401) {
+          this.$router.push({ name: "Login" });
+        }
+        if (err.response.status == 500) {
+          this.errorMsg = "Please check all input fields and ensure you have not exceed the maximum number of passes per month.";
+        } else if (err.response.status == 400) {
+          this.errorMsg = "You are not allowed to book pass, please check with the HR for access rights."
+        }
+        else {
+          this.errorMsg = "An error has occured. Please try again later.";
+        }
+        this.makeToast(this.errorMsg);
         return {
           code: err,
         };
       }
     },
-    makeToast() {
-      let toast = document.createElement("div");
+    makeToast(errorMsg: string) {
+      let toast = document.createElement("sectionheader");
       toast.innerHTML = `
-      <div id="hjvvhj" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-          <strong class="me-auto">Bootstrap</strong>
-          <small>11 mins ago</small>
+      <div id="hjvvhj" class="toast mb-3 me-2" style="z-index:999" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
+        <div class="toast-header" data-bs-delay="10000">
+          <strong class="me-auto">Error Message</strong>
           <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body">
-          Hello, world! This is a toast message.
+        <div class="toast-body">` + errorMsg +
+          `
         </div>
       </div>
       `;
 
-      const html = document.querySelector("#app");
+      const html = document.querySelector("#sectionheader");
       html.appendChild(toast);
 
       toast = document.querySelector("#hjvvhj");
@@ -304,6 +327,7 @@ export default defineComponent({
   padding-top: 300px;
   padding-bottom: 300px;
   background-size: 100%;
+  position:absolute;
 }
 
 .main {
@@ -319,6 +343,12 @@ export default defineComponent({
   padding-bottom: 10px;
   line-height: 1.4;
   margin-left: 100px;
+}
+.toast {
+  z-index: 9998;
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
 .titledescription {
@@ -428,16 +458,15 @@ export default defineComponent({
 }
 
 .btn-submit {
-  background-color: #f37931;
+  background-color: #f37931!important;
   letter-spacing: 0;
   line-height: 24px;
-  color: black;
+  color: white!important;;
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   padding-left: 20px;
 }
-
 .btn-submit:hover {
-  background-color: #d72255;
+  background-color: #d72255!important;
   color: white;
 }
 </style>

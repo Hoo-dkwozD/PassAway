@@ -1,98 +1,47 @@
 <template>
-  <NavBar></NavBar>
-  <div
-    class="imageDiv p-5 mb-5 container-fluid"
-    :style="{ backgroundImage: `url(${currentBackground})` }"
-  >
-    <div>
-      <h1 class="text-center">{{ title }}</h1>
-    </div>
+  <div class="container-fluid">
+    <div
+      class="imageDiv p-5 mb-5 row"
+      :style="{ backgroundImage: `url(${currentBackground})` }"
+    >
+      <div>
+        <h1 class="text-center">{{ title }}</h1>
+      </div>
 
-    <div class="table-responsive tableblock col-6">
-      <table class="table table-hover border shadow p-3 mb-5 bg-white rounded">
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr class="table-active">
+            <th scope="col">Loan ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Start Date</th>
+            <th scope="col">Attraction Name</th>
+            <th scope="col">Pass ID</th>
+            <th scope="col">Previous Borrower</th>
+            <th scope="col">Previous Borrower Contact</th>
+          </tr>
+        </thead>
         <tbody>
-          <tr class="table-active bookingfont">
-            <th class="fw-bold">Previous Loaner's Details</th>
-            <th></th>
-          </tr>
           <tr>
-            <th class="bookingfont fw-bold">Name</th>
-            <td class="bookingfont align-right">{{locationDetails[0]}}</td>
-          </tr>
-          <tr>
-            <th class="bookingfont fw-bold">Email</th>
-            <td class="bookingfont align-right">{{locationDetails[1]}}</td>
-          </tr>
-          <tr>
-            <th class="bookingfont fw-bold">Contact No.</th>
-            <td class="bookingfont align-right">{{locationDetails[2]}}</td>
-          </tr>
-          <tr>
-            <th class="bookingfont fw-bold">Loan Date</th>
-            <td class="bookingfont align-right">{{locationDetails[3]}}</td>
-          </tr>
-          <tr>
-            <th class="bookingfont fw-bold">Pass No.</th>
-            <td class="bookingfont align-right">{{locationDetails[4]}}</td>
-          </tr>
-          <td>
-            <button class="btn btn-danger position-relative ml-auto">Report Lost</button>
-          </td>
-          <tr>
+            <th scope="col">{{ locationDetails[0] }}</th>
+            <td scope="col">{{ locationDetails[1] }}</td>
+            <td scope="col">{{ locationDetails[2] }}</td>
+            <td scope="col">{{ locationDetails[3] }}</td>
+            <td scope="col">{{ locationDetails[4] }}</td>
+            <td scope="col">{{ locationDetails[5] }}</td>
+            <td scope="col">{{ locationDetails[6] }}</td>
+            <td scope="col">{{ locationDetails[7] }}</td>
           </tr>
         </tbody>
       </table>
     </div>
-
-    <div class="table-responsive tableblock col-6">
-      <table
-        class="table table-hover border shadow p-3 mb-5 bg-white rounded"
-        v-if="checkLoaner"
-      >
-        <tbody>
-          <tr class="table-warning bookingfont">
-            <th class="fw-bold">Previous Loaner's Details</th>
-            <th></th>
-          </tr>
-          <tr>
-            <th class="bookingfont fw-bold">Name</th>
-            <td class="bookingfont align-right">Bob Aw</td>
-          </tr>
-          <tr>
-            <th class="bookingfont fw-bold">Email</th>
-            <td class="bookingfont align-right">BobAw@ss.edu.sg</td>
-          </tr>
-          <tr>
-            <th class="bookingfont fw-bold">Due Date</th>
-            <td class="bookingfont align-right">Date</td>
-          </tr>
-          <tr>
-            <th class="bookingfont fw-bold">Attraction</th>
-            <td class="bookingfont align-right">AttractionName</td>
-          </tr>
-          <tr>
-            <th class="bookingfont fw-bold">Number of Passes</th>
-            <td class="bookingfont align-right">2</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="text-center m-5 p-5">
-      <button
-        type="button"
-        class="btn btn-color btn-lg btn-block"
-        @click="showPreviousLoaner"
-      >
-        Check previous borrower
-      </button>
-    </div>
-    <div class="py-5"></div>
   </div>
 </template>
 
 <script lang="ts">
 import axios from "axios";
+import { defineComponent } from "vue";
+import NavBar from "../components/Navbar.vue";
 import { isIntegerKey } from "@vue/shared";
 
 //pass the output from the api to the respective table rows
@@ -102,7 +51,15 @@ interface Data {
   loanID: number;
   currentBackground: string;
   locationDetails: [];
+  staffId: number;
+  role: string;
 }
+
+interface LoginData {
+  staffId: number;
+  role: string;
+}
+
 export default defineComponent({
   data(): Data {
     return {
@@ -110,6 +67,8 @@ export default defineComponent({
       checkLoaner: false,
       locationDetails: [],
       loanID: parseInt(this.loanID),
+      staffId: 0,
+      role: "",
       currentBackground:
         "https://img.freepik.com/free-vector/white-desktop-background-modern-minimal-design-vector_53876-140226.jpg?w=1800&t=st=1668366952~exp=1668367552~hmac=a23687ccfe071f6c28017a514a3380e222e62d36894545fc6ff4f9ad24033935",
     };
@@ -117,32 +76,69 @@ export default defineComponent({
     // as absolute bottom and right define based on how much i want it to space
   },
   async created() {
-    const loanDetails = await axios.get(
-      import.meta.env.VITE_API_URL + "api/loan/" + this.loanID.toString()
-    );
-    const detail = loanDetails.data.data;
+    this.checkLogin();
+    try {
+      const loanDetails = await axios.get(
+        import.meta.env.VITE_API_URL + "api/loan/" + this.$route.params.loanID
+      );
+    }
+    catch (err) {
+      if (err.response.status == 401) {
+        this.$router.push({ name: "Login" });
+      }
+    }
+    const detail = loanDetails.data.data[0];
 
-
-    const name = detail.staff.firstName;
-    const email = detail.staff.email;
-    const contactNumber = detail.staff.contactNumber;
-    const startDate = detail.startDate;
-    const passes = detail.pass.passId;
-    this.locationDetails = [name, email, contactNumber, startDate, passes];
-    
+    const loanId = detail["loanId"];
+    const staffName = detail.staffName;
+    const staffEmail = detail.staffEmail;
+    const visitDate = detail.visitDate;
+    const attractionName = detail.attractionName;
+    const passId = detail.passId;
+    const prevBorrowerName = detail.prevBorrowerName;
+    const prevBorrowerContact = detail.prevBorrowerContact;
+    this.locationDetails = [
+      loanId,
+      staffName,
+      staffEmail,
+      visitDate,
+      attractionName,
+      passId,
+      prevBorrowerName,
+      prevBorrowerContact,
+    ];
   },
   methods: {
     showPreviousLoaner() {
       this.checkLoaner = this.checkLoaner ? false : true;
     },
+    checkLogin(): LoginData | undefined {
+      const staffIdStr = localStorage.getItem("staffId");
+      const role = localStorage.getItem("role");
+
+      if (staffIdStr === null || role === null) {
+        this.$router.push({ name: "Login" });
+      } else {
+        this.staffId = parseInt(staffIdStr);
+
+        return {
+          staffId: this.staffId,
+          role: this.role,
+        };
+      }
+    },
   },
   props: ["loanID"],
-};
+});
 </script>
 
 <style>
-imageDiv {
-  background-size: 100% 100%;
+.imageDiv {
+  width: 100%;
+  background-size: cover;
+  padding-top: 300px;
+  padding-bottom: 300px;
+  background-size: 100%;
 }
 
 h1 {
@@ -176,8 +172,8 @@ h2 {
   text-align: right;
 }
 
-.btn-color,
-.btn-color:focus {
+.btn-block,
+.btn-block:focus {
   background-color: #d72255;
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   color: white;

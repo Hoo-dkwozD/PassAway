@@ -73,4 +73,10 @@ public interface LoanRepository extends JpaRepository<Loan, Integer> {
             ORDER BY start_date DESC
             """, nativeQuery = true)
     List<Loan> getPrevBorrowers(String passId, Integer staffId, Date startDate);
+
+    @Query(value = """
+            SELECT * FROM Loan WHERE pass_id = :passId AND staff_id != :staffId
+            AND has_collected = FALSE AND has_returned = FALSE AND start_date > :startDate
+            """, nativeQuery = true)
+    List<Loan> getAffectedLoansOfLostPass(String passId, Integer staffId, Date startDate);
 }

@@ -6,6 +6,8 @@ import ProfilePassword from '../views/ProfilePassword.vue'
 import GOPLandingPage from '../views/GOPLandingPage.vue'
 import AnalyticsView from '../views/AnalyticsView.vue'
 import Admin from '../views/Admin.vue'
+import LoginView from '../views/LoginView.vue'
+import PersonalBookings from '../views/PersonalBookingsView.vue'
 
 function requireAuth(to, from, next){
   console.log(this);
@@ -58,6 +60,16 @@ const router = createRouter({
       path: "/Analytics",
       name: 'Analytics',
       component: AnalyticsView,
+    },
+    {
+      path: "/Login",
+      name: 'Login',
+      component: LoginView,
+    },
+    {
+      path: "/Bookings",
+      name: "Bookings",
+      component: PersonalBookings
     }
   ],
 });

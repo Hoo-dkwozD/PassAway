@@ -14,7 +14,6 @@ font-family: Avenir, Helvetica, Arial, sans-serif;
 -moz-osx-font-smoothing: grayscale;
 text-align: center;
 color: #2c3e50;
-
 }
 </style>
 
@@ -24,13 +23,7 @@ color: #2c3e50;
 import { defineComponent } from "vue";
 import { RouterLink, RouterView } from "vue-router";
 import VCalendar from "v-calendar";
-import NavBar from '@/components/Navbar.vue'
-export default defineComponent({
-    name: 'App',
-    components: {
-    NavBar
-}
-})
+
 // Typings
 interface Route {
   path: string;
@@ -38,6 +31,7 @@ interface Route {
 }
 
 export default defineComponent({
+  name: 'App',
   data() {
     const role = "Admin";
     const routes: Route[] = [
