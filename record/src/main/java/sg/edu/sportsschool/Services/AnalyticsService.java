@@ -9,14 +9,12 @@ import java.io.IOException;
 import java.sql.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.opencsv.CSVWriter;
 
 import sg.edu.sportsschool.DTO.Request.AnalyticsDto;
 import sg.edu.sportsschool.Entities.Loan;
-import sg.edu.sportsschool.Helper.Json.JSONBody;
 import sg.edu.sportsschool.Repositories.LoanRepository;
 
 @Service
