@@ -12,7 +12,7 @@ import PersonalBookingsView from "../views/PersonalBookingsView.vue";
 import ProfileView from "../views/ProfileView.vue";
 import ProfilePasswordView from "../views/ProfilePasswordView.vue";
 import SignupView from "../views/SignupView.vue";
-import SignupRedirect from "../views/SignupRedirect.vue";
+import SignupRedirectView from "../views/SignupRedirectView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -35,7 +35,7 @@ const router = createRouter({
     },
     {
       path: "/admin/bookings",
-      name: "bookings",
+      name: "book",
       component: BookView,
       props: true,
     },
@@ -72,32 +72,22 @@ const router = createRouter({
     },
     {
       path: "/signup",
-      name: "Signup",
+      name: "signup",
       component: SignupView,
     },
     {
-      path: "/Analytics",
-      name: "Analytics",
-      component: AnalyticsView,
-    },
-    {
-      path: "/Login",
-      name: "Login",
-      component: LoginView,
-    },
-    {
       path: "/bookings",
-      name: "Bookings",
+      name: "personal bookings",
       component: PersonalBookingsView,
     },
     {
       path: "/signupredirect",
-      name: "SignupRedirect",
-      component: SignupRedirect,
+      name: "signup redirect",
+      component: SignupRedirectView,
     },
     {
       path: "/adminAllBookings",
-      name: "AdminAllBookings",
+      name: "admin all bookings",
       component: AdminAllBookings,
     },
   ],
