@@ -44,6 +44,26 @@ public class EmailService {
     }
 
     @Async
+    public void notifyAdminLostPass(String[] emailTo, String staffName, String attrName, String passId)
+            throws MessagingException {
+        Context context = new Context();
+        // Staff name, pass id, attraction name
+        context.setVariable("staffName", staffName);
+        context.setVariable("attrName", attrName);
+        context.setVariable("passId", passId);
+        String process = templateEngine.process("NotifyAdminLostPassEmailTemplate.html", context);
+
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false);
+        helper.setSubject("Lost pass for " + attrName);
+        helper.setText(process, true);
+        helper.setTo(emailTo);
+
+        javaMailSender.send(mimeMessage);
+        System.out.println("Admin notified of lost pass " + "by " + staffName + "for passId:" + passId + " and attraction:" + attrName);
+    }
+
+    @Async
     public void sendRegistrationEmail(String emailTo, String staffName, String registerKey) throws MessagingException {
         Context context = new Context();
         context.setVariable("staffName", staffName);
