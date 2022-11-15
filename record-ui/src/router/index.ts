@@ -6,6 +6,7 @@ import ProfilePassword from '../views/ProfilePassword.vue'
 import GOPLandingPage from '../views/GOPLandingPage.vue'
 import AnalyticsView from '../views/AnalyticsView.vue'
 import Admin from '../views/Admin.vue'
+import AdminView from "../views/AdminView.vue";
 import EditBarCode from '../views/EditBarCode.vue'
 import LoginView from '../views/LoginView.vue'
 import SignUp from '../views/Signup.vue'
@@ -19,6 +20,11 @@ function requireAuth(to, from, next){
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: "/editadmin",
+      name: "AdminView",
+      component: AdminView,
+    },
     {
       path: "/",
       name: "Home",
