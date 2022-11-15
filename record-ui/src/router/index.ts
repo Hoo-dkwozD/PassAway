@@ -3,6 +3,10 @@ import SampleView from "../views/SampleView.vue";
 import AboutView from "../views/AboutView.vue";
 import BookView from '../views/BookView.vue'
 import BookingConfirmationView from "../views/BookingConfirmationView.vue"
+import AttractionView from "../views/AttractionView.vue"
+import singleAttractionView from "../views/singleAttractionView.vue"
+import EditAttractionView from "../views/EditAttractionView.vue"
+import CreateAttractionView from "../views/CreateAttractionView.vue"
 
 function requireAuth(to,from,next){
   console.log(this);
@@ -34,7 +38,30 @@ const router = createRouter({
       path: "/bookingconfirmation",
       name: "Booking Confirmation",
       component: BookingConfirmationView
+    },
+    {
+      path:"/Attract",
+      name:"Attract",
+      component: AttractionView
+    },
+    {
+      path:'/Attract/:id',
+      name : 'singleAttraction',
+      component: singleAttractionView
+    },
+    {
+      path:'/Attract/edit/:id',
+      name : 'EditAttraction',
+      component: EditAttractionView
+
+    },
+    {
+      path:'/create',
+      name : 'CreateAttraction',
+      component: CreateAttractionView
+
     }
+
   ],
 });
 
