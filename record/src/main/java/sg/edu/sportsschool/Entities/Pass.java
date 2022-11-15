@@ -10,11 +10,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+// import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "pass")
-@JsonIgnoreProperties({"attraction"})
+// @JsonIgnoreProperties({"attraction"})
 public class Pass {
     @Id
     private String passId;
@@ -75,4 +75,10 @@ public class Pass {
         return Objects.hash(passId, attraction.getAttractionId());
     }
 
+    @Override
+    public String toString() {
+      return passId + "";
+    }
+
+    
 }

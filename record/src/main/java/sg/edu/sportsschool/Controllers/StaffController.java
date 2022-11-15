@@ -431,16 +431,6 @@ public class StaffController {
         return staffService.completeStaffRegistration(dto);
     }
 
-    // @PostMapping("/signup")
-    // public ResponseEntity<JSONBody> signup(@RequestBody RegisterStaffDto signupDto) {
-    //     return staffService.signUp(signupDto);
-    // }
-
-    // @PostMapping("/signin")
-    // public ResponseEntity<JSONBody> signIn(@RequestBody SignInDto signInDto) {
-    //     return staffService.signIn(signInDto);
-    // }
-
     /**
      * @api {put} /staff/:staffId Update staff information
      * @apiName UpdateStaffDetails

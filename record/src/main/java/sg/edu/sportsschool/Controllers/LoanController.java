@@ -1,7 +1,5 @@
 package sg.edu.sportsschool.Controllers;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,9 +17,7 @@ import sg.edu.sportsschool.DTO.Request.CollectPassDto;
 import sg.edu.sportsschool.DTO.Request.LoanDTO;
 import sg.edu.sportsschool.DTO.Request.LoanIdsDto;
 import sg.edu.sportsschool.DTO.Request.UpdateLoanDto;
-import sg.edu.sportsschool.Entities.Staff;
 import sg.edu.sportsschool.Helper.Json.JSONBody;
-import sg.edu.sportsschool.Repositories.StaffRepository;
 import sg.edu.sportsschool.Services.LoanService;
 
 @RestController
@@ -32,9 +28,6 @@ public class LoanController {
     private LoanService lService;
 
     @Autowired
-    private StaffRepository sRepository;
-
-    @Autowired
     public LoanController(LoanService lService) {
         this.lService = lService;
     }
@@ -43,17 +36,7 @@ public class LoanController {
      * @api {get} Get all loans
      * @apiName GetLoans
      * @apiGroup Loan
-     *           "loanId": 1,
-     *           "staffName": "Zhi Wei",
-     *           "staffEmail": "zwthean.2021@scis.smu.edu.sg",
-     *           "visitDate": "2021-01-22",
-     *           "attractionName": "Universal Studios",
-     *           "hasCollected": false,
-     *           "hasReturned": false,
-     *           "passId": "ABC12345F",
-     *           "prevBorrowerName": "None",
-     *           "prevBorrowerContact": "None",
-     *           "lost": true
+     *
      * @apiSuccess {Number} code HTTP status code.
      * @apiSuccess {Object[]} data List of JSON objects representing loans.
      * @apiSuccess {Number} data[loanId] Loan ID.
@@ -61,9 +44,9 @@ public class LoanController {
      * @apiSuccess {String} data[staffEmail] Staff email.
      * @apiSuccess {String} data[visitDate] Visit date.
      * @apiSuccess {String} data[attractionName] Attraction name
-     * @apiSuccess {Boolean} data[hasCollected] Whether the loan pass has been
+     * @apiSuccess {Boolean} data[hasCollected] Whether the loaned pass has been
      *             collected.
-     * @apiSuccess {Boolean} data[hasReturned] Whether the loan pass has been
+     * @apiSuccess {Boolean} data[hasReturned] Whether the loaned pass has been
      *             returned.
      * @apiSuccess {String} data[passId] Pass Id
      * @apiSuccess {String} data[prevBorrowerName] Previous borrower name
@@ -184,7 +167,7 @@ public class LoanController {
      *                  "message": "Server unable to get loan of id: 20"
      *                  }
      * 
-     * @apiDescription Gets the details of a loan
+     * @apiDescription Gets the details of a loan given a loan ID.
      */
     @GetMapping(path = "/{id}")
     public ResponseEntity<JSONBody> getLoan(@PathVariable int id) {
@@ -192,7 +175,7 @@ public class LoanController {
     }
 
     /**
-     * @api {get} /list-by-email Get loans by staff email
+     * @api {get} /list-by-email?email=:email Get loans by staff email
      * @apiName Get loans by email
      * @apiGroup Loan
      * 
@@ -273,7 +256,7 @@ public class LoanController {
      *                  henry@scis.smu.edu.sg"
      *                  }
      * 
-     * @apiDescription Gets the details of a loan
+     * @apiDescription Gets the loans by a user's email
      */
     @GetMapping(path = "/list-by-email")
     public ResponseEntity<JSONBody> getLoansByEmail(@RequestParam String email) {
@@ -457,8 +440,7 @@ public class LoanController {
      *                  theanzhiwei@gmail.com"
      *                  }
      * 
-     * @apiDescription Adds a loan into the loans table. One pass = one loan entry
-     *                 in loans table. Two passes = two loan entries in loan table
+     * @apiDescription Adds a loan into the loans table.
      */
     @PostMapping(path = "/add")
     public ResponseEntity<JSONBody> addLoan(@RequestBody LoanDTO loanDTO) {
@@ -466,7 +448,7 @@ public class LoanController {
     }
 
     /**
-     * @api {get} /available-passes Get available passes by attraction id in a month
+     * @api {get} /available-passes?aId=:aId&yyyy=:yyyy&mm=:mm Get available passes by attraction id in a month
      * @apiName Get available passes for each day in a month
      * @apiGroup Loan
      * 
@@ -555,68 +537,189 @@ public class LoanController {
      * @apiName Update loan pass return status
      * @apiGroup Loan
      * 
-     * @apiBody {Number} attractionId Attraction ID.
-     * @apiBody {String} name Attraction name.
-     * @apiBody {String} description Attraction description.
-     * @apiBody {String} passType Attraction pass type. ("0": PHYSICAL, "1":
-     *          DIGITAL)
-     * @apiBody {Number} replacementFee Attraction replacement fee in SGD.
-     * @apiBody {Number} numAccompanyingGuests Attraction number of accompanying
-     *          guests.
-     * @apiBody {Number} maxPassesPerLoan Attraction maximum passes per loan.
-     * @apiBody {Number} maxLoansPerMonth Attraction maximum loans per month.
-     * @apiBody {String} address Attraction address.
-     * @apiBody {String} membershipId Attraction membership ID.
-     * @apiBody {Number} expiryDateYYYY Attraction expiry date's year.
-     * @apiBody {Number} expiryDateMM Attraction expiry date's month.
-     * @apiBody {Number} expiryDateDD Attraction expiry date's day.
-     * @apiBody {String} benefits Attraction benefits.
-     * @apiBody {String} termsConditions Attraction terms and conditions
+     * @apiBody {Number} loanId Attraction ID.
+     * @apiBody {Boolean} hasCollected Whether the pass has been collected.
+     * @apiBody {Boolean} hasReturned Whether the pass has been returned.
      * 
-     * @apiSuccess {Number} code HTTP status code.
-     * @apiSuccess {Object} data JSON Object representing number of passes available
-     *             for loans each date.
-     * @apiSuccess {Number} data[date] Number of passes available for loans that
-     *             date.
+     * @apiSuccess {Object} data JSON object representing updated loan.
+     * @apiSuccess {Number} data[loanId] Loan ID.
+     * @apiSuccess {String} data[staffName] Staff name.
+     * @apiSuccess {String} data[staffEmail] Staff email.
+     * @apiSuccess {String} data[visitDate] Visit date.
+     * @apiSuccess {String} data[attractionName] Attraction name
+     * @apiSuccess {Boolean} data[hasCollected] Whether the loan pass has been
+     *             collected.
+     * @apiSuccess {Boolean} data[hasReturned] Whether the loan pass has been
+     *             returned.
+     * @apiSuccess {String} data[passId] Pass Id
+     * @apiSuccess {String} data[prevBorrowerName] Previous borrower name
+     * @apiSuccess {String} data[prevBorrowerContact] Previous borrower contact.
+     * @apiSuccess {Boolean} data[lost] Whether the pass is lost.
      * 
      * @apiSuccessExample {json} Success-Response:
-     *                    HTTP/1.1 200 OK
-     *                    {
-     *                    "code": 200,
-     *                    "data": {
-     *                    "2021-01-02": 1,
-     *                    "2021-01-24": 0,
-     *                    "2021-01-03": 1,
-     *                    "2021-01-25": 1,
-     *                    "2021-01-22": -1,
-     *                    "2021-01-01": 1,
-     *                    "2021-01-23": 1,
-     *                    "2021-01-20": 1,
-     *                    "2021-01-21": 1,
-     *                    "2021-01-19": 1,
-     *                    "2021-01-17": 1,
-     *                    "2021-01-18": 1,
-     *                    "2021-01-15": 1,
-     *                    "2021-01-16": 1,
-     *                    "2021-01-13": 1,
-     *                    "2021-01-14": 1,
-     *                    "2021-01-11": 1,
-     *                    "2021-01-12": 1,
-     *                    "2021-01-31": 1,
-     *                    "2021-01-10": 1,
-     *                    "2021-01-30": 1,
-     *                    "2021-01-08": 1,
-     *                    "2021-01-09": 1,
-     *                    "2021-01-06": 1,
-     *                    "2021-01-28": 1,
-     *                    "2021-01-07": 1,
-     *                    "2021-01-29": 1,
-     *                    "2021-01-04": 1,
-     *                    "2021-01-26": 1,
-     *                    "2021-01-05": 1,
-     *                    "2021-01-27": 1
-     *                    }
-     *                    }
+     *       HTTP/1.1 200 OK
+     *  {
+            "code": 200,
+            "data": {
+                "loanId": 12,
+                "staffName": "ZWgmail",
+                "staffEmail": "theanzhiwei@gmail.com",
+                "visitDate": "2021-01-26",
+                "attractionName": "Universal Studios",
+                "hasCollected": true,
+                "hasReturned": true,
+                "passId": "ABC12345H",
+                "prevBorrowerName": "Zhi Wei",
+                "prevBorrowerContact": "91234567",
+                "lost": false
+            }
+        }
+     *
+     * @apiError (Error 404) {Number} code HTTP status code.
+     * @apiError (Error 404) {String} message Error message.
+     * 
+     * @apiErrorExample {json} Error-Response:
+     *                  HTTP/1.1 404 Not Found
+     *                  {
+     *                  "code": 404,
+     *                  "message": "Loan not found"
+     *                  }
+     * @apiDescription Updates the pass collection and return status according to the request body. Also updates all previous borrowers collection and return statuses to true if the current borrower's pass is returned.
+     */
+    @PutMapping(path = "/return")
+    public ResponseEntity<JSONBody> updateReturned(@RequestBody UpdateLoanDto dto) {
+        return lService.updateReturned(dto);
+    }
+
+    /**
+     * @api {put} /collect Update loan pass collection status
+     * @apiName Update loan pass collect status
+     * @apiGroup Loan
+     * 
+     * @apiBody {Number} loanId Attraction ID.
+     * @apiBody {Boolean} hasCollected Whether the pass has been collected.
+     * 
+     * @apiSuccess {Object} data JSON object representing updated loan.
+     * @apiSuccess {Number} data[loanId] Loan ID.
+     * @apiSuccess {String} data[staffName] Staff name.
+     * @apiSuccess {String} data[staffEmail] Staff email.
+     * @apiSuccess {String} data[visitDate] Visit date.
+     * @apiSuccess {String} data[attractionName] Attraction name
+     * @apiSuccess {Boolean} data[hasCollected] Whether the loan pass has been
+     *             collected.
+     * @apiSuccess {Boolean} data[hasReturned] Whether the loan pass has been
+     *             returned.
+     * @apiSuccess {String} data[passId] Pass Id
+     * @apiSuccess {String} data[prevBorrowerName] Previous borrower name
+     * @apiSuccess {String} data[prevBorrowerContact] Previous borrower contact.
+     * @apiSuccess {Boolean} data[lost] Whether the pass is lost.
+     * 
+     * @apiSuccessExample {json} Success-Response:
+     *       HTTP/1.1 200 OK
+     *  {
+            "code": 200,
+            "data": {
+                "loanId": 21,
+                "staffName": "Zhi Wei",
+                "staffEmail": "zwthean.2021@scis.smu.edu.sg",
+                "visitDate": "2022-12-26",
+                "attractionName": "Universal Studios",
+                "hasCollected": true,
+                "hasReturned": false,
+                "passId": "ABC12345H",
+                "prevBorrowerName": "None",
+                "prevBorrowerContact": "None",
+                "lost": true
+            }
+        }
+     *
+     * @apiError (Error 404) {Number} code HTTP status code.
+     * @apiError (Error 404) {String} message Error message.
+     * 
+     * @apiErrorExample {json} Error-Response:
+     *                  HTTP/1.1 404 Not Found
+     *                  {
+     *                  "code": 404,
+     *                  "message": "Loan not found"
+     *                  }
+     * @apiDescription Updates the pass collection status according to the request body. Sends collection notification email to the borower if pass is marked as collected.
+     */
+    @PutMapping(path = "/collect")
+    public ResponseEntity<JSONBody> updateCollected(@RequestBody UpdateLoanDto dto) {
+        return lService.updateCollected(dto);
+    }
+
+    /**
+     * @api {delete} /cancel Delete (cancel) loan pass
+     * @apiName Delete (cancel) loan pass
+     * @apiGroup Loan
+     * 
+     * @apiBody {Number[]} Array of loan Ids to be deleted (cancelled)
+     * 
+     * @apiSuccess {Number} code HTTP status code.
+     * @apiSuccess {String} message String displaying the deleted loan IDs
+     * 
+     * @apiSuccessExample {json} Success-Response:
+     *       HTTP/1.1 200 OK
+     *  {
+            "code": 200,
+            "message": "successfully deleted loans: [21, 22]"
+        }
+    
+     * @apiSuccess {Number} code HTTP status code.
+     * @apiSuccess {String} message String displaying the deleted loan IDs and the loan Ids that cannot be deleted (if there is). Loans are only allowed to be cancelled up to 1 day before the visit date.
+     * 
+     * @apiSuccessExample {json} Success-Response:
+     *       HTTP/1.1 200 OK
+     *  {
+            "code": 200,
+            "message": "successfully deleted loans: [21,22]. Unable to cancel loans of:[23]  1 day before the visit date."
+        }
+     * 
+     * 
+     * @apiError (Error 400) {Number} code HTTP status code.
+     * @apiError (Error 400) {String} message Error message.
+     * 
+     * @apiErrorExample {json} Error-Response:
+     *                  HTTP/1.1 400 Bad Request
+     *                  {
+     *                  "code": 400,
+     *                  "message": "Please select loan(s) to cancel"
+     *                  }
+     *
+     * @apiError (Error 500) {Number} code HTTP status code.
+     * @apiError (Error 500) {String} message Error message.
+     * 
+     * @apiErrorExample {json} Error-Response:
+     *                  HTTP/1.1 500 Bad Request
+     *                  {
+     *                  "code": 500,
+     *                  "message": "Server unable to delete loans."
+     *                  }
+     * 
+     * @apiDescription Cancel loan(s) for loan IDs in the request body
+     */
+    @DeleteMapping(path = "/cancel")
+    public ResponseEntity<JSONBody> cancelLoans(@RequestBody LoanIdsDto dto) {
+        return lService.cancelLoans(dto);
+    }
+
+    /**
+     * @api {post} /report-lost Report loss of (physical) loan pass
+     * @apiName Report loss of loan pass
+     * @apiGroup Loan
+     * 
+     * @apiBody {Number[]} Array of loan Ids whose passes are lost
+     * 
+     * @apiSuccess {Number} code HTTP status code.
+     * @apiSuccess {String} message String displaying the deleted loan IDs
+     * 
+     * @apiSuccessExample {json} Success-Response:
+     *       HTTP/1.1 200 OK
+     *  {
+            "code": 200,
+            "message": "successfully reported lost passes: [21, 22]"
+        }
      *
      * @apiError (Error 400) {Number} code HTTP status code.
      * @apiError (Error 400) {String} message Error message.
@@ -625,39 +728,11 @@ public class LoanController {
      *                  HTTP/1.1 400 Bad Request
      *                  {
      *                  "code": 400,
-     *                  "message": "No passes have been allocated yet for attraction
-     *                  id: 5"
+     *                  "message": "Please select loan(s) to report lost passes."
      *                  }
-     * 
-     * @apiError (Error 500) {Number} code HTTP status code.
-     * @apiError (Error 500) {String} message Error message.
-     * 
-     * @apiErrorExample {json} Error-Response:
-     *                  HTTP/1.1 500 Internal Server Error
-     *                  {
-     *                  "code": 500,
-     *                  "message": "Server unable to get all currently booked passes
-     *                  of attraction ID Singapore Zoo for (yyyy-mm) 2021-11"
-     *                  }
-     * 
-     * @apiDescription Gets the number of available passes for each date in a month
-     *                 for an attraction.
+     *
+     * @apiDescription Update passes as lost, disable staff's booking status. Send notification email to admin for each lost loan. Re-assign available passes to affected borrowers (if available). If no passes are available, sends email to affected borrowers to re-book their loans.
      */
-    @PutMapping(path = "/return")
-    public ResponseEntity<JSONBody> updateReturned(@RequestBody UpdateLoanDto dto) {
-        return lService.updateReturned(dto);
-    }
-
-    @PutMapping(path = "/collect")
-    public ResponseEntity<JSONBody> updateCollected(@RequestBody UpdateLoanDto dto) {
-        return lService.updateCollected(dto);
-    }
-
-    @DeleteMapping(path = "/cancel")
-    public ResponseEntity<JSONBody> cancelLoans(@RequestBody LoanIdsDto dto) {
-        return lService.cancelLoans(dto);
-    }
-
     @PostMapping(path = "/report-lost")
     public ResponseEntity<JSONBody> reportLostPass(@RequestBody LoanIdsDto dto) {
         return lService.reportLostPass(dto);
@@ -665,16 +740,7 @@ public class LoanController {
 
     // ------------------------------------------------------------------------------------------------
     // // -- Following codes are used for testing only
-    @GetMapping(path = "/test")
-    public String test() {
-        List<Staff> res = sRepository.findByRole(0);
-        System.out.println("Borrower: " + res);
-        List<Staff> res2 = sRepository.findByRole(1);
-        System.out.println("Admin: " + res2);
-        List<Staff> res3 = sRepository.findByRole(2);
-        System.out.println("GOP: " + res3);
-        return "ok";
-    }
+    
     // //
     // ------------------------------------------------------------------------------------------------
 

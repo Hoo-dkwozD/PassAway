@@ -40,6 +40,7 @@ import sg.edu.sportsschool.Exceptions.BadRequestException;
 import sg.edu.sportsschool.Exceptions.InternalServerException;
 import sg.edu.sportsschool.Helper.PassComparator;
 import sg.edu.sportsschool.Helper.PassType;
+import sg.edu.sportsschool.Helper.StaffRole;
 import sg.edu.sportsschool.Helper.Json.JSONBody;
 import sg.edu.sportsschool.Helper.Json.JSONWithData;
 import sg.edu.sportsschool.Helper.Json.JSONWithMessage;
@@ -299,23 +300,25 @@ public class LoanService {
         Loan loan = optLoan.get();
         loan.setHasCollected(dto.isHasCollected());
         lRepository.save(loan);
+
+        LoanResponseDto res = createLoanResponseDto(loan);
+        JSONWithData<LoanResponseDto> result = new JSONWithData<>(200, res);
+        ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(result, HttpStatus.OK);
+        if (!dto.isHasCollected()) {
+            return response;
+        }
+
         Staff s = loan.getStaff();
         String emailTo = s.getEmail();
         String staffName = s.getFirstName();
-
         try {
-            // Send collection email (asynchronous) if pass is marked as collected
-            if (dto.isHasCollected()) {
-                emailService.sendCollectionEmail(emailTo, staffName, loan.getPass().getAttraction().getName());
-            }
+            // Send collection email (asynchronous) only if pass is marked as collected
+            emailService.sendCollectionEmail(emailTo, staffName, loan.getPass().getAttraction().getName());
 
         } catch (MessagingException e) {
             System.out.println("Server unable to send collection email to " + staffName
                     + " for collection of " + loan.getPass().getAttraction().getName());
         }
-
-        JSONWithData<Loan> result = new JSONWithData<>(200, loan);
-        ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(result, HttpStatus.OK);
 
         return response;
     }
@@ -332,16 +335,22 @@ public class LoanService {
         loan.setHasReturned(dto.isHasReturned());
         lRepository.save(loan);
 
+        LoanResponseDto res = createLoanResponseDto(loan);
+        JSONWithData<LoanResponseDto> result = new JSONWithData<>(200, res);
+        ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(result, HttpStatus.OK);
+        if (!dto.isHasReturned()) {
+            return response;
+        }
+
+        // update previous borrowers if current borrower has returned pass
         List<Loan> prevBorrowers = lRepository.getPrevBorrowers(loan.getPass().getPassId(),
                 loan.getStaff().getStaffId(), loan.getStartDate());
+        System.out.println(prevBorrowers);
         for (Loan l : prevBorrowers) {
             l.setHasCollected(true);
             l.setHasReturned(true);
         }
         lRepository.saveAll(prevBorrowers);
-
-        JSONWithData<Loan> result = new JSONWithData<>(200, loan);
-        ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(result, HttpStatus.OK);
 
         return response;
 
@@ -388,7 +397,7 @@ public class LoanService {
 
         List<Loan> lostLoans = lRepository.findAllById(loanIds);
 
-        List<Staff> admin = sRepository.findByRole(1); // 0 - borrower, 1 - admin, 2 - GOP
+        List<Staff> admin = sRepository.findByRole(StaffRole.ADMINISTRATOR); // 0 - borrower, 1 - admin, 2 - GOP
             String[] adminEmails = new String[admin.size()];
             admin.stream()
                     .map(s -> s.getEmail())
@@ -556,6 +565,22 @@ public class LoanService {
         }
 
         return res;
+    }
+    public LoanResponseDto createLoanResponseDto(Loan l) {
+        Staff s = l.getStaff();
+        Pass p = l.getPass();
+        List<Loan> prevBorrowers = getPrevBorrowers(p.getPassId(), s.getStaffId(),
+                l.getStartDate());
+        String prevBorrowerName = (prevBorrowers.size() > 0) ? prevBorrowers.get(0).getStaff().getFirstName()
+                : "None";
+        String prevBorrowerContact = (prevBorrowers.size() > 0)
+                ? prevBorrowers.get(0).getStaff().getContactNumber()
+                : "None";
+        return new LoanResponseDto(l.getLoanId(), s.getFirstName(), s.getEmail(), l.getStartDate(),
+                p.getAttraction().getName(), l.isHasCollected(), l.isHasReturned(), p.getPassId(), p.isLost(),
+                prevBorrowerName, prevBorrowerContact);
+    
+
     }
 
     // -- Following codes are used for testing only
