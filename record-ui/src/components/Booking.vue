@@ -6,12 +6,12 @@
     <div
       id="sectionheader"
       :style="{ backgroundImage: `url(${currentBackground})` }"
-      class="mx-0"
+      class="mx-0 w-100"
     >
       <div class="main">
-        <h1 class="title">{{ title }}</h1>
-        <h3 class="titledescription">
-          You are entitled to 2 passes a month. {{}}
+        <h1 class="title mx-auto">{{ title }}</h1>
+        <h3 class="titledescription mx-auto">
+          You are entitled to 2 passes a month.
         </h3>
         <h3 v-if="attractionDetails.length != 0" class="titledescription">
           Each pass entitles you to {{ numOfAccompanyingGuests }} accompanying
@@ -19,14 +19,14 @@
         </h3>
       </div>
 
-      <div class="bookingdetails d-flex flex-column flex-md-row gap-3 px-3">
-        <div class="dropdown col-12 col-md-3 flex-grow-1" id="group-location">
+      <div class="bookingdetails d-flex flex-column flex-md-row position-absolute">
+        <div class="dropdown col-12 col-md-3 flex-grow-1" id="group-location" style="width:20%;">
           <select
             v-model="attractionDetails"
             class="form-select shadow"
             @change="
               populateNoOfTickets();
-              populateAttractionDetails();
+              populateAttractionDetails(); 
             "
           >
             <option disabled value="">Attractions</option>
@@ -211,7 +211,6 @@ export default defineComponent({
   },
   methods: {
     async populateNoOfTickets(): Promise<any> {
-      console.log(this.attractionDetails);
       this.numberofPasses = [];
       const maxPasses = this.attractionDetails["id"][2];
 
