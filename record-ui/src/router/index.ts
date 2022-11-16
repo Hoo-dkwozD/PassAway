@@ -2,10 +2,10 @@ import { createRouter, createWebHistory } from "vue-router";
 import AttractionView from "../views/AttractionView.vue"
 import SingleAttractionView from "../views/singleAttractionView.vue"
 import EditAttractionView from "../views/EditAttractionView.vue"
-import CreateAttractionView from "../views/CreateAttractionView.vue"
+import singleAttractionView from "../views/singleAttractionView.vue"
+import CreateAttraction from "../components/CreateAttraction.vue"
 import AdminView from '../views/AdminView.vue';
 import AdminAllBookings from "../views/adminAllBookings.vue";
-import AnalyticsView from '../views/AnalyticsView.vue';
 import BookingConfirmationView from '../views/BookingConfirmationView.vue';
 import BookView from '../views/BookView.vue';
 import EditBarCodeView from "../views/EditBarCodeView.vue";
@@ -18,6 +18,8 @@ import SignupView from "../views/SignupView.vue";
 import AdminStaffsView from "../views/AdminStaffsView.vue";
 import StaffUpdateProfileView from "../views/StaffUpdateProfileView.vue";
 import SignupRedirectView from "../views/SignupRedirectView.vue";
+import StaffAddView from "../views/StaffAddView.vue";
+import CreateAttractionView from "../views/CreateAttractionView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,9 +36,29 @@ const router = createRouter({
       component: AdminView
     },
     {
-      path: "/analytics",
-      name: "analytics",
-      component: AnalyticsView,
+      path: "/staffs/add",
+      name: "add staff",
+      component: StaffAddView
+    },
+    {
+      path:"/Attract",
+      name:"Attract",
+      component: AttractionView
+    },
+    {
+      path:'/Attract/:id',
+      name : 'singleAttraction',
+      component: singleAttractionView
+    },
+    {
+      path:'/Attract/edit/:id',
+      name : 'EditAttraction',
+      component: EditAttractionView
+    },
+    {
+      path:'/createAttraction',
+      name : 'CreateAttraction',
+      component: CreateAttraction
     },
     {
       path: "/admin/attractions",
@@ -118,6 +140,11 @@ const router = createRouter({
       path: "/admin/updateStaff/:staffId",
       name: "AdminUpdateStaff",
       component: StaffUpdateProfileView
+    },
+    {
+      path: '/createAttraction',
+      name: 'CreateAttraction',
+      component: CreateAttraction
     }
   ],
 });
