@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import AttractionView from "../views/AttractionView.vue"
-import singleAttractionView from "../views/singleAttractionView.vue"
+import SingleAttractionView from "../views/singleAttractionView.vue"
 import EditAttractionView from "../views/EditAttractionView.vue"
 import CreateAttractionView from "../views/CreateAttractionView.vue"
 import AdminView from '../views/AdminView.vue';
@@ -27,8 +27,8 @@ const router = createRouter({
       props: true,
     },
     {
-      path: "/staffs/admin",
-      name: "update admin",
+      path: "/admin/staffs/admin",
+      name: "update admins",
       component: AdminView
     },
     {
@@ -37,30 +37,24 @@ const router = createRouter({
       component: AnalyticsView,
     },
     {
-      path:"/Attract",
-      name:"Attract",
+      path: "/admin/attractions",
+      name: "attractions",
       component: AttractionView
     },
     {
-      path:'/Attract/:id',
-      name : 'singleAttraction',
-      component: singleAttractionView
+      path:'/admin/attraction/:id',
+      name : 'single attraction',
+      component: SingleAttractionView
     },
     {
-      path:'/Attract/edit/:id',
-      name : 'EditAttraction',
+      path:'/admin/attraction/:id/edit',
+      name : 'edit attraction',
       component: EditAttractionView
     },
     {
-      path:'/create',
+      path:'/admin/attraction/create',
       name : 'CreateAttraction',
       component: CreateAttractionView
-    },
-    {
-      path: "/admin/bookings",
-      name: "book",
-      component: BookView,
-      props: true,
     },
     {
       path: "/booking/:loanID/confirmation",
@@ -69,7 +63,7 @@ const router = createRouter({
       props: true,
     },
     {
-      path: "/attraction/barcode",
+      path: "/attraction/barcode/edit",
       name: "edit bar code",
       component: EditBarCodeView,
     },
@@ -82,6 +76,11 @@ const router = createRouter({
       path: "/login",
       name: "login",
       component: LoginView,
+    },
+    {
+      path: "/bookings",
+      name: "personal bookings",
+      component: PersonalBookingsView,
     },
     {
       path: "/profile",
@@ -99,20 +98,15 @@ const router = createRouter({
       component: SignupView,
     },
     {
-      path: "/bookings",
-      name: "personal bookings",
-      component: PersonalBookingsView,
-    },
-    {
-      path: "/signupredirect",
+      path: "/signup/redirect",
       name: "signup redirect",
       component: SignupRedirectView,
     },
     {
-      path: "/adminAllBookings",
+      path: "/admin/bookings",
       name: "admin all bookings",
       component: AdminAllBookings,
-    },
+    }
   ],
 });
 
