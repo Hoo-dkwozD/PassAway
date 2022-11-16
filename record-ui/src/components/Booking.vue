@@ -19,20 +19,9 @@
 
       <div class="bookingdetails">
         <div class="dropdown" id="group-location">
-          <select
-            v-model="attractionDetails"
-            class="form-select shadow"
-            @change="
-              populateNoOfTickets();
-              populateAttractionDetails();
-            "
-          >
+          <select v-model="attractionDetails" class="form-select shadow" @change="populateNoOfTickets();populateAttractionDetails();">
             <option disabled value="">Attractions</option>
-            <option
-              v-for="(id, location) in locations"
-              :key="id"
-              :value="{ id }"
-            >
+            <option v-for="(id, location) in locations" :key="id" :value="{ id }">
               {{ location }}
             </option>
           </select>
@@ -56,7 +45,7 @@
                 <v-date-picker
                   v-model="dateSelected"
                   :attributes="attributes"
-                  @click="showCalendar = false"
+                  @dayclick="showCalendar=false"
                 ></v-date-picker>
               </div>
             </div>
@@ -129,6 +118,8 @@ interface LoginData {
 export default defineComponent({
   data(): Data {
     return {
+      allAttractions: null,
+      // brant codes
       type: true,
       attraction: "",
       attractionDetails: "",
@@ -171,9 +162,10 @@ export default defineComponent({
   async created() {
     this.checkLogin();
     try {
-      const attractions = await axios.get(
+      const res = await axios.get(
         import.meta.env.VITE_API_URL + "api/attractions"
       );
+      this.allAttractions = res.data.data;
       for (const att of attractions.data.data) {
       const location = att.name;
       const attractionId = att.attractionId;
@@ -203,7 +195,7 @@ export default defineComponent({
           dates: ticketInfo.dates,
           dot: {
             color: ticketInfo.color,
-            class: ticketInfo.isComplete ? "opacity-75" : "",
+            // class: ticketInfo.isComplete ? "opacity-75" : "",
           },
           popover: {
             label: ticketInfo.description,
@@ -214,6 +206,9 @@ export default defineComponent({
     },
   },
   methods: {
+    test() {
+      console.log(this.dateSelected);
+    },
     async populateNoOfTickets(): Promise<any> {
       this.numberofPasses = [];
       const maxPasses = this.attractionDetails["id"][2];
