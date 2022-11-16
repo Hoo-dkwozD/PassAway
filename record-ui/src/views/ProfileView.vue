@@ -261,9 +261,15 @@ export default defineComponent({
 
                 <div class="text-center">
                   <div>
-                    <button type="submit" class="w-100 btn btn-outline-success text-uppercase fw-bold">
+                    <button type="submit" class="w-100 btn btn-outline-success text-uppercase fw-bold mb-2">
                       Save
                     </button>
+
+                    <RouterLink to="/profilepassword">
+                      <button type="submit" class="w-100 btn btn-outline-dark text-uppercase fw-bold">
+                        Change Password
+                      </button>
+                    </RouterLink>
                   </div>
                 </div>
               </div>
