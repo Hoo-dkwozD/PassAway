@@ -50,10 +50,11 @@
                     : "No date selected"
                 }}
               </button>
-              <div class="position-absolute" style="z-index: 5" v-if="showCalendar">
-                <v-date-picker @change="showCalendar = !showCalendar"
+              <div v-if="showCalendar" class="position-absolute">
+                <v-date-picker
                   v-model="dateSelected"
                   :attributes="attributes"
+                  @click="showCalendar = false"
                 ></v-date-picker>
               </div>
         </div>
@@ -84,11 +85,9 @@
     </div>
   </div>
 </template>
-
 <script lang="ts">
 import axios from "axios";
 import { defineComponent } from "vue";
-import NavBar from "../components/Navbar.vue";
 import "v-calendar/dist/style.css";
 
 type ticketInformation = {

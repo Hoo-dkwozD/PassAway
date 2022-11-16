@@ -48,6 +48,7 @@ interface Data{
   title: string,
   currentBackground: string,
   loans: [],
+  staffId: number,
 }
 
 interface LoginData{
@@ -60,11 +61,12 @@ export default defineComponent ({
         return{
             title: 'All Bookings',
             loans: [],
+            staffId: 0,
             currentBackground: 'https://img.freepik.com/free-vector/white-desktop-background-modern-minimal-design-vector_53876-140226.jpg?w=1800&t=st=1668366952~exp=1668367552~hmac=a23687ccfe071f6c28017a514a3380e222e62d36894545fc6ff4f9ad24033935'
         }
     },
     async created() {
-      // this.checkLogin();
+      this.checkLogin();
       try{
         const loanDetails = await axios.get(
         import.meta.env.VITE_API_URL + "api/loan"
@@ -100,21 +102,24 @@ export default defineComponent ({
     }
 },
   methods: {
-    // checkLogin(): LoginData | undefined {
-    //   const staffIdStr = localStorage.getItem("staffId");
-    //   const role = localStorage.getItem("role");
+    checkLogin(): LoginData | undefined {
+      const staffIdStr = localStorage.getItem("staffId");
+      const role = localStorage.getItem("role");
 
-    //   if (staffIdStr === null || role === null) {
-    //     this.$router.push({ name: "Login" });
-    //   } else {
-    //     this.staffId = parseInt(staffIdStr);
+      if (staffIdStr === null || role === null) {
+        this.$router.push({ name: "Login" });
+      } else {
+        this.staffId = parseInt(staffIdStr);
+        if (this.role !== "ADMINISTRATOR") {
+          this.$router.push({ name: "home" });
+        }
 
-    //     return {
-    //       staffId: this.staffId,
-    //       role: role,
-    //     };
-    //   }
-    // },
+        return {
+          staffId: this.staffId,
+          role: role,
+        };
+      }
+    },
   }
 })
 

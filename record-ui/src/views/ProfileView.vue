@@ -119,7 +119,7 @@ export default defineComponent({
 <template>
   <Navbar></Navbar>
   <div id="top" class="h-100" :style="{ backgroundImage: `url(${currentBackground})` }">
-    <div class="content" style="margin-top: 80px">
+    <div class="content">
       <div class="container-fluid">
         <div class="row align-items-stretch">
           <div class="col-12">
