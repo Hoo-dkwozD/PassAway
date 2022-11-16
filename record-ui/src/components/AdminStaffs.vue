@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid p-0 mx-0 position-relative w-100 d-flex flex-column">
     <div class="vh-100">
       <div
         class="imageDiv p-5 mb-5 row"
@@ -158,20 +158,34 @@
               <th scope="col">Contact</th>
               <th scope="col">Role</th>
               <th scope="col">Registered?</th>
-              <th scope="col">Left?</th>
+              <th scope="col">Lock?</th>
               <th scope="col">Edit</th>
               <th scope="col">Delete</th>
             </tr>
           </thead>
-          <tbody v-for="staff in staffs">
+          <tbody v-for="(staff,index) in staffs">
             <tr>
               <th scope="col">{{ staff[0] }}</th>
               <td scope="col">{{ staff[1] }}</td>
               <td scope="col">{{ staff[2] }}</td>
               <td scope="col">{{ staff[3] }}</td>
               <td scope="col">{{ staff[4] }}</td>
-              <td scope="col">{{ staff[5] }}</td>
-              <td scope="col">{{ staff[6] }}</td>
+              <td scope="col">{{ staff[5] ? "Yes" : "No" }}</td>
+              <td scope="col">
+                <div class="form-check form-switch d-flex justify-content-center">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="flexSwitchCheckDefault"
+                    :checked="staff[7]"
+                    @click="checkSwitch(staff)"
+                  />
+                  <label
+                    class="form-check-label"
+                    for="flexSwitchCheckDefault"
+                  ></label>
+                </div>
+              </td>
               <td scope="col">
                 <button
                   class="btn btn-secondary"
@@ -216,6 +230,7 @@ interface Data {
   email: string;
   contact: string;
   role: string;
+  isChecked: any;
 }
 interface LoginData {
   staffId: number;
@@ -235,6 +250,7 @@ export default defineComponent({
       role: "",
       disableButton: false,
       file: "",
+      isChecked: "",
       currentBackground:
         "https://img.freepik.com/free-vector/white-desktop-background-modern-minimal-design-vector_53876-140226.jpg?w=1800&t=st=1668366952~exp=1668367552~hmac=a23687ccfe071f6c28017a514a3380e222e62d36894545fc6ff4f9ad24033935",
     };
@@ -270,6 +286,7 @@ export default defineComponent({
         const role = detail.role;
         const registered = detail.registered;
         const disabled = detail.disabled;
+        const cannotBook = detail.cannotBook;
         this.staffs.push([
           staffId,
           staffName,
@@ -278,6 +295,7 @@ export default defineComponent({
           role,
           registered,
           disabled,
+          cannotBook
         ]);
       }
       console.log(this.staffs[0]);
@@ -302,6 +320,38 @@ export default defineComponent({
           staffId: this.staffId,
           role: role,
         };
+      }
+    },
+    async checkSwitch(staff: any[]) {
+      // flexSwitchCheckDefault
+      this.isChecked = document.getElementById(
+        "flexSwitchCheckDefault"
+      ).checked;
+      //change local instance of staffs array, 
+      console.log(this.isChecked);
+      // console.log(staff);
+      if (this.isChecked) {
+        try {
+          const res = await axios.put(
+            import.meta.env.VITE_API_URL + "api/staff/" + staff[0] + "/lock"
+          );
+          console.log("lock");
+        } catch (err) {
+          if (err.response.status == 401) {
+            this.$router.push({ name: "Login" });
+          }
+        }
+      } else {
+        try {
+          const res = await axios.put(
+            import.meta.env.VITE_API_URL + "api/staff/" + staff[0] + "/unlock"
+          );
+          console.log("unlock");
+        } catch (err) {
+          if (err.response.status == 401) {
+            this.$router.push({ name: "Login" });
+          }
+        }
       }
     },
     async addStaff() {

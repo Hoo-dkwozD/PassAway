@@ -5,20 +5,21 @@ import Navbar from "../components/Navbar.vue";
 
 // Typings
 interface ProfileData {
-  staffId: Number | null;
-  firstName: String | null;
-  lastName: String | null;
-  email: String | null;
-  contactNumber: String | null;
-  bookingStatus: Boolean | null;
-  editEmail: Boolean;
-  editNumber: Boolean;
-  editName: Boolean;
+  staffId: number | null;
+  firstName: string | null;
+  lastName: string | null;
+  email: string | null;
+  contactNumber: string | null;
+  bookingStatus: boolean | null;
+  editEmail: boolean;
+  editNumber: boolean;
+  editName: boolean;
+  currentBackground: string;
 }
 
 interface LoginData {
-  staffId: Number;
-  role: String;
+  staffId: number;
+  role: string;
 }
 
 export default defineComponent({
@@ -34,17 +35,19 @@ export default defineComponent({
       editEmail: false,
       editName: false,
       editNumber: false,
+      currentBackground:
+        "https://img.freepik.com/free-vector/white-desktop-background-modern-minimal-design-vector_53876-140226.jpg?w=1800&t=st=1668366952~exp=1668367552~hmac=a23687ccfe071f6c28017a514a3380e222e62d36894545fc6ff4f9ad24033935",
     };
   },
   methods: {
     checkLogin(): LoginData | undefined {
-      let staffIdStr = localStorage.getItem("staffId");
-      let role = localStorage.getItem("role");
+      const staffIdStr = localStorage.getItem("staffId");
+      const role = localStorage.getItem("role");
 
       if (staffIdStr === null || role === null) {
         this.$router.push({ name: "Login" });
       } else {
-        let staffId = parseInt(staffIdStr);
+        const staffId = parseInt(staffIdStr);
 
         if (role !== "ADMINISTRATOR") {
           this.$router.push({ name: "home" });
@@ -87,7 +90,7 @@ export default defineComponent({
     },
   },
   async created() {
-    let loginData: LoginData | undefined = this.checkLogin();
+    const loginData: LoginData | undefined = this.checkLogin();
 
     if (loginData !== undefined) {
       this.staffId = loginData.staffId;
@@ -114,7 +117,7 @@ export default defineComponent({
     }
   },
   computed: {
-    fullName(): String {
+    fullName(): string {
       return this.firstName + " " + this.lastName;
     },
   },
@@ -126,12 +129,17 @@ export default defineComponent({
 
 <template>
   <Navbar></Navbar>
-  <div class="content" style="margin-top: 80px">
+  <div
+    class="vh-100 container-fluid p-0 mx-0 position-relative w-100 d-flex flex-column"
+    :style="{ backgroundImage: `url(${currentBackground})` }"
+    style="margin-top: 0px"
+  >
     <div class="container-fluid">
       <div class="row align-items-stretch">
         <div class="col-12">
           <div class="h-100">
             <div class="text-center">
+              <div class="p-5"></div>
               <router-link to="/">
                 <img
                   src="@/assets/SSSlogo.png"
@@ -264,24 +272,13 @@ export default defineComponent({
                 <button
                   @click="updateProfile()"
                   type="submit"
-                  class="
-                    btn btn-outline-success
-                    text-uppercase
-                    fw-bold
-                    change-btn
-                    m-2
-                  "
+                  class="btn btn-outline-success text-uppercase fw-bold change-btn m-2"
                 >
                   Save
                 </button>
                 <button
-                @click="returnToStaffs()"
-                  class="
-                    btn btn-light btn-outline-warning
-                    text-uppercase
-                    fw-bold
-                    change-btnm-2
-                  "
+                  @click="returnToStaffs()"
+                  class="btn btn-light btn-outline-warning text-uppercase fw-bold change-btnm-2"
                 >
                   Back
                 </button>

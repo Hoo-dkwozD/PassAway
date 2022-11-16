@@ -9,6 +9,19 @@
         <h1 class="text-center">{{ title }}</h1>
       </div>
 
+      <div class="pb-2 align-right">
+        Start Date:
+        <input class="me-2 date" id="start" type="date" v-model="startDate" />
+        End Date:
+        <input class="me-2 date" type="date" v-model="endDate" />
+        <button
+          class="btn btn-secondary me-2"
+          @click="download()"
+          id="download"
+        >
+          Download CSV
+        </button>
+      </div>
       <table class="table table-bordered table-hover">
         <thead>
           <tr class="table-active">
@@ -44,39 +57,41 @@ import { defineComponent } from 'vue'
 import axios from 'axios'
 import Navbar from '../components/Navbar.vue';
 
-interface Data{
-  title: string,
-  currentBackground: string,
-  loans: [],
-  staffId: number,
+interface Data {
+  title: string;
+  currentBackground: string;
+  loans: [];
+  staffId: number;
+  startDate: any;
+  endDate: any;
 }
 
-interface LoginData{
-  staffId: number,
-  role: string,
+interface LoginData {
+  staffId: number;
+  role: string;
 }
-export default defineComponent ({
-    name: 'AdminAllBookings',
-    components: {
-        Navbar
-    },
-    data(): Data {
-        return{
-            title: 'All Bookings',
-            loans: [],
-            staffId: 0,
-            currentBackground: 'https://img.freepik.com/free-vector/white-desktop-background-modern-minimal-design-vector_53876-140226.jpg?w=1800&t=st=1668366952~exp=1668367552~hmac=a23687ccfe071f6c28017a514a3380e222e62d36894545fc6ff4f9ad24033935'
-        }
-    },
-    async created() {
-      const loginData = this.checkLogin();
-      if (loginData.role !== "ADMINISTRATOR") {
-        this.$router.push({ name: "home" });
-      }
-      try{
-        const loanDetails = await axios.get(
-          import.meta.env.VITE_API_URL + "api/loan"
-        );
+export default defineComponent({
+  name: "AdminAllBookings",
+  components: {
+    Navbar,
+  },
+  data(): Data {
+    return {
+      title: "All Bookings",
+      loans: [],
+      staffId: 0,
+      startDate: "",
+      endDate: "",
+      currentBackground:
+        "https://img.freepik.com/free-vector/white-desktop-background-modern-minimal-design-vector_53876-140226.jpg?w=1800&t=st=1668366952~exp=1668367552~hmac=a23687ccfe071f6c28017a514a3380e222e62d36894545fc6ff4f9ad24033935",
+    };
+  },
+  async created() {
+    this.checkLogin();
+    try {
+      const loanDetails = await axios.get(
+        import.meta.env.VITE_API_URL + "api/loan"
+      );
 
       for (const index in loanDetails.data.data) {
         const detail = loanDetails.data.data[index];
@@ -97,25 +112,71 @@ export default defineComponent ({
           passId,
           prevBorrowerName,
           prevBorrowerContact,
-        ]); 
+        ]);
       }
       console.log(this.loans);
-    }
-      catch(err){
-        if (err.response.status == 401) {
+    } catch (err) {
+      if (err.response.status == 401) {
         this.$router.push({ name: "Login" });
       }
     }
-},
+  },
   methods: {
+    async download() {
+      const startDateArr = this.startDate.split("-");
+      const endDateArr = this.endDate.split("-");
+      try {
+        const res = await axios.post(
+          import.meta.env.VITE_API_URL + "api/analytics/loan/csv",
+          {
+            fromDay: startDateArr[2],
+            fromMonth: startDateArr[1],
+            fromYear: startDateArr[0],
+            toDay: endDateArr[2],
+            toMonth: endDateArr[1],
+            toYear: endDateArr[0],
+          },
+          {
+            responseType: "blob",
+          }
+        );
+        console.log(res);
+        // const blob = new Blob([res.data], { type: "text/csv" });
+        const blob = await res.data;
+
+        // Creating an object for downloading url
+        const url = window.URL.createObjectURL(blob);
+
+        // Creating an anchor(a) tag of HTML
+        const dl = document.createElement("a");
+
+        // Passing the blob downloading url
+        dl.setAttribute("href", url);
+
+        // Setting the anchor tag attribute for downloading
+        // and passing the download file name
+        dl.setAttribute("download", "download.csv");
+        dl.click();
+        // Performing a download with click
+      } catch (err) {
+        console.log(err);
+        if (err.response.status == 401) {
+          this.$router.push({ name: "Login" });
+        }
+      }
+    },
     checkLogin(): LoginData | undefined {
       const staffIdStr = localStorage.getItem("staffId");
       const role = localStorage.getItem("role");
+      console.log(role);
 
       if (staffIdStr === null || role === null) {
         this.$router.push({ name: "Login" });
       } else {
         this.staffId = parseInt(staffIdStr);
+        if (role !== "ADMINISTRATOR") {
+          this.$router.push({ name: "home" });
+        }
 
         return {
           staffId: this.staffId,
@@ -123,10 +184,8 @@ export default defineComponent ({
         };
       }
     },
-  }
-})
-
-    
+  },
+});
 </script>
 
 <style scoped>
