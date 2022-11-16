@@ -1,14 +1,10 @@
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid" :style="{ backgroundImage: `url(${currentBackground})` }">
     <div class="vh-100">
-      <div
-        class="imageDiv p-5 mb-5 row"
-        :style="{ backgroundImage: `url(${currentBackground})` }"
-      >
         <div>
           <h1 class="text-center">{{ title }}</h1>
         </div>
-
+        hello
         <table class="table table-bordered table-hover">
           <thead>
             <tr class="table-active">
@@ -43,10 +39,9 @@
         </table>
       </div>
     </div>
-  </div>
 </template>
   
-  <script lang="ts">
+<script lang="ts">
 import axios from "axios";
 import { defineComponent } from "vue";
 import NavBar from "../components/Navbar.vue";
@@ -91,8 +86,8 @@ export default defineComponent({
     try {
       const loanDetails = await axios.get(
         import.meta.env.VITE_API_URL +
-          "api/loan/list-by-email?email=" +
-          this.email
+        "api/loan/list-by-email?email=" +
+        this.email
       );
 
       for (const index in loanDetails.data.data) {
@@ -140,29 +135,27 @@ export default defineComponent({
       }
     },
     async report(loanID: number) {
-    try{
+      try {
         console.log(JSON.stringify([parseInt(loanID)]));
         const res = await axios.post(import.meta.env.VITE_API_URL + "api/loan/report-lost", { loanIds: JSON.stringify([loanID]) });
         console.log(res);
-    }
-    catch (err) {
-      if (err.response.status == 401) {
-        this.$router.push({ name: "Login" });
       }
-    }
-  },
-}
+      catch (err) {
+        if (err.response.status == 401) {
+          this.$router.push({ name: "Login" });
+        }
+      }
+    },
+  }
 });
 </script>
   
-  <style>
-.imageDiv {
+<style>
+/* .imageDiv {
   width: 100%;
   background-size: cover;
-  padding-top: 300px;
-  padding-bottom: 300px;
   background-size: 100%;
-}
+} */
 
 h1 {
   font-size: 60px;

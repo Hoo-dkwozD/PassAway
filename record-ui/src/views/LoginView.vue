@@ -1,6 +1,11 @@
 <template>
-  <div class="content" style = "margin-top: 80px;">
+  <div class="content">
     <div class="container-fluid">
+      <div class="text-center mt-5">
+          <router-link to="/">
+            <img src="../assets/SSSlogo.png" class="img mx-auto image-style" />
+          </router-link>
+        </div>
       <div class="row align-items-stretch no-gutters contact-wrap">
         <div class="col-md-12">
           <div class="form h-100">
@@ -13,7 +18,7 @@
               </div>
             </div>
             <div class="form-floating mx-auto mb-3 col-6">
-              <input v-model="password" type="password" th:field="*{password}" class="form-control" id="password" placeholder="Password">
+              <input v-model="password" @keyup.enter="signin()" type="password" th:field="*{password}" class="form-control" id="password" placeholder="Password">
               <label for="password">Password</label>
               <div id="passwordHelpBlock" class="form-text text-danger" v-if="passwordInvalid">
                 {{passwordMsg}}
@@ -23,10 +28,8 @@
             <button @click="signin()" class="btn btn-outline-success col-5 btn-login text-uppercase fw-bold signin-btn m-1">Sign in</button>
             
             <div class="d-grid" style="align-items: center;"> 
-              <router-link to="/signup">
-                <p style = "margin-top: 20px; text-decoration: underline; color: blue;">
-                  Don't Have An Account? Sign Up
-                </p>
+              <router-link to="/signup" style = "margin-top: 20px; text-decoration: underline; color: blue;">
+                Don't Have An Account? Sign Up
               </router-link>
             </div>
           </div>

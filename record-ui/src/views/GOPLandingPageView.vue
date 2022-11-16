@@ -2,11 +2,14 @@
 import { defineComponent } from 'vue';
 import axios from 'axios';
 
+import Navbar from '../components/Navbar.vue';
+
 // Typings
 interface GopLandingPageData {
     loans: any[],
     displayLoans: any[],
-    queryString: String | null
+    queryString: String | null,
+    currentBackground: String | null,
 }
 
 interface Loan {
@@ -28,8 +31,13 @@ export default defineComponent({
         return{
             loans: [],
             displayLoans: [],
-            queryString: null
+            queryString: null,
+            currentBackground: 'https://img.freepik.com/free-vector/white-desktop-background-modern-minimal-design-vector_53876-140226.jpg?w=1800&t=st=1668366952~exp=1668367552~hmac=a23687ccfe071f6c28017a514a3380e222e62d36894545fc6ff4f9ad24033935'
+
         }
+    },
+    components: {
+        Navbar
     },
     async created() {
         try {
@@ -107,8 +115,8 @@ export default defineComponent({
 
 <template>
     <Navbar></Navbar>
-    <div class="content" style="margin-top: 80px;">
-        <div class="container-fluid">
+    <div class="content">
+        <div class="container-fluid vh-100" :style="{ backgroundImage: `url(${currentBackground})`}">
             <div class="row">
                 <div class="col-12">
                     <div class="h-100">

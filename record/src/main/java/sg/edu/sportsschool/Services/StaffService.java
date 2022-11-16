@@ -94,26 +94,28 @@ public class StaffService {
         try {
             List<String[]> csvData = ReadCsv.read(csvFile);
 
-            if (csvData.size() == 0 || (csvData.size() == 1 && csvData.get(0).length != 2)) {
+            if (csvData.size() == 0) {
                 JSONWithData<Map<String, List<Staff>>> results = new JSONWithData<>(201, new HashMap<>());
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.CREATED);
 
                 return response;
-            } else if (csvData.get(0).length != 2) {
+            } else if (csvData.get(0).length < 2) {
                 JSONWithMessage results = new JSONWithMessage(400, "The uploaded CSV file is not valid. ");
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.BAD_REQUEST);
 
                 return response;
             } else {
                 List<Staff> addedStaff = csvData
-                        .stream()
-                        .map(
-                                arr -> new Staff(
-                                        arr[1],
-                                        arr[0].split(" ")[0],
-                                        arr[0].split(" ")[1],
-                                        StaffRole.BORROWER))
-                        .collect(Collectors.toList());
+                                            .stream()
+                                            .map(
+                                                arr -> new Staff(
+                                                    arr[arr.length - 2], 
+                                                    arr[arr.length - 3].split(" ")[0], 
+                                                    arr[arr.length - 3].split(" ")[1], 
+                                                    StaffRole.BORROWER
+                                                )
+                                            )
+                                            .collect(Collectors.toList());
 
                 for (Staff targetStaff : addedStaff) {
                     String targetStaffEmail = targetStaff.getEmail();
@@ -134,7 +136,7 @@ public class StaffService {
                 return response;
             }
         } catch (Exception e) {
-            JSONWithMessage results = new JSONWithMessage(500, "Server unable to parse file as CSV file. ");
+            JSONWithMessage results = new JSONWithMessage(500, "Server unable to parse file as CSV file. " + e.getMessage());
             ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
 
             return response;
@@ -438,7 +440,7 @@ public class StaffService {
 
                 sRepository.save(staff);
 
-                List<Loan> futureLoans = lRepository.getFutureLoanedPassByEmail(staff.getEmail(), new Date(System.currentTimeMillis()));
+                List<Loan> futureLoans = lRepository.getFutureLoanedPassByEmail(staff.getEmail(), new Date( System.currentTimeMillis()));
 
                 for (Loan loan : futureLoans) {
                     lRepository.delete(loan);

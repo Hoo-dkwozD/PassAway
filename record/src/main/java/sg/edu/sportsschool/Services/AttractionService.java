@@ -98,9 +98,8 @@ public class AttractionService {
         }
     }
 
-    public ResponseEntity<JSONBody> updateAttraction(UpdateAttractionDto dto) {
+    public ResponseEntity<JSONBody> updateAttraction(Integer aId, UpdateAttractionDto dto) {
         try {
-            Integer aId = dto.getAttractionId();
             Attraction a = returnAttraction(aId);
 
             if (a == null) {
@@ -122,7 +121,7 @@ public class AttractionService {
             a.setMembershipId(dto.getMembershipId());
             Date expiryDate = Date.valueOf(
                 String.format(
-                    "%d-%d-%d", 
+                    "%04d-%02d-%02d", 
                     dto.getExpiryDateYYYY(), 
                     dto.getExpiryDateMM(), 
                     dto.getExpiryDateDD()
@@ -133,7 +132,7 @@ public class AttractionService {
             a.setTermsConditions(dto.getTermsConditions());
 
             Attraction results = aRepository.save(a);
-            JSONWithData<Attraction> body = new JSONWithData<Attraction>(200, results);
+            JSONWithData<Attraction> body = new JSONWithData<>(200, results);
 
             return new ResponseEntity<JSONBody>(body, HttpStatus.OK);
         } catch (NoSuchElementException e) {
