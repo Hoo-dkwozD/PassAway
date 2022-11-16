@@ -145,6 +145,11 @@ const router = createRouter({
       path: '/createAttraction',
       name: 'CreateAttraction',
       component: CreateAttraction
+    },
+    {
+      path: '/profilepassword',
+      name: 'ProfilePassword',
+      component: ProfilePasswordView
     }
   ],
 });
