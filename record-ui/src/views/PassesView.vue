@@ -1,8 +1,8 @@
 
 <template>
 
+  <Navbar />
   <div class="container w-80">
-    <Navbar />
     <div class="row mt-3">
       <div class="col">
         <select name="attractions" id="attractions" class="form-select text-center mb-3" @change="showPasses"
