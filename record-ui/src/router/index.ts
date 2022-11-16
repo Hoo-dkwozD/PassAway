@@ -5,13 +5,11 @@ import { createRouter, createWebHistory } from "vue-router";
  */
 // Attractions
 import AttractionView from "@/views/AttractionView.vue";
-import CreateAttraction from "@/components/CreateAttraction.vue"
 import CreateAttractionView from "@/views/CreateAttractionView.vue";
 import EditAttractionView from "@/views/EditAttractionView.vue";
 import EditBarCodeView from "@/views/EditBarCodeView.vue";
-import singleAttraction from "@/components/singleAttraction.vue";
-import SingleAttractionView from "@/views/SingleAttractionView.vue";
-// import singleAttractionView from "@/views/singleAttractionView.vue";
+// import singleAttraction from "@/components/singleAttraction.vue";
+import SingleAttractionView from "@/views/singleAttractionView.vue";
 
 // Loans
 import AdminAllBookings from "@/views/adminAllBookings.vue";
@@ -76,8 +74,8 @@ const router = createRouter({
       component: AdminView,
     },
     {
-      path:"/admin/attractions",
-      name:"attraction",
+      path: "/admin/attractions",
+      name: "attraction",
       component: AttractionView
     },
     {
@@ -88,7 +86,7 @@ const router = createRouter({
     {
       path:'/admin/attraction/add',
       name : 'create attraction',
-      component: CreateAttraction
+      component: CreateAttractionView
     },
     {
       path:'/admin/attraction/:id',
@@ -99,11 +97,6 @@ const router = createRouter({
       path:'/admin/attraction/:id/edit',
       name : 'edit attraction',
       component: EditAttractionView
-    },
-    {
-      path:'/admin/attraction/create',
-      name : 'create attraction',
-      component: CreateAttractionView
     },
     {
       path: "/booking/:loanID/confirmation",

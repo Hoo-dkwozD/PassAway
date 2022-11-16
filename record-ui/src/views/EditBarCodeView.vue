@@ -55,12 +55,17 @@
 import { defineComponent } from "vue";
 import axios from 'axios';
 
-import Navbar from "../components/Navbar.vue";
+import Navbar from "@/components/Navbar.vue";
 
 // Typings
 interface LoginData {
   staffId: number;
   role: string;
+}
+
+interface Attraction {
+  attractionId: number;
+  name: string;
 }
 
 interface EditBarCodeView {
@@ -69,11 +74,6 @@ interface EditBarCodeView {
   attractions: Attraction[],
   selectedAttr: number | null,
   uploadedImg: File | null
-}
-
-interface Attraction {
-  attractionId: number;
-  name: string;
 }
 
 export default defineComponent({
@@ -107,7 +107,9 @@ export default defineComponent({
       }
     },
     changeImage(e: Event) {
-      this.uploadedImg = e.target.files[0];
+      if (e.target) {
+        this.uploadedImg = e.target.files[0];
+      }
     },
     async uploadBarcodeImage() {
       const reqData = new FormData();
@@ -131,7 +133,18 @@ export default defineComponent({
             this.$router.push({ name: 'attraction' }).then(() => this.$router.go(0));
           }
         } catch (err: any) {
-          console.error(err);
+          if (err.response) {
+            if (err.response.status === 401) {
+              this.$router
+                .push({ name: "login" })
+                .then(() => this.$router.go(0));
+              return;
+            } else {
+              console.error(err.response.data.message);
+            }
+          } else {
+            console.error(err.message);
+          }
         }
       }
     }
@@ -152,7 +165,18 @@ export default defineComponent({
           );
           this.attractions = await attrRes.data.data;
         } catch (err: any) {
-          console.error(err.message);
+          if (err.response) {
+            if (err.response.status === 401) {
+              this.$router
+                .push({ name: "login" })
+                .then(() => this.$router.go(0));
+              return;
+            } else {
+              console.error(err.response.data.message);
+            }
+          } else {
+            console.error(err.message);
+          }
         }
       }
     }

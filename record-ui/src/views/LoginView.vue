@@ -80,6 +80,7 @@
           if (data.code === 200) {
             localStorage.setItem("staffId", data.data.staffId);
             localStorage.setItem("role", data.data.role);
+            localStorage.setItem("token", data.data.token);
             this.$router.push({ name: 'home'});
           } else {
             this.emailInvalid = true;

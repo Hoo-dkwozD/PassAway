@@ -1,20 +1,24 @@
 <template>
-  <div class="container-fluid m-0 p-0">
+  <div class="container-fluid m-0 p-0 h-100">
     <div
       id="section-header"
       :style="{
         'background-image':
           'url(https://img.freepik.com/free-vector/white-desktop-background-modern-minimal-design-vector_53876-140226.jpg?w=1800&t=st=1668366952~exp=1668367552~hmac=a23687ccfe071f6c28017a514a3380e222e62d36894545fc6ff4f9ad24033935)',
       }"
-      class="w-100 pt-5 pb-5 px-3"
+      class="w-100 pt-5 pb-5 px-3 h-100"
     >
-      <div class="px-5 d-flex flex-row justify-content-between align-items-center">
+      <div
+        class="px-5 d-flex flex-row justify-content-between align-items-center"
+      >
         <div class="m-0">
           <div class="title">Attractions</div>
         </div>
-        <div class="m-0 d-flex flex-column justify-content-center align-items-center px-3">
+        <div
+          class="m-0 d-flex flex-column justify-content-center align-items-center px-3"
+        >
           <router-link :to="`/admin/attraction/add`">
-            <button class="btn btn-light fw-bold">Create Attraction +</button>
+            <button class="btn btn-light shadow fw-bold">Create Attraction +</button>
           </router-link>
         </div>
       </div>
@@ -32,20 +36,23 @@
             </tr>
           </thead>
           <tbody>
-            <tr 
-              v-for="(attract, idx) in attractions"
-              :key="idx"
-            >
+            <tr v-for="attract, idx in attractions" :key="idx">
               <td class="py-2" scope="row">{{ attract.name }}</td>
               <td class="py-2">{{ attract.description }}</td>
               <td class="py-2">
                 <router-link :to="`/admin/attraction/${attract.attractionId}`">
-                  <button class="btn btn-outline-secondary">View Attraction</button>
+                  <button class="btn btn-outline-secondary">
+                    View Attraction
+                  </button>
                 </router-link>
               </td>
               <td class="py-2">
-                <router-link :to="`/admin/attraction/${attract.attractionId}/edit`">
-                  <button class="btn btn-company-orange">Edit Attraction</button>
+                <router-link
+                  :to="`/admin/attraction/${attract.attractionId}/edit`"
+                >
+                  <button class="btn btn-company-orange">
+                    Edit Attraction
+                  </button>
                 </router-link>
               </td>
               <td class="py-2">
@@ -67,7 +74,6 @@
           </tbody>
         </table>
       </div>
-
     </div>
   </div>
   <div
@@ -98,7 +104,11 @@
           </p>
         </div>
         <div class="modal-footer">
-          <button @click="deleteAttraction()" type="button" class="btn btn-danger">
+          <button
+            @click="deleteAttraction()"
+            type="button"
+            class="btn btn-danger"
+          >
             Yes
           </button>
           <button
@@ -156,7 +166,7 @@ export default defineComponent({
       attractions: [],
       staffId: null,
       role: null,
-      toDeleteId: null
+      toDeleteId: null,
     };
   },
   async created() {
@@ -175,10 +185,31 @@ export default defineComponent({
       return;
     }
 
-    const res = await axios.get(
-      import.meta.env.VITE_API_URL + `api/attractions`
-    );
-    this.attractions = await res.data.data;
+    try {
+      const res = await axios.get(
+        import.meta.env.VITE_API_URL + `api/attractions`,
+        {
+          headers: {'authorization': `${localStorage.getItem("token")}`},
+        }
+      );
+
+      this.attractions = await res.data.data;
+    } catch (err: any) {
+      if (err.response) {
+        if (err.response.status == 401) {
+          // this.$router
+          //   .push({ name: "login" })
+          //   .then(() => this.$router.go(0));
+          console.log(err.response);
+
+          return;
+        } else {
+          console.log(err.response.data.message);
+        }
+      } else {
+        console.log(err.message);
+      }
+    }
   },
   methods: {
     checkLogin(): LoginData | undefined {
@@ -199,17 +230,25 @@ export default defineComponent({
     async deleteAttraction() {
       try {
         const res = await axios.delete(
-          import.meta.env.VITE_API_URL + `api/attraction/${this.toDeleteId}`
+          import.meta.env.VITE_API_URL + `api/attraction/${this.toDeleteId}`,
+          {
+            headers: {'authorization': `${localStorage.getItem("token")}`},
+          }
         );
         const data = await res.data;
 
         if (data.code === 200) {
-          this.$router.push({ name: "attraction" }).then(() => this.$router.go(0));
+          this.$router
+            .push({ name: "attraction" })
+            .then(() => this.$router.go(0));
+
+          return;
         }
       } catch (err: any) {
         if (err.response) {
           if (err.response.status == 401) {
             this.$router.push({ name: "login" }).then(() => this.$router.go(0));
+            return;
           } else {
             console.error(err.response.data.message);
           }
@@ -235,15 +274,15 @@ export default defineComponent({
 }
 
 .btn-company-red {
-  background-color: #d91c53!important;
-  border-color: #d91c53!important;
-  color: white!important;
+  background-color: #d91c53 !important;
+  border-color: #d91c53 !important;
+  color: white !important;
 }
 
 .btn-company-orange {
-  background-color: #f57921!important;
-  border-color: #f57921!important;
-  color: white!important;
+  background-color: #f57921 !important;
+  border-color: #f57921 !important;
+  color: white !important;
 }
 
 #attract-title {
@@ -259,7 +298,7 @@ export default defineComponent({
   padding-bottom: 10px; */
   /* line-height: 1.4; */
   margin-left: 100px;
-  color: #d91c53!important;
+  color: #d91c53 !important;
 }
 
 .titledescription {
@@ -371,11 +410,6 @@ export default defineComponent({
 }
 
 .btn-submit {
-  /* background-color: #31ccf3; */
-  /* letter-spacing: 0;
-  line-height: 24px;
-  color: black;
-  /* box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
   padding-left: 20px;
 }
 </style>

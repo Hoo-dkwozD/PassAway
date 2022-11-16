@@ -284,38 +284,38 @@
     </div>
 </template>
 
-    <script lang="ts">
-    import axios from "axios";
-    import { defineComponent } from "vue";
+<script lang="ts">
+import axios from "axios";
+import { defineComponent } from "vue";
 
-    // Typings
-    interface CreateAttractionData {
-        attractionName: string | null;
-        description: string | null;
-        passType: string | null;
-        cannotBook: boolean | null;
-        barcodeImage: string | null;
-        replacementFee: number | null;
-        accompanyingGuests: number | null;
-        maximumPasses: number | null;
-        maxLoans: number | null;
-        address: string | null;
-        membershipID: string | null;
-        expiryDate: string | null;
-        benefits: string | null;
-        termsConditions: string | null;
-        staffId: number | null;
-        role: string | null;
-        attractionId: number | null;
-    }
+// Typings
+interface ViewAttractionData {
+    attractionId: number | null;
+    attractionName: string | null;
+    description: string | null;
+    passType: string | null;
+    cannotBook: boolean | null;
+    barcodeImage: string | null;
+    replacementFee: number | null;
+    accompanyingGuests: number | null;
+    maximumPasses: number | null;
+    maxLoans: number | null;
+    address: string | null;
+    membershipID: string | null;
+    expiryDate: string | null;
+    benefits: string | null;
+    termsConditions: string | null;
+    staffId: number | null;
+    role: string | null;
+}
 
-    interface LoginData {
-        staffId: number;
-        role: string;
-    }
+interface LoginData {
+    staffId: number;
+    role: string;
+}
 
-    export default defineComponent({
-    data(): CreateAttractionData {
+export default defineComponent({
+    data(): ViewAttractionData {
         return {
             attractionName: null,
             description: null,
@@ -356,7 +356,10 @@
 
         try {
             const res = await axios.get(
-                import.meta.env.VITE_API_URL + `api/attraction/${this.$route.params.id}`
+                import.meta.env.VITE_API_URL + `api/attraction/${this.$route.params.id}`,
+                {
+                    headers: {'authorization': `${localStorage.getItem("token")}`},
+                }
             );
             const data = await res.data;
 

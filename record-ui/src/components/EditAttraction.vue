@@ -6,294 +6,355 @@
         <div class="h-100">
           <div class="text-center">
             <router-link to="/">
-              <img src="../assets/SSSlogo.png" class="img mx-auto image-style">
+              <img
+                src="../assets/SSSlogo.png"
+                class="img mx-auto image-style"
+              />
             </router-link>
           </div>
 
-          <h1 class="h2 text-center">
-            Edit Attraction
-          </h1>
+          <h1 class="h2 text-center">Edit Attraction</h1>
 
           <div class="form-information">
             <div class="d-flex">
               <div class="row flex-grow-1 mx-2">
-
-                    <div class="align-items">
-                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
-                        Attraction Name
-                      </div>
-                      <div>
-                        <form>
-                          <div class="form-floating">
-                            <input type="text" id="attractionName" class="form-control" v-model="name">
-                            <label for="attractionName">Attraction Name</label>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-
-                </div>
-              </div>
-
-            <hr class="hr-block">
-
-              <div class="d-flex">
-              <div class="row flex-grow-1 mx-2">
-
-                    <div class="align-items">
-                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
-                        Description
-                      </div>
-                      <div>
-                        <form>
-                          <div class="form-floating">
-                            <input type="text" id="description" class="form-control" v-model="desc">
-                            <label for="description">Description</label>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-
-                </div>
-              </div>
-
-            <hr class="hr-block">
-
-            <div class="d-flex">
-              <div class="row flex-grow-1 mx-2">
-
-                    <div class="align-items">
-                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
-                        Address
-                      </div>
-                      <div>
-                        <form>
-                          <div class="form-floating">
-                            <input type="text" id="address" class="form-control" v-model="add">
-                            <label for="address">Address</label>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-
-                </div>
-              </div>
-
-            <hr class="hr-block">
-
-            <div class="d-flex">
-              <div class="row flex-grow-1 mx-2">
-
-                    <div class="align-items">
-                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
-                        Membership ID
-                      </div>
-                      <div>
-                        <form>
-                          <div class="form-floating">
-                            <input type="text" id="membershipID" class="form-control" v-model="memid">
-                            <label for="membershipID">Membership ID</label>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-
-                </div>
-              </div>
-
-            <hr class="hr-block">
-
-            <div class="d-flex">
-              <div class="row flex-grow-1 mx-2">
-
-                    <div class="align-items">
-                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
-                        Expiry Date
-                      </div>
-                      <div>
-                        <form>
-                          <div class="form-floating mb-2">
-                            <input type="number" id="expiryDay" class="form-control" v-model="expiryday">
-                            <label for="expiryDay">Expiry Day</label>
-                          </div>
-                          <div class="form-floating mb-2">
-                            <input type="number" id="expiryMonth" class="form-control" v-model="expirymth">
-                            <label for="expiryMonth">Expiry Month</label>
-                          </div>
-                          <div class="form-floating">
-                            <input type="number" id="expiryYear" class="form-control" v-model="expiryyr">
-                            <label for="expiryYear">Expiry Year</label>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-
-                </div>
-              </div>
-
-            <hr class="hr-block">
-
-            <div class="d-flex">
-              <div class="row flex-grow-1 mx-2">
-
-                    <div class="align-items">
-                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
-                        Benefits
-                      </div>
-                      <div>
-                        <form>
-                          <div class="form-floating">
-                            <input type="text" id="benefits" class="form-control" v-model="benefits">
-                            <label for="benefits">Benefits</label>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-
-                </div>
-              </div>
-
-            <hr class="hr-block">
-
-            <div class="d-flex">
-              <div class="row flex-grow-1 mx-2">
-
-                    <div class="align-items">
-                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
-                        Terms and Conditions
-                      </div>
-                      <div>
-                        <form>
-                          <div class="form-floating">
-                            <input type="text" id="terms-conditions" class="form-control" v-model="tnc">
-                            <label for="terms-conditions">Terms and Conditions</label>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-
-                </div>
-              </div>
-
-            <hr class="hr-block">
-
-            <div class="d-flex">
-              <div class="row flex-grow-1 mx-2">
-
-                    <div class="align-items">
-                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
-                        Pass Type
-                      </div>
-                      <div>
-                        <form>
-                          <div class="form-floating">
-                            <input type="text" id="passType" class="form-control" v-model="passType">
-                            <label for="passType">Pass Type</label>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-
-                </div>
-              </div>
-            <hr class="hr-block">
-
-              <div class="d-flex">
-                <div class="row flex-grow-1 mx-2">
-
-                    <div class="align-items">
-                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
-                        Replacement Fee
-                      </div>
-                      <div>
-                        <form>
-                          <div class="form-floating">
-                            <input type="number" min="0" id="replacementFee" class="form-control" v-model="replacementFee">
-                            <label for="replacementFee">Replacement Fee</label>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-
-                </div>
-              </div>
-
-              <hr class="hr-block">
-
-                <div class="d-flex">
-                  <div class="row flex-grow-1 mx-2">
-
-                        <div class="align-items">
-                          <div class="d-flex flex-grow-1 justify-content-between pb-2">
-                            Maximum Number of Passes
-                          </div>
-                          <div>
-                            <form>
-                              <div class="form-floating">
-                                <input type="number" min="0" id="maximumPasses" class="form-control" v-model="maxpasses">
-                                <label for="maximumPasses">Maximum Number of Passes</label>
-                              </div>
-                            </form>
-                          </div>
-                        </div>
-
-                    </div>
+                <div class="align-items">
+                  <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                    Attraction Name
                   </div>
+                  <div>
+                    <form>
+                      <div class="form-floating">
+                        <input
+                          type="text"
+                          id="attractionName"
+                          class="form-control"
+                          v-model="name"
+                        />
+                        <label for="attractionName">Attraction Name</label>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <hr class="hr-block">
+            <hr class="hr-block" />
 
             <div class="d-flex">
               <div class="row flex-grow-1 mx-2">
-
-                    <div class="align-items">
-                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
-                        Number of Accompanying Guests
+                <div class="align-items">
+                  <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                    Description
+                  </div>
+                  <div>
+                    <form>
+                      <div class="form-floating">
+                        <input
+                          type="text"
+                          id="description"
+                          class="form-control"
+                          v-model="desc"
+                        />
+                        <label for="description">Description</label>
                       </div>
-                      <div>
-                        <form>
-                          <div class="form-floating">
-                            <input type="number" min="0" id="accompanyingGuests" class="form-control" v-model="numguests">
-                            <label for="accompanyingGuests">Number of Accompanying Guests</label>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-
+                    </form>
+                  </div>
                 </div>
               </div>
+            </div>
 
-            <hr class="hr-block">
+            <hr class="hr-block" />
 
             <div class="d-flex">
               <div class="row flex-grow-1 mx-2">
-                    <div class="align-items">
-                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
-                        Maximum Number of Loans
+                <div class="align-items">
+                  <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                    Address
+                  </div>
+                  <div>
+                    <form>
+                      <div class="form-floating">
+                        <input
+                          type="text"
+                          id="address"
+                          class="form-control"
+                          v-model="add"
+                        />
+                        <label for="address">Address</label>
                       </div>
-                      <div>
-                        <form>
-                          <div class="form-floating">
-                            <input type="number" min="1" max="99" id="maxLoans" class="form-control" v-model="maxloans">
-                            <label for="maxLoans">Maximum Number of Loans</label>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-
+                    </form>
+                  </div>
                 </div>
               </div>
+            </div>
+
+            <hr class="hr-block" />
+
+            <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
+                <div class="align-items">
+                  <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                    Membership ID
+                  </div>
+                  <div>
+                    <form>
+                      <div class="form-floating">
+                        <input
+                          type="text"
+                          id="membershipID"
+                          class="form-control"
+                          v-model="memid"
+                        />
+                        <label for="membershipID">Membership ID</label>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="hr-block" />
+
+            <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
+                <div class="align-items">
+                  <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                    Expiry Date
+                  </div>
+                  <div>
+                    <form>
+                      <div class="form-floating mb-2">
+                        <input
+                          type="number"
+                          id="expiryDay"
+                          class="form-control"
+                          v-model="expiryday"
+                        />
+                        <label for="expiryDay">Expiry Day</label>
+                      </div>
+                      <div class="form-floating mb-2">
+                        <input
+                          type="number"
+                          id="expiryMonth"
+                          class="form-control"
+                          v-model="expirymth"
+                        />
+                        <label for="expiryMonth">Expiry Month</label>
+                      </div>
+                      <div class="form-floating">
+                        <input
+                          type="number"
+                          id="expiryYear"
+                          class="form-control"
+                          v-model="expiryyr"
+                        />
+                        <label for="expiryYear">Expiry Year</label>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="hr-block" />
+
+            <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
+                <div class="align-items">
+                  <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                    Benefits
+                  </div>
+                  <div>
+                    <form>
+                      <div class="form-floating">
+                        <input
+                          type="text"
+                          id="benefits"
+                          class="form-control"
+                          v-model="benefits"
+                        />
+                        <label for="benefits">Benefits</label>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="hr-block" />
+
+            <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
+                <div class="align-items">
+                  <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                    Terms and Conditions
+                  </div>
+                  <div>
+                    <form>
+                      <div class="form-floating">
+                        <input
+                          type="text"
+                          id="terms-conditions"
+                          class="form-control"
+                          v-model="tnc"
+                        />
+                        <label for="terms-conditions"
+                          >Terms and Conditions</label
+                        >
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="hr-block" />
+
+            <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
+                <div class="align-items">
+                  <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                    Pass Type
+                  </div>
+                  <div>
+                    <form>
+                      <div class="form-floating">
+                        <input
+                          type="text"
+                          id="passType"
+                          class="form-control"
+                          v-model="passType"
+                        />
+                        <label for="passType">Pass Type</label>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr class="hr-block" />
+
+            <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
+                <div class="align-items">
+                  <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                    Replacement Fee
+                  </div>
+                  <div>
+                    <form>
+                      <div class="form-floating">
+                        <input
+                          type="number"
+                          min="0"
+                          id="replacementFee"
+                          class="form-control"
+                          v-model="replacementFee"
+                        />
+                        <label for="replacementFee">Replacement Fee</label>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="hr-block" />
+
+            <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
+                <div class="align-items">
+                  <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                    Maximum Number of Passes
+                  </div>
+                  <div>
+                    <form>
+                      <div class="form-floating">
+                        <input
+                          type="number"
+                          min="0"
+                          id="maximumPasses"
+                          class="form-control"
+                          v-model="maxpasses"
+                        />
+                        <label for="maximumPasses"
+                          >Maximum Number of Passes</label
+                        >
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="hr-block" />
+
+            <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
+                <div class="align-items">
+                  <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                    Number of Accompanying Guests
+                  </div>
+                  <div>
+                    <form>
+                      <div class="form-floating">
+                        <input
+                          type="number"
+                          min="0"
+                          id="accompanyingGuests"
+                          class="form-control"
+                          v-model="numguests"
+                        />
+                        <label for="accompanyingGuests"
+                          >Number of Accompanying Guests</label
+                        >
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="hr-block" />
+
+            <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
+                <div class="align-items">
+                  <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                    Maximum Number of Loans
+                  </div>
+                  <div>
+                    <form>
+                      <div class="form-floating">
+                        <input
+                          type="number"
+                          min="1"
+                          max="99"
+                          id="maxLoans"
+                          class="form-control"
+                          v-model="maxloans"
+                        />
+                        <label for="maxLoans">Maximum Number of Loans</label>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="text-center mt-4">
-              <button @click="postreq" type="submit" class="w-40 btn btn-outline-success text-uppercase fw-bold">
+              <button
+                @click="postreq"
+                type="submit"
+                class="w-40 btn btn-outline-success text-uppercase fw-bold"
+              >
                 Save
               </button>
             </div>
-
-          </div>
-
           </div>
         </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -302,28 +363,28 @@ import { defineComponent } from "vue";
 
 // Typings
 interface CreateAttractionData {
-  name: string | null,
-  desc: string | null,
-  passType: string | null,
-  replacementFee: number | null,
-  numguests: number | null,
-  maxpasses: number | null,
-  maxloans: number | null,
-  add: string | null,
-  memid: string | null,
-  expiryyr: number | null,
-  expirymth: number | null,
-  expiryday: number | null,
-  benefits: string | null,
-  tnc: string | null,
-  attrId: number | null,
-  staffId: number | null,
-  role: string | null,
+  name: string | null;
+  desc: string | null;
+  passType: string | null;
+  replacementFee: number | null;
+  numguests: number | null;
+  maxpasses: number | null;
+  maxloans: number | null;
+  add: string | null;
+  memid: string | null;
+  expiryyr: number | null;
+  expirymth: number | null;
+  expiryday: number | null;
+  benefits: string | null;
+  tnc: string | null;
+  attrId: number | null;
+  staffId: number | null;
+  role: string | null;
 }
 
 interface LoginData {
-  staffId: number,
-  role: string
+  staffId: number;
+  role: string;
 }
 
 export default defineComponent({
@@ -345,7 +406,7 @@ export default defineComponent({
       maxloans: null,
       attrId: null,
       staffId: null,
-      role: null
+      role: null,
     };
   },
   async created() {
@@ -359,13 +420,16 @@ export default defineComponent({
       return;
     }
 
-    if (this.role !== 'ADMINISTRATOR') {
+    if (this.role !== "ADMINISTRATOR") {
       this.$router.push({ name: "home" }).then(() => this.$router.go(0));
       return;
     }
 
     const res = await axios.get(
-      import.meta.env.VITE_API_URL + `api/attraction/${this.$route.params.id}`
+      import.meta.env.VITE_API_URL + `api/attraction/${this.$route.params.id}`,
+      {
+        headers: {'authorization': `${localStorage.getItem("token")}`},
+      }
     );
     const data = await res.data;
 
@@ -373,18 +437,18 @@ export default defineComponent({
     this.desc = data.data.description;
     this.add = data.data.address;
     this.memid = data.data.membershipId;
-    this.expiryyr = parseInt(data.data.expiryDate.split('-')[0]);
-    this.expirymth = parseInt(data.data.expiryDate.split('-')[1]);
-    this.expiryday = parseInt(data.data.expiryDate.split('-')[2]);
+    this.expiryyr = parseInt(data.data.expiryDate.split("-")[0]);
+    this.expirymth = parseInt(data.data.expiryDate.split("-")[1]);
+    this.expiryday = parseInt(data.data.expiryDate.split("-")[2]);
     this.benefits = data.data.benefits;
     this.tnc = data.data.termsConditions;
-    this.passType = data.data.passType === 'PHYSICAL' ? '0' : '1';
+    this.passType = data.data.passType === "PHYSICAL" ? "0" : "1";
     this.replacementFee = data.data.replacementFee;
     this.numguests = data.data.numAccompanyingGuests;
     this.maxpasses = data.data.maxPassesPerLoan;
     this.maxloans = data.data.maxLoansPerMonth;
   },
-  methods : {
+  methods: {
     checkLogin(): LoginData | undefined {
       const staffIdStr = localStorage.getItem("staffId");
       const role = localStorage.getItem("role");
@@ -401,38 +465,49 @@ export default defineComponent({
       }
     },
     async postreq(e: Event) {
-        e.preventDefault();
+      e.preventDefault();
 
-        axios({
-            url : import.meta.env.VITE_API_URL + `api/attraction/${this.$route.params.id}`,
-            method: 'put',
-            data : {
-                attractionId: parseInt(this.$route.params.id instanceof Array ? this.$route.params.id[0] : this.$route.params.id),
-                name: this.name,
-                description: this.desc,
-                passType: this.passType,
-                replacementFee: this.replacementFee,
-                numAccompanyingGuests: this.numguests,
-                maxPassesPerLoan: this.maxpasses,
-                maxLoansPerMonth: this.maxloans,
-                address: this.add,
-                membershipId: this.memid,
-                expiryDateYYYY: this.expiryyr,
-                expiryDateMM : this.expirymth,
-                expiryDateDD : this.expiryday,
-                benefits : this.benefits,
-                termsConditions : this.tnc 
-            }
-        })
+      axios({
+        url:
+          import.meta.env.VITE_API_URL +
+          `api/attraction/${this.$route.params.id}`,
+        method: "put",
+        data: {
+          attractionId: parseInt(
+            this.$route.params.id instanceof Array
+              ? this.$route.params.id[0]
+              : this.$route.params.id
+          ),
+          name: this.name,
+          description: this.desc,
+          passType: this.passType,
+          replacementFee: this.replacementFee,
+          numAccompanyingGuests: this.numguests,
+          maxPassesPerLoan: this.maxpasses,
+          maxLoansPerMonth: this.maxloans,
+          address: this.add,
+          membershipId: this.memid,
+          expiryDateYYYY: this.expiryyr,
+          expiryDateMM: this.expirymth,
+          expiryDateDD: this.expiryday,
+          benefits: this.benefits,
+          termsConditions: this.tnc,
+        },
+        headers: {'authorization': `${localStorage.getItem("token")}`}
+      })
         .then((res) => {
-          if(res.data.code === 200) {
-            this.$router.push({ name: 'attraction' }).then(() => this.$router.go(0));
+          if (res.data.code === 200) {
+            this.$router
+              .push({ name: "attraction" })
+              .then(() => this.$router.go(0));
           }
         })
         .catch((err: any) => {
           if (err.response) {
             if (err.response.status === 401) {
-              this.$router.push({ name: "login" }).then(() => this.$router.go(0));
+              this.$router
+                .push({ name: "login" })
+                .then(() => this.$router.go(0));
             } else {
               console.log(err.response.data.message);
             }
@@ -440,20 +515,19 @@ export default defineComponent({
             console.log(err.message);
           }
         });
-    }
-    
+    },
   },
 });
 </script>
 
 <style scoped>
 .form-information {
-    margin-top: 5px;
-    margin-bottom: 30px;
-    border: 2px solid black;
-    border-radius: 10px;
-    margin-left: 20%;
-    margin-right: 20%;
-    padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 30px;
+  border: 2px solid black;
+  border-radius: 10px;
+  margin-left: 20%;
+  margin-right: 20%;
+  padding: 10px;
 }
 </style>
