@@ -40,35 +40,36 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import axios from 'axios'
-import NavBar from '../components/Navbar.vue'
+import { defineComponent } from "vue";
+import axios from "axios";
+import NavBar from "../components/Navbar.vue";
 
-interface Data{
-  title: string,
-  currentBackground: string,
-  loans: [],
-  staffId: number,
+interface Data {
+  title: string;
+  currentBackground: string;
+  loans: [];
+  staffId: number;
 }
 
-interface LoginData{
-  staffId: number,
-  role: string,
+interface LoginData {
+  staffId: number;
+  role: string;
 }
-export default defineComponent ({
-    name: 'AdminAllBookings',
-    data(): Data {
-        return{
-            title: 'All Bookings',
-            loans: [],
-            staffId: 0,
-            currentBackground: 'https://img.freepik.com/free-vector/white-desktop-background-modern-minimal-design-vector_53876-140226.jpg?w=1800&t=st=1668366952~exp=1668367552~hmac=a23687ccfe071f6c28017a514a3380e222e62d36894545fc6ff4f9ad24033935'
-        }
-    },
-    async created() {
-      this.checkLogin();
-      try{
-        const loanDetails = await axios.get(
+export default defineComponent({
+  name: "AdminAllBookings",
+  data(): Data {
+    return {
+      title: "All Bookings",
+      loans: [],
+      staffId: 0,
+      currentBackground:
+        "https://img.freepik.com/free-vector/white-desktop-background-modern-minimal-design-vector_53876-140226.jpg?w=1800&t=st=1668366952~exp=1668367552~hmac=a23687ccfe071f6c28017a514a3380e222e62d36894545fc6ff4f9ad24033935",
+    };
+  },
+  async created() {
+    this.checkLogin();
+    try {
+      const loanDetails = await axios.get(
         import.meta.env.VITE_API_URL + "api/loan"
       );
 
@@ -91,16 +92,15 @@ export default defineComponent ({
           passId,
           prevBorrowerName,
           prevBorrowerContact,
-        ]); 
+        ]);
       }
       console.log(this.loans);
-    }
-      catch(err){
-        if (err.response.status == 401) {
+    } catch (err) {
+      if (err.response.status == 401) {
         this.$router.push({ name: "Login" });
       }
     }
-},
+  },
   methods: {
     checkLogin(): LoginData | undefined {
       const staffIdStr = localStorage.getItem("staffId");
@@ -110,7 +110,7 @@ export default defineComponent ({
         this.$router.push({ name: "Login" });
       } else {
         this.staffId = parseInt(staffIdStr);
-        if (this.role !== "ADMINISTRATOR") {
+        if (role !== "ADMINISTRATOR") {
           this.$router.push({ name: "home" });
         }
 
@@ -120,10 +120,8 @@ export default defineComponent ({
         };
       }
     },
-  }
-})
-
-    
+  },
+});
 </script>
 
 <style scoped>
