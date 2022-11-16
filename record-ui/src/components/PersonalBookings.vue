@@ -4,7 +4,6 @@
         <div>
           <h1 class="text-center">{{ title }}</h1>
         </div>
-        hello
         <table class="table table-bordered table-hover">
           <thead>
             <tr class="table-light">
