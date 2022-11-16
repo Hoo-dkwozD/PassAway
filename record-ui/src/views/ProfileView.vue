@@ -97,6 +97,7 @@ export default defineComponent({
           this.email = data.data.email;
           this.contactNumber = data.data.contactNumber;
           this.bookingStatus = !data.data.cannotBook;
+          console.log(data.data.cannotBook);
         } else {
           console.error(data.message);
         }
