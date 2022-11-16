@@ -8,18 +8,8 @@
         <div>
           <h1 class="text-center">{{ title }}</h1>
         </div>
-
-        <div class="align-right">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
-          >
-            Add Staff
-          </button>
-          <div class="modal fade" id="myModal" role="dialog"></div>
-          <form>
+      <div class="d-flex px-0">
+        <form>
             <div class="form-group">
               <label for="exampleFormControlFile1" class="m-2"
                 >Upload Staff CSV file</label
@@ -35,6 +25,16 @@
               </button>
             </div>
           </form>
+        <div class="align-right">
+          <button
+            type="button"
+            class="btn btn-secondary m-2"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal"
+          >
+            Add Staff
+          </button>
+          <div class="modal fade" id="myModal" role="dialog"></div>
         </div>
         <div
           class="modal fade"
@@ -56,6 +56,7 @@
                   aria-label="Close"
                 ></button>
               </div>
+            </div>
               <div class="modal-body">
                 <form>
                   <div class="mb-3">

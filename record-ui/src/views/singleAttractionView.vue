@@ -6,13 +6,13 @@
 <script lang="ts">
 import {defineComponent} from "vue";
 
-import SingleAttraction from "../components/SingleAttraction.vue";
+import singleAttraction from "../components/singleAttraction.vue";
 import Navbar from "../components/Navbar.vue";
 
 export default defineComponent({
   name: 'SingleAttractionView',
   components: {
-    SingleAttraction,
+    singleAttraction,
     Navbar
   },
 });

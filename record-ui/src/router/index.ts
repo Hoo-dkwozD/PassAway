@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import AttractionView from "../views/AttractionView.vue"
-import SingleAttractionView from "../views/SingleAttractionView.vue"
+import singleAttraction from "../components/singleAttraction.vue"
 import EditAttractionView from "../views/EditAttractionView.vue"
 import singleAttractionView from "../views/singleAttractionView.vue"
 import CreateAttraction from "../components/CreateAttraction.vue"
@@ -18,6 +18,7 @@ import SignupView from "../views/SignupView.vue";
 import AdminStaffsView from "../views/AdminStaffsView.vue";
 import StaffUpdateProfileView from "../views/StaffUpdateProfileView.vue";
 import SignupRedirectView from "../views/SignupRedirectView.vue";
+// import StaffAddView from "../views/StaffAddView.vue";
 import CreateAttractionView from "../views/CreateAttractionView.vue";
 
 const router = createRouter({
@@ -34,6 +35,11 @@ const router = createRouter({
       name: "update admins",
       component: AdminView
     },
+    // {
+    //   path: "/staffs/add",
+    //   name: "add staff",
+    //   component: StaffAddView
+    // },
     {
       path:"/Attract",
       name:"Attract",
@@ -62,7 +68,7 @@ const router = createRouter({
     {
       path:'/admin/attraction/:id',
       name : 'single attraction',
-      component: SingleAttractionView
+      component: singleAttraction
     },
     {
       path:'/admin/attraction/:id/edit',

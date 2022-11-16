@@ -66,11 +66,14 @@ export default defineComponent ({
         }
     },
     async created() {
-      this.checkLogin();
+      const loginData = this.checkLogin();
+      if (loginData.role !== "ADMINISTRATOR") {
+        this.$router.push({ name: "home" });
+      }
       try{
         const loanDetails = await axios.get(
-        import.meta.env.VITE_API_URL + "api/loan"
-      );
+          import.meta.env.VITE_API_URL + "api/loan"
+        );
 
       for (const index in loanDetails.data.data) {
         const detail = loanDetails.data.data[index];
@@ -110,9 +113,6 @@ export default defineComponent ({
         this.$router.push({ name: "Login" });
       } else {
         this.staffId = parseInt(staffIdStr);
-        if (this.role !== "ADMINISTRATOR") {
-          this.$router.push({ name: "home" });
-        }
 
         return {
           staffId: this.staffId,
