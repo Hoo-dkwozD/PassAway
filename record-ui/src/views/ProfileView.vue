@@ -97,6 +97,7 @@ export default defineComponent({
           this.email = data.data.email;
           this.contactNumber = data.data.contactNumber;
           this.bookingStatus = !data.data.cannotBook;
+          console.log(data.data.cannotBook);
         } else {
           console.error(data.message);
         }
@@ -120,7 +121,7 @@ export default defineComponent({
   <Navbar></Navbar>
   <div
     id="top"
-    class="h-100"
+    class="vh-100 container-fluid p-0 mx-0 position-relative w-100 d-flex flex-column"
     :style="{ backgroundImage: `url(${currentBackground})` }"
   >
     <div class="content" style="margin-top: 80px">

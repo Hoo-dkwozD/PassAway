@@ -1,6 +1,8 @@
 <template>
   <NavBar></NavBar>
-  <div class="container-fluid p-0 mx-0 position-relative w-100 d-flex flex-column" id="top">
+  <div
+    class="container-fluid p-0 mx-0 position-relative w-100 d-flex flex-column"
+  >
     <div
       id="sectionheader"
       :style="{ backgroundImage: `url(${currentBackground})` }"
@@ -176,26 +178,24 @@ export default defineComponent({
         import.meta.env.VITE_API_URL + "api/attractions"
       );
       for (const att of attractions.data.data) {
-      const location = att.name;
-      const attractionId = att.attractionId;
-      const maxPassesPerLoan = att.maxPassesPerLoan;
-      const numOfAccompanyingGuests = att.numAccompanyingGuests;
-      const photoURL = att.backgroundImage;
-      this.locations[location] = [
-        location,
-        attractionId,
-        maxPassesPerLoan,
-        numOfAccompanyingGuests,
-        photoURL,
-      ];
-    }
-    }
-    catch (err) {
+        const location = att.name;
+        const attractionId = att.attractionId;
+        const maxPassesPerLoan = att.maxPassesPerLoan;
+        const numOfAccompanyingGuests = att.numAccompanyingGuests;
+        const photoURL = att.backgroundImage;
+        this.locations[location] = [
+          location,
+          attractionId,
+          maxPassesPerLoan,
+          numOfAccompanyingGuests,
+          photoURL,
+        ];
+      }
+    } catch (err) {
       if (err.response.status == 401) {
         this.$router.push({ name: "Login" });
       }
     }
-
   },
   computed: {
     attributes() {
@@ -216,6 +216,7 @@ export default defineComponent({
   },
   methods: {
     async populateNoOfTickets(): Promise<any> {
+      console.log(this.attractionDetails);
       this.numberofPasses = [];
       const maxPasses = this.attractionDetails["id"][2];
 
@@ -277,34 +278,41 @@ export default defineComponent({
         });
         return res.data;
       } catch (err) {
-        console.log(err)
-        if (err.response.status == 401) {
-          this.$router.push({ name: "Login" });
-        }
-        if (err.response.status == 500) {
-          this.errorMsg = "Please check all input fields and ensure you have not exceed the maximum number of passes per month.";
-        } else if (err.response.status == 400) {
-          this.errorMsg = "You are not allowed to book pass, please check with the HR for access rights."
-        }
-        else {
-          this.errorMsg = "An error has occured. Please try again later.";
-        }
+        console.log(err.response.data);
+        const errorMsg = err.response.data;
+        this.populateError(errorMsg);
         this.makeToast(this.errorMsg);
         return {
           code: err,
         };
       }
     },
+    populateError(msg) {
+      if (msg === "Attraction of id: 0 does not exist in the database") {
+        this.errorMsg = "Please select an attraction.";
+      } else if (msg.includes("Staff of staff id")) {
+        this.errorMsg =
+          "You are not allowed to book pass, please check with the HR for access rights.";
+      } else if (msg.includes("insufficient available pass(es)")) {
+        this.errorMsg =
+          "There are insufficient available pass(es) for this attraction for the selected date.";
+      } else {
+        this.errorMsg = "An error has occured. Please try again later.";
+      }
+    },
+
     makeToast(errorMsg: string) {
       let toast = document.createElement("sectionheader");
-      toast.innerHTML = `
+      toast.innerHTML =
+        `
       <div id="hjvvhj" class="toast mb-3 me-2" style="z-index:999" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
         <div class="toast-header" data-bs-delay="10000">
           <strong class="me-auto">Error Message</strong>
           <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body">` + errorMsg +
-          `
+        <div class="toast-body">` +
+        errorMsg +
+        `
         </div>
       </div>
       `;
@@ -328,7 +336,7 @@ export default defineComponent({
   padding-top: 300px;
   padding-bottom: 300px;
   background-size: 100%;
-  position:absolute;
+  position: absolute;
 }
 
 .main {
@@ -459,15 +467,15 @@ export default defineComponent({
 }
 
 .btn-submit {
-  background-color: #f37931!important;
+  background-color: #f37931 !important;
   letter-spacing: 0;
   line-height: 24px;
-  color: white!important;;
+  color: white !important;
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   padding-left: 20px;
 }
 .btn-submit:hover {
-  background-color: #d72255!important;
+  background-color: #d72255 !important;
   color: white;
 }
 </style>
