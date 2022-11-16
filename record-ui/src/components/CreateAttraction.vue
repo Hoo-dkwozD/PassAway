@@ -2,72 +2,72 @@
   <form class="container-fluid">
     <div class="form-group">
       <label for="name">Name </label>
-      <input type="text" class="form-control" id="name" />
+      <input v-model="name" type="text" class="form-control" id="name" />
     </div>
 
     <div class="form-group">
       <label for="desc">Description </label>
-      <input type="text" class="form-control" id="desc" />
+      <input v-model="desc" type="text" class="form-control" id="desc" />
     </div>
 
     <div class="form-group">
       <label for="add">Address</label>
-      <input type="text" class="form-control" id="add" />
+      <input v-model="add" type="text" class="form-control" id="add" />
     </div>
 
     <div class="form-group">
       <label for="memid">Membership ID</label>
-      <input type="text" class="form-control" id="memid" />
+      <input v-model="memid" type="text" class="form-control" id="memid" />
     </div>
 
     <div class="form-group">
       <label for="expiryyear">Expiry Date(YYYY)</label>
-      <input type="number" class="form-control" id="expiryyear" />
+      <input v-model="expiryyr" type="number" class="form-control" id="expiryyear" />
     </div>
 
     <div class="form-group">
       <label for="expirymth">Expiry Date(MM)</label>
-      <input type="number" class="form-control" id="expirymth" />
+      <input v-model="expirymth" type="number" class="form-control" id="expirymth" />
     </div>
 
     <div class="form-group">
-      <label for="expiryday">Expiry Date(MM)</label>
-      <input type="number" class="form-control" id="expiryday" />
+      <label for="expiryday">Expiry Date(DD)</label>
+      <input v-model="expiryday" type="number" class="form-control" id="expiryday" />
     </div>
 
     <div class="form-group">
       <label for="benefits">Benefits: </label>
-      <input type="text" class="form-control" id="benefits" />
+      <input v-model="benefits" type="text" class="form-control" id="benefits" />
     </div>
 
     <div class="form-group">
       <label for="tnc">Terms and Conditions </label>
-      <input type="text" class="form-control" id="tnc" />
+      <input v-model="tnc" type="text" class="form-control" id="tnc" />
     </div>
 
     <div class="form-group">
       <label for="passType">Pass Type : </label>
-      <input type="text" class="form-control" id="passType" />
+      <input v-model="passType" type="text" class="form-control" id="passType" />
     </div>
 
     <div class="form-group">
       <label for="replacementFee">Replacement Fee : </label>
-      <input type="number" class="form-control" id="replacementFee" />
+      <input v-model="replacementFee" type="number" class="form-control" id="replacementFee" />
     </div>
 
     <div class="form-group">
       <label for="numguests">Number of Accompanying Guests : </label>
-      <input type="number" class="form-control" id="numguests" />
+      <input v-model="numguests" type="number" class="form-control" id="numguests" />
     </div>
 
     <div class="form-group">
       <label for="maxPasses">Maximum Passes per loan : </label>
-      <input type="number" class="form-control" id="maxPasses" />
+      <input v-model="maxpasses" type="number" class="form-control" id="maxPasses" />
     </div>
 
     <div class="form-group">
       <label for="maxLoans">Maximum Loans Per Month : </label>
-      <input type="number" class="form-control" id="maxLoans" />
+      <input v-model="maxloans" type="number" class="form-control" id="maxLoans" />
     </div>
     <button  class="btn btn-primary" @click="postreq">Submit</button>
   </form>
@@ -75,113 +75,129 @@
 
 <script lang="ts">
 import axios from "axios";
-import { DatePicker } from "v-calendar";
 import { defineComponent } from "vue";
-import CalendarPicker from "./CalendarPicker.vue";
 
-export default {
-  data() {
+// Typings
+interface CreateAttractionData {
+  name: string | null,
+  desc: string | null,
+  passType: string | null,
+  replacementFee: number | null,
+  numguests: number | null,
+  maxpasses: number | null,
+  maxloans: number | null,
+  add: string | null,
+  memid: string | null,
+  expiryyr: number | null,
+  expirymth: number | null,
+  expiryday: number | null,
+  benefits: string | null,
+  tnc: string | null,
+  staffId: number | null,
+  role: string | null,
+}
+
+interface LoginData {
+  staffId: number,
+  role: string
+}
+
+export default defineComponent({
+  data(): CreateAttractionData {
     return {
-      name: "",
-      desc: "",
-      add: "",
-      memid: "",
-      expiryyr: 0,
-      expirymth: 0,
-      expiryday: 0,
-      benefits: "",
-      tnc: "",
-      passType: "",
-      replacementFee: 0,
-      numguests: 0,
-      maxpasses: 0,
-      maxloans: 0,
+      name: null,
+      desc: null,
+      add: null,
+      memid: null,
+      expiryyr: null,
+      expirymth: null,
+      expiryday: null,
+      benefits: null,
+      tnc: null,
+      passType: null,
+      replacementFee: null,
+      numguests: null,
+      maxpasses: null,
+      maxloans: null,
+      staffId: null,
+      role: null
     };
   },
+  created() {
+    const loginData = this.checkLogin();
 
+    if (loginData !== undefined) {
+      this.staffId = loginData.staffId;
+      this.role = loginData.role;
+    } else {
+      this.$router.push({ name: "login" }).then(() => this.$router.go(0));
+      return;
+    }
+
+    if (this.role !== 'ADMINISTRATOR') {
+      this.$router.push({ name: "home" }).then(() => this.$router.go(0));
+      return;
+    }
+  },
   methods : {
+    checkLogin(): LoginData | undefined {
+      const staffIdStr = localStorage.getItem("staffId");
+      const role = localStorage.getItem("role");
 
-    async postreq(e) {
-        
-        e.preventDefault()
-        const name1 = document.getElementById("name") as HTMLInputElement;
-        this.name = name1.value ;
-        console.log(this.name)
-        const desc1 = document.getElementById("desc") as HTMLInputElement;
-        this.desc = desc1.value ;
+      if (staffIdStr === null || role === null) {
+        this.$router.push({ name: "login" }).then(() => this.$router.go(0));
+      } else {
+        const staffId = parseInt(staffIdStr);
 
-        const add1 = document.getElementById("add") as HTMLInputElement;
-        this.add = add1.value ;
+        return {
+          staffId: staffId,
+          role: role,
+        };
+      }
+    },
+    async postreq(e: Event) {
+        e.preventDefault();
 
-        const memid1 = document.getElementById("memid") as HTMLInputElement ;
-        this.memid = memid1.value ;
-
-        const expiryyr1 = document.getElementById("expiryyear") as HTMLInputElement ;
-        this.expiryyr = expiryyr1.value ;
-
-        const expirymth1 = document.getElementById("expirymth") as HTMLInputElement ;
-        this.expirymth = expirymth1.value ;
-
-
-        const expiryday1 = document.getElementById("expiryday") as HTMLInputElement ;
-        this.expiryday = expiryday1.value ;
-
-        const benefits1 = document.getElementById("benefits") as HTMLInputElement ;
-        this.benefits = benefits1.value ;
-
-        const tnc1 = document.getElementById("tnc") as HTMLInputElement ;
-        this.tnc = tnc1.value ;
-
-        const passType1 = document.getElementById("passType") as HTMLInputElement ;
-        this.passType = passType1.value ;
-
-        const replacementFee1 = document.getElementById("replacementFee") as HTMLInputElement ;
-        this.replacementFee = replacementFee1.value ;
-
-        const numguests1 = document.getElementById("numguests") as HTMLInputElement ;
-        this.numguests = numguests1.value ;
-
-        const maxpasses1 = document.getElementById("maxPasses") as HTMLInputElement ;
-        this.maxpasses = maxpasses1.value ;
-
-        const maxloans1 = document.getElementById("maxLoans") as HTMLInputElement ;
-        this.maxloans = maxloans1.value ;
- 
         axios({
-            url : "http://localhost:8080/api/attraction",
+            url : import.meta.env.VITE_API_URL + "api/attraction",
             method: 'post',
             data : {
                 name: this.name,
-        description: this.desc,
-        passType: this.passType,
-        replacementFee: this.replacementFee,
-        numAccompanyingGuests: this.numguests,
-        maxPassesPerLoan: this.maxPassesPerLoan,
-        maxLoansPerMonth: this.maxloans,
-        address: this.add,
-        membershipId: this.memid,
-        expiryDateYYYY: this.expiryyr,
-        expiryDateMM : this.expirymth,
-        expiryDateDD : this.expiryday,
-        benefits : this.benefits,
-        termsConditions : this.tnc 
+                description: this.desc,
+                passType: this.passType,
+                replacementFee: this.replacementFee,
+                numAccompanyingGuests: this.numguests,
+                maxPassesPerLoan: this.maxpasses,
+                maxLoansPerMonth: this.maxloans,
+                address: this.add,
+                membershipId: this.memid,
+                expiryDateYYYY: this.expiryyr,
+                expiryDateMM : this.expirymth,
+                expiryDateDD : this.expiryday,
+                benefits : this.benefits,
+                termsConditions : this.tnc 
             }
-
-
-
         })
         .then((res) => {
-                if(res.data.code==200) {
-                    window.alert("You have created successfully!")
-                }
-                console.log(res)
-            
+          if(res.data.code === 200) {
+            this.$router.push({ name: 'attractions' }).then(() => this.$router.go(0));
+          }
         })
-        .catch((err) => console.log(err));
+        .catch((err: any) => {
+          if (err.response) {
+            if (err.response.status === 401) {
+              this.$router.push({ name: "login" }).then(() => this.$router.go(0));
+            } else {
+              console.log(err.response.data.message);
+            }
+          } else {
+            console.log(err.message);
+          }
+        });
     }
     
   },
-};
+});
 </script>
 
 <style></style>

@@ -1,14 +1,18 @@
 <template>
-    <singleAttraction></singleAttraction>
+  <Navbar></Navbar>
+  <SingleAttraction></SingleAttraction>
 </template>
 
 <script lang="ts">
 import {defineComponent} from "vue";
-import singleAttraction from "../components/singleAttraction.vue";
+
+import SingleAttraction from "../components/SingleAttraction.vue";
+import Navbar from "../components/Navbar.vue";
 
 export default defineComponent({
   components: {
-    singleAttraction,
+    SingleAttraction,
+    Navbar
   },
 });
 </script>

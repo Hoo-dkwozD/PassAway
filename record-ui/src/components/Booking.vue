@@ -91,7 +91,6 @@
     </div>
   </div>
 </template>
-
 <script lang="ts">
 import axios from "axios";
 import { defineComponent } from "vue";

@@ -1,6 +1,6 @@
 <!-- eslint-disable prettier/prettier -->
 <template>
-<div class="container-fluid">
+  <div class="container-fluid">
     <div id="sectionheader"
       :style="{'background-image':'url(https://www.planetware.com/photos-large/SIN/singapore-marina-bay-sands.jpg)'}"
     ><div class="row">
@@ -8,7 +8,7 @@
         <div  class="title">Attractions</div>
       </div>
       <div class="col-2">
-         <router-link :to="`/create`" >
+         <router-link :to="`/admin/attraction/create`" >
         <button class="btn btn-primary">Create Attraction</button>
          </router-link>
       </div>
@@ -17,7 +17,7 @@
      
 
      
-     <div  v-for="attract in attractions" :key='attract.attractionId'  class="bookingdetails container-fluid">
+     <div  v-for="attract, idx in attractions" :key='idx'  class="bookingdetails container-fluid">
         <div class="row">
              <div class="row ">
               <div class="col-8">
@@ -26,7 +26,7 @@
             <p>{{attract.description}}</p>
               </div>
             <div class="col-2 ">
-              <router-link :to="`/Attract/edit/${attract.attractionId}`" >
+              <router-link :to="`/admin/attraction/${attract.attractionId}/edit`" >
                <button
               
               class="btn btn-info  "
@@ -36,7 +36,7 @@
              </router-link>
             </div>
             <div class="col-2 ">
-               <router-link :to="`/Attract/${attract.attractionId}`" >
+               <router-link :to="`/admin/attraction/${attract.attractionId}`" >
               <button
               
               class="btn btn-info" 
@@ -63,29 +63,87 @@
 
 
 <script lang="ts">
-import axios from "axios";
-import { DatePicker } from "v-calendar";
 import { defineComponent } from "vue";
-import CalendarPicker from "./CalendarPicker.vue";
+import axios from "axios";
 
-export default({
-  data() {
+// Typings
+interface Attraction {
+  attractionId: number,
+  name: string,
+  description: string,
+  passType: string,
+  replacementFee: number,
+  numAccompanyingGuests: number,
+  maxPassesPerLoan: number,
+  maxLoansPerMonth: number,
+  cannotBook: boolean,
+  address: string,
+  membershipId: string,
+  expiryDate: string,
+  barcodeImage: string,
+  backgroundImage: string,
+  benefits: string,
+  termsConditions: string
+}
+
+interface AttractionData {
+  attractions: Attraction[],
+  staffId: number | null,
+  role: string | null
+}
+
+interface LoginData {
+  staffId: number,
+  role: string
+}
+
+export default defineComponent({
+  data(): AttractionData {
     return {
-      attractions:[]
-    }
+      attractions: [],
+      staffId: null,
+      role: null
+    };
   },
   async created() {
-    const response = await axios.get(
-      "http://localhost:8080/api/attractions"
+    const loginData = this.checkLogin();
+
+    if (loginData !== undefined) {
+      this.staffId = loginData.staffId;
+      this.role = loginData.role;
+    } else {
+      this.$router.push({ name: "login" }).then(() => this.$router.go(0));
+      return;
+    }
+
+    if (this.role !== 'ADMINISTRATOR') {
+      this.$router.push({ name: "home" }).then(() => this.$router.go(0));
+      return;
+    }
+
+    const res = await axios.get(
+      import.meta.env.VITE_API_URL + `api/attractions`
     );
-    this.attractions = response.data.data ;
-   
-    
+    this.attractions = await res.data.data;
+  },
+  methods: {
+    checkLogin(): LoginData | undefined {
+      const staffIdStr = localStorage.getItem("staffId");
+      const role = localStorage.getItem("role");
+
+      if (staffIdStr === null || role === null) {
+        this.$router.push({ name: "login" }).then(() => this.$router.go(0));
+      } else {
+        const staffId = parseInt(staffIdStr);
+
+        return {
+          staffId: staffId,
+          role: role,
+        };
+      }
+    },
   }
-
-  
-
-})
+});
 </script>
 
 <style>
@@ -99,7 +157,8 @@ export default({
 
 .main {
   margin-bottom: 10px;
-},
+}
+
 #attract-title{
     margin-left:10px ;
     color : blueviolet ;
