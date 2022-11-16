@@ -288,6 +288,8 @@ export default defineComponent({
       } else if (msg.includes("Staff of staff id")) {
         this.errorMsg =
           "You are not allowed to book pass, please check with the HR for access rights.";
+      } else if (msg.includes("Unable to make anymore loans.")) {
+        this.errorMsg = "You have reached the maximum number of loans this month.";
       } else if (msg.includes("insufficient available pass(es)")) {
         this.errorMsg =
           "There are insufficient available pass(es) for this attraction for the selected date.";
