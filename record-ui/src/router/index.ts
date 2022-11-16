@@ -4,6 +4,7 @@ import SingleAttractionView from "../views/singleAttractionView.vue"
 import EditAttractionView from "../views/EditAttractionView.vue"
 import singleAttractionView from "../views/singleAttractionView.vue"
 import CreateAttraction from "../components/CreateAttraction.vue"
+import PassesView from "../views/PassesView.vue";
 import AdminView from '../views/AdminView.vue';
 import AdminAllBookings from "../views/adminAllBookings.vue";
 import BookingConfirmationView from '../views/BookingConfirmationView.vue';
@@ -23,6 +24,16 @@ import CreateAttractionView from "../views/CreateAttractionView.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: "/passes",
+      name: "PassesView",
+      component: PassesView,
+    },
+    {
+      path: "/editadmin",
+      name: "AdminView",
+      component: AdminView,
+    },
     {
       path: "/",
       name: "home",
