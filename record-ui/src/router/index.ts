@@ -18,7 +18,6 @@ import SignupView from "../views/SignupView.vue";
 import AdminStaffsView from "../views/AdminStaffsView.vue";
 import StaffUpdateProfileView from "../views/StaffUpdateProfileView.vue";
 import SignupRedirectView from "../views/SignupRedirectView.vue";
-import StaffAddView from "../views/StaffAddView.vue";
 import CreateAttractionView from "../views/CreateAttractionView.vue";
 
 const router = createRouter({
@@ -34,11 +33,6 @@ const router = createRouter({
       path: "/admin/staffs/admin",
       name: "update admins",
       component: AdminView
-    },
-    {
-      path: "/staffs/add",
-      name: "add staff",
-      component: StaffAddView
     },
     {
       path:"/Attract",
