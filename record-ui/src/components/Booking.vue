@@ -338,6 +338,7 @@ export default defineComponent({
   margin: 40px;
 
 }
+
 .title {
   color: rgb(247, 247, 132);
   font-family: "Trebuchet MS", sans-serif;

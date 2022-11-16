@@ -1,139 +1,145 @@
 <template>
-  <div class="container-fluid" :style="{ backgroundImage: `url(${currentBackground})` }">
+  <div
+    class="container-fluid"
+    :style="{ backgroundImage: `url(${currentBackground})` }"
+  >
     <div class="vh-100">
-        <div>
-          <h1 class="text-center">{{ title }}</h1>
-        </div>
-        <table class="table table-bordered table-hover">
-          <thead>
-            <tr class="table-light">
-              <th scope="col">Loan ID</th>
-              <th scope="col">Name</th>
-              <th scope="col">Email</th>
-              <th scope="col">Start Date</th>
-              <th scope="col">Attraction Name</th>
-              <th scope="col">Pass ID</th>
-              <th scope="col">Previous Borrower</th>
-              <th scope="col">Previous Borrower Contact</th>
-              <th scope="col">Cancel Booking</th>
-              <th scope="col">Report Loss Pass</th>
-            </tr>
-          </thead>
-          <tbody v-for="loan in loans.reverse()">
-            <tr>
-              <th scope="col">{{ loan[0] }}</th>
-              <td scope="col">{{ loan[1] }}</td>
-              <td scope="col">{{ loan[2] }}</td>
-              <td scope="col">{{ loan[3] }}</td>
-              <td scope="col">{{ loan[4] }}</td>
-              <td scope="col">{{ loan[5] }}</td>
-              <td scope="col">{{ loan[6] }}</td>
-              <td scope="col">{{ loan[7] }}</td>
-              <td>
-                <button
-                  class="btn btn-danger"
-                  data-bs-toggle="modal"
-                  data-bs-target="#staticBackdrop"
-                >
-                  Cancel
-                </button>
-              </td>
-              <td>
-                <button
-                  class="btn btn-danger"
-                  @click="report(loan[0])"
-                  :disabled="loan[8]"
-                  data-bs-toggle="modal"
-                  data-bs-target="#staticBackdrop1"
-                >
-                  Report Loss
-                </button>
-                <!-- modal -->
-                <div
-                  class="modal fade"
-                  id="staticBackdrop"
-                  data-bs-backdrop="static"
-                  data-bs-keyboard="false"
-                  tabindex="-1"
-                  aria-labelledby="staticBackdropLabel"
-                  aria-hidden="true"
-                >
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h3 class="modal-title fs-5" id="staticBackdropLabel">
-                          Confirm Cancel Booking?
-                        </h3>
-                        <button
-                          type="button"
-                          class="btn-close"
-                          data-bs-dismiss="modal"
-                          aria-label="Close"
-                        ></button>
-                      </div>
-                      <div class="modal-footer">
-                        <button
-                          type="button"
-                          class="btn btn-secondary btn-outline-warning"
-                          @click="cancel(loan[0])"
-                        >
-                          Yes
-                        </button>
-                        <button
-                          type="button"
-                          class="btn btn-light btn-outline-danger"
-                          data-bs-dismiss="modal"
-                        >
-                          No
-                        </button>
-                      </div>
+      <div>
+        <h1 class="text-center">{{ title }}</h1>
+      </div>
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr class="table-light">
+            <th scope="col">Loan ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Start Date</th>
+            <th scope="col">Attraction Name</th>
+            <th scope="col">Pass ID</th>
+            <th scope="col">Previous Borrower</th>
+            <th scope="col">Previous Borrower Contact</th>
+            <th scope="col">Cancel Booking</th>
+            <th scope="col">Report Loss Pass</th>
+          </tr>
+        </thead>
+        <tbody v-for="loan in loans.reverse()">
+          <tr>
+            <th scope="col">{{ loan[0] }}</th>
+            <td scope="col">{{ loan[1] }}</td>
+            <td scope="col">{{ loan[2] }}</td>
+            <td scope="col">{{ loan[3] }}</td>
+            <td scope="col">{{ loan[4] }}</td>
+            <td scope="col">{{ loan[5] }}</td>
+            <td scope="col">{{ loan[6] }}</td>
+            <td scope="col">{{ loan[7] }}</td>
+            <td>
+              <button
+                class="btn btn-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop"
+                :disabled="loan[8]"
+              >
+                Cancel
+              </button>
+            </td>
+            <td>
+              <button
+                class="btn btn-danger"
+                @click="report(loan[0])"
+                :disabled="loan[8]"
+                data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop1"
+              >
+                Report Loss
+              </button>
+              <!-- modal -->
+              <div
+                class="modal fade"
+                id="staticBackdrop"
+                data-bs-backdrop="static"
+                data-bs-keyboard="false"
+                tabindex="-1"
+                aria-labelledby="staticBackdropLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h3 class="modal-title fs-5" id="staticBackdropLabel">
+                        Confirm Cancel Booking?
+                      </h3>
+                      <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary btn-outline-warning"
+                        @click="cancel(loan[0])"
+                      >
+                        Yes
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-light btn-outline-danger"
+                        data-bs-dismiss="modal"
+                      >
+                        No
+                      </button>
                     </div>
                   </div>
                 </div>
-                <!-- modal -->
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <!-- modal2 -->
-        <div
-          class="modal fade"
-          id="staticBackdrop1"
-          data-bs-backdrop="static"
-          data-bs-keyboard="false"
-          tabindex="-1"
-          aria-labelledby="staticBackdropLabel"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h3 class="modal-title fs-5" id="staticBackdropLabel">
-                  Successful Report
-                </h3>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
               </div>
-              <div class="modal-body">HR will reach out to you follow-up shortly.</div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-light btn-outline-danger"
-                  data-bs-dismiss="modal"
-                >
-                  Close
-                </button>
-              </div>
+              <!-- modal -->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- modal2 -->
+      <div
+        class="modal fade"
+        id="staticBackdrop1"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3 class="modal-title fs-5" id="staticBackdropLabel">
+                Successful Report
+              </h3>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              HR will reach out to you follow-up shortly.
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-light btn-outline-danger"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>
-        <!-- modal -->
       </div>
+      <!-- modal -->
     </div>
+  </div>
 </template>
   
   <script lang="ts">
@@ -152,7 +158,6 @@ interface Data {
   staffId: number;
   email: string;
   loanId: number;
-  
 }
 interface LoginData {
   staffId: number;
@@ -187,8 +192,8 @@ export default defineComponent({
     try {
       const loanDetails = await axios.get(
         import.meta.env.VITE_API_URL +
-        "api/loan/list-by-email?email=" +
-        this.email
+          "api/loan/list-by-email?email=" +
+          this.email
       );
       for (const index in loanDetails.data.data) {
         const detail = loanDetails.data.data[index];
@@ -221,6 +226,19 @@ export default defineComponent({
     }
   },
   methods: {
+    async cancel(loanId: any) {
+      try {
+        const res = await axios.delete(
+          import.meta.env.VITE_API_URL + "api/loan/cancel",
+          { data: { loanIds: [loanId] } }
+        );
+        this.$router.go(0);
+      } catch (err) {
+        if (err.response.status == 401) {
+          this.$router.push({ name: "Login" });
+        }
+      }
+    },
     checkLogin(): LoginData | undefined {
       const staffIdStr = localStorage.getItem("staffId");
       const role = localStorage.getItem("role");
@@ -237,18 +255,21 @@ export default defineComponent({
       }
     },
     async report(loanID: number) {
-    try{
+      try {
         console.log(JSON.stringify([parseInt(loanID)]));
-        const res = await axios.post(import.meta.env.VITE_API_URL + "api/loan/report-lost", { loanIds: JSON.stringify([loanID]) });
+        const res = await axios.post(
+          import.meta.env.VITE_API_URL + "api/loan/report-lost",
+          { loanIds: [loanID] }
+        );
         console.log(res);
-    }
-    catch (err) {
-      if (err.response.status == 401) {
-        this.$router.push({ name: "Login" });
+        this.$router.go(3);
+      } catch (err) {
+        if (err.response.status == 401) {
+          this.$router.push({ name: "Login" });
+        }
       }
-    }
+    },
   },
-}
 });
 </script>
   

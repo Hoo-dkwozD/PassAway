@@ -119,7 +119,11 @@ export default defineComponent({
 
 <template>
   <Navbar></Navbar>
-  <div id="top" class="h-100" :style="{ backgroundImage: `url(${currentBackground})` }">
+  <div
+    id="top"
+    class="h-100"
+    :style="{ backgroundImage: `url(${currentBackground})` }"
+  >
     <div class="content">
       <div class="container-fluid">
         <div class="row align-items-stretch">
@@ -127,7 +131,10 @@ export default defineComponent({
             <div class="h-100 content">
               <div class="text-center">
                 <router-link to="/">
-                  <img src="../assets/SSSlogo.png" class="img mx-auto image-style" />
+                  <img
+                    src="../assets/SSSlogo.png"
+                    class="img mx-auto image-style"
+                  />
                 </router-link>
               </div>
 
@@ -138,11 +145,16 @@ export default defineComponent({
                     <div>
                       <div class="align-items">
                         <div id="personal-details">
-                          <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                          <div
+                            class="d-flex flex-grow-1 justify-content-between pb-2"
+                          >
                             Legal Name
                             <div>
                               <div id="edit">
-                                <button class="btn btn-link p-0" @click="editName = !editName">
+                                <button
+                                  class="btn btn-link p-0"
+                                  @click="editName = !editName"
+                                >
                                   Edit
                                 </button>
                               </div>
@@ -157,12 +169,22 @@ export default defineComponent({
                         <div v-else>
                           <form>
                             <div class="form-floating firstName mb-2">
-                              <input type="text" id="firstName" class="form-control" :value="firstName" />
+                              <input
+                                type="text"
+                                id="firstName"
+                                class="form-control"
+                                :value="firstName"
+                              />
                               <label for="firstName">First Name</label>
                             </div>
 
                             <div class="form-floating lastName">
-                              <input type="text" id="lastname" class="form-control" :value="lastName" />
+                              <input
+                                type="text"
+                                id="lastname"
+                                class="form-control"
+                                :value="lastName"
+                              />
                               <label for="lastname">Last Name</label>
                             </div>
                           </form>
@@ -178,11 +200,16 @@ export default defineComponent({
                     <div>
                       <div class="align-items">
                         <div id="personal-details">
-                          <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                          <div
+                            class="d-flex flex-grow-1 justify-content-between pb-2"
+                          >
                             Email
                             <div>
                               <div id="edit">
-                                <button class="btn btn-link p-0" @click="editEmail = !editEmail">
+                                <button
+                                  class="btn btn-link p-0"
+                                  @click="editEmail = !editEmail"
+                                >
                                   Edit
                                 </button>
                               </div>
@@ -191,13 +218,21 @@ export default defineComponent({
                         </div>
                       </div>
                       <div v-if="!editEmail">
-                        <div v-if="email != ''" class="d-flex border rounded p-2">
+                        <div
+                          v-if="email != ''"
+                          class="d-flex border rounded p-2"
+                        >
                           {{ email }}
                         </div>
                       </div>
                       <div v-else>
                         <form class="form-floating">
-                          <input type="text" id="name" class="form-control" :value="email" />
+                          <input
+                            type="text"
+                            id="name"
+                            class="form-control"
+                            :value="email"
+                          />
                           <label for="name">Email</label>
                         </form>
                       </div>
@@ -212,11 +247,16 @@ export default defineComponent({
                     <div>
                       <div class="align-items">
                         <div id="personal-details">
-                          <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                          <div
+                            class="d-flex flex-grow-1 justify-content-between pb-2"
+                          >
                             Contact Number
                             <div>
                               <div id="edit">
-                                <button class="btn btn-link p-0" @click="editNumber = !editNumber">
+                                <button
+                                  class="btn btn-link p-0"
+                                  @click="editNumber = !editNumber"
+                                >
                                   Edit
                                 </button>
                               </div>
@@ -226,12 +266,17 @@ export default defineComponent({
                       </div>
                       <div v-if="!editNumber">
                         <span class="d-flex border rounded p-2">{{
-                            contactNumber
+                          contactNumber
                         }}</span>
                       </div>
                       <div v-else>
                         <form class="form-floating">
-                          <input type="text" id="name" class="form-control" :value="contactNumber" />
+                          <input
+                            type="text"
+                            id="name"
+                            class="form-control"
+                            :value="contactNumber"
+                          />
                           <label for="name">Contact Number</label>
                         </form>
                       </div>
@@ -245,21 +290,26 @@ export default defineComponent({
                     <div>
                       <div class="align-items">
                         <div id="personal-details">
-                          <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                          <div
+                            class="d-flex flex-grow-1 justify-content-between pb-2"
+                          >
                             Booking Status
                           </div>
                         </div>
                       </div>
                       <div>
-                        <span class="d-flex border rounded p-2 mb-3" v-if="!bookingStatus">
-                        <p class="text-success">
-                          You are allowed to make bookings
-                        </p>
+                        <span
+                          class="d-flex border rounded p-2 mb-3"
+                          v-if="!bookingStatus"
+                        >
+                          <p class="text-success">
+                            You are allowed to make bookings
+                          </p>
                         </span>
                         <span class="d-flex border rounded p-2 mb-3" v-else>
-                        <p class="text-danger">
-                          You are not allowed to make bookings
-                        </p>
+                          <p class="text-danger">
+                            You are not allowed to make bookings
+                          </p>
                         </span>
                       </div>
                     </div>
@@ -268,12 +318,19 @@ export default defineComponent({
 
                 <div class="text-center">
                   <div>
-                    <button type="submit" class="w-100 btn btn-outline-success text-uppercase fw-bold mb-2">
+                    <button
+                      @click="updateProfile"
+                      type="submit"
+                      class="w-100 btn btn-outline-success text-uppercase fw-bold mb-2"
+                    >
                       Save
                     </button>
 
                     <RouterLink to="/profilepassword">
-                      <button type="submit" class="w-100 btn btn-outline-dark text-uppercase fw-bold">
+                      <button
+                        type="submit"
+                        class="w-100 btn btn-outline-dark text-uppercase fw-bold"
+                      >
                         Change Password
                       </button>
                     </RouterLink>

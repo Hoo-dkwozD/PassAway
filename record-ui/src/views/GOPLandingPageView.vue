@@ -42,7 +42,7 @@ export default defineComponent({
     async created() {
         try {
             const res = await axios.get(
-                import.meta.env.VITE_API_URL + `api/loan/list-all`,
+                import.meta.env.VITE_API_URL + `api/loan/list`,
             );
             const data = await res.data;
 
@@ -72,7 +72,7 @@ export default defineComponent({
         async markCollected(loan: Loan) {
             try {
                 const res = await axios.put(
-                    import.meta.env.VITE_API_URL + `api/loan/pass/collectStatus`,
+                    import.meta.env.VITE_API_URL + `api/loan/pass/collect`,
                     {
                         loanId: loan.loanId,
                         hasCollected: true,
@@ -91,7 +91,7 @@ export default defineComponent({
         async markReturned(loan: Loan) {
             try {
                 const res = await axios.put(
-                    import.meta.env.VITE_API_URL + `api/loan/pass/returnStatus`,
+                    import.meta.env.VITE_API_URL + `api/loan/pass/return`,
                     {
                         loanId: loan.loanId,
                         hasCollected: true,
