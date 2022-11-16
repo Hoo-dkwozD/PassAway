@@ -40,7 +40,7 @@ const router = createRouter({
     },
     {
       path: "/admin/attractions",
-      name: "attractions",
+      name: "admin attractions",
       component: AttractionView
     },
     {
@@ -55,7 +55,7 @@ const router = createRouter({
     },
     {
       path:'/admin/attraction/create',
-      name : 'CreateAttraction',
+      name : 'create attraction',
       component: CreateAttractionView
     },
     {
@@ -106,17 +106,17 @@ const router = createRouter({
     },
     {
       path: "/admin/bookings",
-      name: "admin all bookings",
+      name: "admin bookings",
       component: AdminAllBookings,
     },
     {
       path: "/admin/staffs",
-      name: "AdminStaffs",
+      name: "admin staffs",
       component: AdminStaffsView,
     },
     {
-      path: "/admin/updateStaff/:staffId",
-      name: "AdminUpdateStaff",
+      path: "/admin/staff/:staffId/update",
+      name: "admin update staff",
       component: StaffUpdateProfileView
     }
   ],
