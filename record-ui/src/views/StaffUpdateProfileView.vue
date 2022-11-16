@@ -106,7 +106,7 @@ export default defineComponent({
         this.lastName = details.lastName;
         this.email = details.email;
         this.contactNumber = details.contactNumber;
-      } catch (err) {
+      } catch (err: any) {
         if (err.response.status === 401) {
           this.$router.push({ name: "Login" });
         }

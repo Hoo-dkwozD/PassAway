@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import AttractionView from "../views/AttractionView.vue"
-import SingleAttractionView from "../views/singleAttractionView.vue"
+import SingleAttractionView from "../views/SingleAttractionView.vue"
 import EditAttractionView from "../views/EditAttractionView.vue"
 import CreateAttractionView from "../views/CreateAttractionView.vue"
 import AdminView from '../views/AdminView.vue';
