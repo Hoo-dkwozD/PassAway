@@ -268,7 +268,7 @@ public class LoanService {
                         ? prevBorrowers.get(0).getStaff().getContactNumber()
                         : "None";
                 response.add(new LoanResponseDto(l.getLoanId(), s.getFirstName(), s.getEmail(), l.getStartDate(),
-                        p.getAttraction().getName(), l.isHasCollected(), l.isHasReturned(), p.getPassId(), p.isLost(),
+                        p.getAttraction().getName(), l.isHasCollected(), l.isHasReturned(), p.getPassId(), p.getAttraction().getPassType(), p.isLost(),
                         prevBorrowerName, prevBorrowerContact));
             }
             JSONWithData<List<LoanResponseDto>> body = new JSONWithData<>(200, response);
@@ -560,7 +560,7 @@ public class LoanService {
                     ? prevBorrowers.get(0).getStaff().getContactNumber()
                     : "None";
             res.add(new LoanResponseDto(l.getLoanId(), s.getFirstName(), s.getEmail(), l.getStartDate(),
-                    p.getAttraction().getName(), l.isHasCollected(), l.isHasReturned(), p.getPassId(), p.isLost(),
+                    p.getAttraction().getName(), l.isHasCollected(), l.isHasReturned(), p.getPassId(), p.getAttraction().getPassType(), p.isLost(),
                     prevBorrowerName, prevBorrowerContact));
         }
 
@@ -577,7 +577,7 @@ public class LoanService {
                 ? prevBorrowers.get(0).getStaff().getContactNumber()
                 : "None";
         return new LoanResponseDto(l.getLoanId(), s.getFirstName(), s.getEmail(), l.getStartDate(),
-                p.getAttraction().getName(), l.isHasCollected(), l.isHasReturned(), p.getPassId(), p.isLost(),
+                p.getAttraction().getName(), l.isHasCollected(), l.isHasReturned(), p.getPassId(), p.getAttraction().getPassType(), p.isLost(),
                 prevBorrowerName, prevBorrowerContact);
     
 

@@ -23,7 +23,7 @@
         </div>
         <div v-else class="row d-flex flex-row justify-content-end pb-2">
           <div class="input-group mb-3">
-            <input @change="changeFile" type="file" class="form-control" accept="image/jpeg,image/jpg,image/png" id="passCSV">
+            <input @change="changeFile" type="file" class="form-control" accept="text/csv" id="passCSV">
             <button @click="uploadFile()" class="btn btn-outline-secondary" type="button" id="passCSVSubmit">Upload</button>
           </div>
         </div>
