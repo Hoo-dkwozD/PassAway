@@ -347,7 +347,7 @@ public class AttractionController {
      */
     @PutMapping(path = "/attraction/{aId}")
     public ResponseEntity<JSONBody> updateAttraction(@PathVariable int aId, @RequestBody UpdateAttractionDto dto) {
-        return aService.updateAttraction(dto);
+        return aService.updateAttraction(aId, dto);
     }
 
     /**
