@@ -53,7 +53,7 @@ export default defineComponent({
 </script>
 
 <template>
-    <div class="content" style="margin-top: 80px;">
+    <div class="content">
         <div class="container-fluid h-100">
             <div class="row align-items-stretch no-gutters contact-wrap">
                 <div class="col-md-12">

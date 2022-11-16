@@ -1,6 +1,11 @@
 <template>
-  <div class="content" style = "margin-top: 80px;">
+  <div class="content">
     <div class="container-fluid">
+      <div class="text-center mt-5">
+          <router-link to="/">
+            <img src="../assets/SSSlogo.png" class="img mx-auto image-style" />
+          </router-link>
+        </div>
       <div class="row align-items-stretch no-gutters contact-wrap">
         <div class="col-md-12">
           <div class="form h-100">
