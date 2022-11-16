@@ -10,7 +10,7 @@
 
 <body>
     <p>Dear <span th:text="${staffName}">, </span></p>
-    <p>Please click on the following link to complete your account registration: <br /> <span th:text="${registerKey}"></p>
+    <p>Please click on the following link to complete your account registration: <br /> <a>http://localhost:80/signup/redirect?key=<span th:text="${registerKey}"></a> </p>
 </body>
 
 </html>

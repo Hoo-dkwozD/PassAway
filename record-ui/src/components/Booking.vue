@@ -1,5 +1,4 @@
 <template>
-  <NavBar></NavBar>
   <div class="container-fluid p-0 mx-0 position-relative w-100 d-flex flex-column" id="top">
     <div
       id="sectionheader"
@@ -189,9 +188,9 @@ export default defineComponent({
       ];
     }
     }
-    catch (err) {
+    catch (err: any) {
       if (err.response.status == 401) {
-        this.$router.push({ name: "Login" });
+        this.$router.push({ name: "login" });
       }
     }
 
@@ -233,7 +232,7 @@ export default defineComponent({
       const role = localStorage.getItem("role");
 
       if (staffIdStr === null || role === null) {
-        this.$router.push({ name: "Login" });
+        this.$router.push({ name: "login" });
       } else {
         this.staffId = parseInt(staffIdStr);
 
@@ -275,10 +274,9 @@ export default defineComponent({
           },
         });
         return res.data;
-      } catch (err) {
-        console.log(err)
+      } catch (err: any) {
         if (err.response.status == 401) {
-          this.$router.push({ name: "Login" });
+          this.$router.push({ name: "login" });
         }
         if (err.response.status == 500) {
           this.errorMsg = "Please check all input fields and ensure you have not exceed the maximum number of passes per month.";

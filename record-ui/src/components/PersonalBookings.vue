@@ -43,7 +43,7 @@
 <script lang="ts">
 import axios from "axios";
 import { defineComponent } from "vue";
-import NavBar from "../components/Navbar.vue";
+import Navbar from "../components/Navbar.vue";
 import { isIntegerKey } from "@vue/shared";
 
 //pass the output from the api to the respective table rows

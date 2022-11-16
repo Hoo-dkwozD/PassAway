@@ -134,7 +134,7 @@ export default defineComponent({
             <div class="text-center">
               <router-link to="/">
                 <img
-                  src="../assets/SSSlogo.png"
+                  src="@/assets/SSSlogo.png"
                   class="img mx-auto image-style"
                 />
               </router-link>

@@ -128,7 +128,7 @@ export default defineComponent({
           const data = await res.data;
 
           if (data.code === 200) {
-            this.$router.push({ name: 'home' }).then(() => this.$router.go(0));
+            this.$router.push({ name: 'attraction' }).then(() => this.$router.go(0));
           }
         } catch (err: any) {
           console.error(err);

@@ -45,7 +45,7 @@ export default defineComponent({
       const role = localStorage.getItem("role");
 
       if (staffIdStr === null || role === null) {
-        this.$router.push({ name: "Login" });
+        this.$router.push({ name: "login" });
       } else {
         const staffId = parseInt(staffIdStr);
 

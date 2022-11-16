@@ -1,5 +1,5 @@
 <template>
-  <NavBar></NavBar>
+  <Navbar></Navbar>
   <div class="container-fluid">
     <div
       class="imageDiv p-5 mb-5 row"
@@ -42,7 +42,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import NavBar from '../components/Navbar.vue'
+import Navbar from '../components/Navbar.vue';
 
 interface Data{
   title: string,
@@ -57,6 +57,9 @@ interface LoginData{
 }
 export default defineComponent ({
     name: 'AdminAllBookings',
+    components: {
+        Navbar
+    },
     data(): Data {
         return{
             title: 'All Bookings',

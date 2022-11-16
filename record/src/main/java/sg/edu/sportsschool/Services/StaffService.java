@@ -1,5 +1,7 @@
 package sg.edu.sportsschool.Services;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
@@ -209,7 +211,7 @@ public class StaffService {
                 sRepository.save(staff);
 
                 emailService.sendRegistrationEmail(staff.getEmail(), staff.getFirstName() + " " + staff.getLastName(),
-                        encodedString);
+                        URLEncoder.encode(encodedString, StandardCharsets.UTF_8));
 
                 JSONBody results = new JSONBody(204);
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.NO_CONTENT);

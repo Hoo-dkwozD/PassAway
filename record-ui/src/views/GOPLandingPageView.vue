@@ -42,7 +42,7 @@ export default defineComponent({
     async created() {
         try {
             const res = await axios.get(
-                import.meta.env.VITE_API_URL + `api/loan/list-all`,
+                import.meta.env.VITE_API_URL + `api/loan`,
             );
             const data = await res.data;
 
@@ -72,7 +72,7 @@ export default defineComponent({
         async markCollected(loan: Loan) {
             try {
                 const res = await axios.put(
-                    import.meta.env.VITE_API_URL + `api/loan/pass/collectStatus`,
+                    import.meta.env.VITE_API_URL + `api/loan/pass/collect`,
                     {
                         loanId: loan.loanId,
                         hasCollected: true,
@@ -91,7 +91,7 @@ export default defineComponent({
         async markReturned(loan: Loan) {
             try {
                 const res = await axios.put(
-                    import.meta.env.VITE_API_URL + `api/loan/pass/returnStatus`,
+                    import.meta.env.VITE_API_URL + `api/loan/pass/return`,
                     {
                         loanId: loan.loanId,
                         hasCollected: true,
@@ -140,39 +140,41 @@ export default defineComponent({
                                     class="btn btn-outline-secondary text-uppercase fw-bold search-btn" @click="filterLoans()">Search</button>
                             </div>
                             <div v-if="loans.length !== 0">
-                                <table class="table table-striped table-hover mt-3">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Email</th>
-                                            <th scope="col">Card Number</th>
-                                            <th scope="col">Loan Date</th>
-                                            <th scope="col">Attraction</th>
-                                            <th scope="col">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="(loan, idx) in displayLoans" :key="idx">
-                                            <td>{{ loan.staffName }}</td>
-                                            <td>{{ loan.staffEmail }}</td>
-                                            <td>{{ loan.passId }}</td>
-                                            <td>{{ loan.visitDate }}</td>
-                                            <td>{{ loan.attractionName }}</td>
-                                            <td>
-                                                <div class="btn-group" role="group" aria-label="Loan status">
-                                                    <input @change="markCollected(loan)" :checked="(!loan.lost) && (!loan.hasReturned) && loan.hasCollected" type="radio" class="btn-check" name="loanStatus" id="collected-btn" autocomplete="off">
-                                                    <label class="btn btn-outline-success" for="collected-btn">Collected</label>
+                                <div class="bg-light rounded p-2 my-4">
+                                    <table class="table table-striped table-hover mt-3">
+                                        <thead>
+                                            <tr>
+                                                <th class="fw-bold" scope="col">Name</th>
+                                                <th class="fw-bold" scope="col">Email</th>
+                                                <th class="fw-bold" scope="col">Card Number</th>
+                                                <th class="fw-bold" scope="col">Loan Date</th>
+                                                <th class="fw-bold" scope="col">Attraction</th>
+                                                <th class="fw-bold" scope="col">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(loan, idx) in displayLoans" :key="idx">
+                                                <td>{{ loan.staffName }}</td>
+                                                <td>{{ loan.staffEmail }}</td>
+                                                <td>{{ loan.passId }}</td>
+                                                <td>{{ loan.visitDate }}</td>
+                                                <td>{{ loan.attractionName }}</td>
+                                                <td>
+                                                    <div class="btn-group" role="group" aria-label="Loan status">
+                                                        <input @change="markCollected(loan)" :checked="(!loan.lost) && (!loan.hasReturned) && loan.hasCollected" type="radio" class="btn-check" name="loanStatus" id="collected-btn" autocomplete="off">
+                                                        <label class="btn btn-outline-success" for="collected-btn">Collected</label>
 
-                                                    <input @change="markReturned(loan)" :checked="(!loan.lost) && loan.hasReturned" type="radio" class="btn-check" name="loanStatus" id="returned-btn" autocomplete="off">
-                                                    <label class="btn btn-outline-info" for="returned-btn">Returned</label>
+                                                        <input @change="markReturned(loan)" :checked="(!loan.lost) && loan.hasReturned" type="radio" class="btn-check" name="loanStatus" id="returned-btn" autocomplete="off">
+                                                        <label class="btn btn-outline-info" for="returned-btn">Returned</label>
 
-                                                    <input @change="markLost(loan)" :checked="loan.lost" type="radio" class="btn-check" name="loanStatus" id="lost-btn" autocomplete="off">
-                                                    <label class="btn btn-outline-danger" for="lost-btn">Lost</label>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                                        <!-- <input @change="markLost(loan)" :checked="loan.lost" type="radio" class="btn-check" name="loanStatus" id="lost-btn" autocomplete="off">
+                                                        <label class="btn btn-outline-danger" for="lost-btn">Lost</label> -->
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             <div v-else>
                                 <div class="p-5">

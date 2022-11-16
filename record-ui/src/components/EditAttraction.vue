@@ -1,79 +1,299 @@
-<!-- eslint-disable prettier/prettier -->
-<!-- eslint-disable prettier/prettier -->
-<!-- eslint-disable prettier/prettier -->
 <template>
-  <form class="container-fluid">
-    <div class="form-group">
-      <label for="name">Name </label>
-      <input v-model="name" type="text" class="form-control" id="name" />
-    </div>
+  <Navbar></Navbar>
+  <div class="container-fluid">
+    <div class="row align-items-stretch">
+      <div class="col-12">
+        <div class="h-100">
+          <div class="text-center">
+            <router-link to="/">
+              <img src="../assets/SSSlogo.png" class="img mx-auto image-style">
+            </router-link>
+          </div>
 
-    <div class="form-group">
-      <label for="desc">Description </label>
-      <input v-model="desc" type="text" class="form-control" id="desc" />
-    </div>
+          <h1 class="h2 text-center">
+            Edit Attraction
+          </h1>
 
-    <div class="form-group">
-      <label for="add">Address</label>
-      <input v-model="add" type="text" class="form-control" id="add" />
-    </div>
+          <div class="form-information">
+            <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
 
-    <div class="form-group">
-      <label for="memid">Membership ID</label>
-      <input v-model="memid" type="text" class="form-control" id="memid" />
-    </div>
+                    <div class="align-items">
+                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                        Attraction Name
+                      </div>
+                      <div>
+                        <form>
+                          <div class="form-floating">
+                            <input type="text" id="attractionName" class="form-control" v-model="name">
+                            <label for="attractionName">Attraction Name</label>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
 
-    <div class="form-group">
-      <label for="expiryyear">Expiry Date(YYYY)</label>
-      <input v-model="expiryyr" type="number" class="form-control" id="expiryyear" />
-    </div>
+                </div>
+              </div>
 
-    <div class="form-group">
-      <label for="expirymth">Expiry Date(MM)</label>
-      <input v-model="expirymth" type="number" class="form-control" id="expirymth" />
-    </div>
+            <hr class="hr-block">
 
-    <div class="form-group">
-      <label for="expiryday">Expiry Date(DD)</label>
-      <input v-model="expiryday" type="number" class="form-control" id="expiryday" />
-    </div>
+              <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
 
-    <div class="form-group">
-      <label for="benefits">Benefits: </label>
-      <input v-model="benefits" type="text" class="form-control" id="benefits" />
-    </div>
+                    <div class="align-items">
+                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                        Description
+                      </div>
+                      <div>
+                        <form>
+                          <div class="form-floating">
+                            <input type="text" id="description" class="form-control" v-model="desc">
+                            <label for="description">Description</label>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
 
-    <div class="form-group">
-      <label for="tnc">Terms and Conditions </label>
-      <input v-model="tnc" type="text" class="form-control" id="tnc" />
-    </div>
+                </div>
+              </div>
 
-    <div class="form-group">
-      <label for="passType">Pass Type : </label>
-      <input v-model="passType" type="text" class="form-control" id="passType" />
-    </div>
+            <hr class="hr-block">
 
-    <div class="form-group">
-      <label for="replacementFee">Replacement Fee : </label>
-      <input v-model="replacementFee" type="number" class="form-control" id="replacementFee" />
-    </div>
+            <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
 
-    <div class="form-group">
-      <label for="numguests">Number of Accompanying Guests : </label>
-      <input v-model="numguests" type="number" class="form-control" id="numguests" />
-    </div>
+                    <div class="align-items">
+                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                        Address
+                      </div>
+                      <div>
+                        <form>
+                          <div class="form-floating">
+                            <input type="text" id="address" class="form-control" v-model="add">
+                            <label for="address">Address</label>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
 
-    <div class="form-group">
-      <label for="maxPasses">Maximum Passes per loan : </label>
-      <input v-model="maxpasses" type="number" class="form-control" id="maxPasses" />
-    </div>
+                </div>
+              </div>
 
-    <div class="form-group">
-      <label for="maxLoans">Maximum Loans Per Month : </label>
-      <input v-model="maxloans" type="number" class="form-control" id="maxLoans" />
+            <hr class="hr-block">
+
+            <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
+
+                    <div class="align-items">
+                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                        Membership ID
+                      </div>
+                      <div>
+                        <form>
+                          <div class="form-floating">
+                            <input type="text" id="membershipID" class="form-control" v-model="memid">
+                            <label for="membershipID">Membership ID</label>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+
+                </div>
+              </div>
+
+            <hr class="hr-block">
+
+            <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
+
+                    <div class="align-items">
+                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                        Expiry Date
+                      </div>
+                      <div>
+                        <form>
+                          <div class="form-floating mb-2">
+                            <input type="number" id="expiryDay" class="form-control" v-model="expiryday">
+                            <label for="expiryDay">Expiry Day</label>
+                          </div>
+                          <div class="form-floating mb-2">
+                            <input type="number" id="expiryMonth" class="form-control" v-model="expirymth">
+                            <label for="expiryMonth">Expiry Month</label>
+                          </div>
+                          <div class="form-floating">
+                            <input type="number" id="expiryYear" class="form-control" v-model="expiryyr">
+                            <label for="expiryYear">Expiry Year</label>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+
+                </div>
+              </div>
+
+            <hr class="hr-block">
+
+            <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
+
+                    <div class="align-items">
+                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                        Benefits
+                      </div>
+                      <div>
+                        <form>
+                          <div class="form-floating">
+                            <input type="text" id="benefits" class="form-control" v-model="benefits">
+                            <label for="benefits">Benefits</label>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+
+                </div>
+              </div>
+
+            <hr class="hr-block">
+
+            <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
+
+                    <div class="align-items">
+                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                        Terms and Conditions
+                      </div>
+                      <div>
+                        <form>
+                          <div class="form-floating">
+                            <input type="text" id="terms-conditions" class="form-control" v-model="tnc">
+                            <label for="terms-conditions">Terms and Conditions</label>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+
+                </div>
+              </div>
+
+            <hr class="hr-block">
+
+            <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
+
+                    <div class="align-items">
+                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                        Pass Type
+                      </div>
+                      <div>
+                        <form>
+                          <div class="form-floating">
+                            <input type="text" id="passType" class="form-control" v-model="passType">
+                            <label for="passType">Pass Type</label>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+
+                </div>
+              </div>
+            <hr class="hr-block">
+
+              <div class="d-flex">
+                <div class="row flex-grow-1 mx-2">
+
+                    <div class="align-items">
+                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                        Replacement Fee
+                      </div>
+                      <div>
+                        <form>
+                          <div class="form-floating">
+                            <input type="number" min="0" id="replacementFee" class="form-control" v-model="replacementFee">
+                            <label for="replacementFee">Replacement Fee</label>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+
+                </div>
+              </div>
+
+              <hr class="hr-block">
+
+                <div class="d-flex">
+                  <div class="row flex-grow-1 mx-2">
+
+                        <div class="align-items">
+                          <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                            Maximum Number of Passes
+                          </div>
+                          <div>
+                            <form>
+                              <div class="form-floating">
+                                <input type="number" min="0" id="maximumPasses" class="form-control" v-model="maxpasses">
+                                <label for="maximumPasses">Maximum Number of Passes</label>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+
+                    </div>
+                  </div>
+
+            <hr class="hr-block">
+
+            <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
+
+                    <div class="align-items">
+                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                        Number of Accompanying Guests
+                      </div>
+                      <div>
+                        <form>
+                          <div class="form-floating">
+                            <input type="number" min="0" id="accompanyingGuests" class="form-control" v-model="numguests">
+                            <label for="accompanyingGuests">Number of Accompanying Guests</label>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+
+                </div>
+              </div>
+
+            <hr class="hr-block">
+
+            <div class="d-flex">
+              <div class="row flex-grow-1 mx-2">
+                    <div class="align-items">
+                      <div class="d-flex flex-grow-1 justify-content-between pb-2">
+                        Maximum Number of Loans
+                      </div>
+                      <div>
+                        <form>
+                          <div class="form-floating">
+                            <input type="number" min="1" max="99" id="maxLoans" class="form-control" v-model="maxloans">
+                            <label for="maxLoans">Maximum Number of Loans</label>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+
+                </div>
+              </div>
+            <div class="text-center mt-4">
+              <button @click="postreq" type="submit" class="w-40 btn btn-outline-success text-uppercase fw-bold">
+                Save
+              </button>
+            </div>
+
+          </div>
+
+          </div>
+        </div>
+      </div>
     </div>
-    <button  class="btn btn-primary" @click="postreq">Submit</button>
-  </form>
 </template>
 
 <script lang="ts">
@@ -96,6 +316,7 @@ interface CreateAttractionData {
   expiryday: number | null,
   benefits: string | null,
   tnc: string | null,
+  attrId: number | null,
   staffId: number | null,
   role: string | null,
 }
@@ -122,6 +343,7 @@ export default defineComponent({
       numguests: null,
       maxpasses: null,
       maxloans: null,
+      attrId: null,
       staffId: null,
       role: null
     };
@@ -204,7 +426,7 @@ export default defineComponent({
         })
         .then((res) => {
           if(res.data.code === 200) {
-            this.$router.push({ name: 'attractions' }).then(() => this.$router.go(0));
+            this.$router.push({ name: 'attraction' }).then(() => this.$router.go(0));
           }
         })
         .catch((err: any) => {
@@ -224,4 +446,14 @@ export default defineComponent({
 });
 </script>
 
-<style></style>
+<style scoped>
+.form-information {
+    margin-top: 5px;
+    margin-bottom: 30px;
+    border: 2px solid black;
+    border-radius: 10px;
+    margin-left: 20%;
+    margin-right: 20%;
+    padding: 10px;
+}
+</style>
