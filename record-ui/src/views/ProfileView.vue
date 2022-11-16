@@ -97,6 +97,7 @@ export default defineComponent({
           this.email = data.data.email;
           this.contactNumber = data.data.contactNumber;
           this.bookingStatus = !data.data.cannotBook;
+          console.log(data.data.cannotBook);
         } else {
           console.error(data.message);
         }
@@ -250,9 +251,16 @@ export default defineComponent({
                         </div>
                       </div>
                       <div>
-                        <span class="d-flex border rounded p-2 mb-3">{{
-                            bookingStatus
-                        }}</span>
+                        <span class="d-flex border rounded p-2 mb-3" v-if="!bookingStatus">
+                        <p class="text-success">
+                          You are allowed to make bookings
+                        </p>
+                        </span>
+                        <span class="d-flex border rounded p-2 mb-3" v-else>
+                        <p class="text-danger">
+                          You are not allowed to make bookings
+                        </p>
+                        </span>
                       </div>
                     </div>
                   </div>

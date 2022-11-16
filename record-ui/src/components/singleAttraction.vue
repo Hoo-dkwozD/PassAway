@@ -1,5 +1,4 @@
 <template>
-  <Navbar></Navbar>
   <div id="top" class="overflow-auto" :style="{ backgroundImage: `url(${currentBackground})` }">
     <div class="content">
       <div class="container-fluid">
@@ -421,7 +420,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import axios from "axios";
-import Navbar from "../components/Navbar.vue";
+import Navbar from "./Navbar.vue";
 
 // Typings
 interface Attraction {

@@ -157,7 +157,6 @@
               <th scope="col">Contact</th>
               <th scope="col">Role</th>
               <th scope="col">Registered?</th>
-              <th scope="col">Left?</th>
               <th scope="col">Edit</th>
               <th scope="col">Delete</th>
             </tr>
@@ -169,8 +168,7 @@
               <td scope="col">{{ staff[2] }}</td>
               <td scope="col">{{ staff[3] }}</td>
               <td scope="col">{{ staff[4] }}</td>
-              <td scope="col">{{ staff[5] }}</td>
-              <td scope="col">{{ staff[6] }}</td>
+              <td scope="col">{{ staff[5] ? "Yes" : "No" }}</td>
               <td scope="col">
                 <button
                   class="btn btn-secondary"

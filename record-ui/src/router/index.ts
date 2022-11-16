@@ -4,26 +4,44 @@ import SingleAttractionView from "../views/singleAttractionView.vue"
 import EditAttractionView from "../views/EditAttractionView.vue"
 import singleAttractionView from "../views/singleAttractionView.vue"
 import CreateAttraction from "../components/CreateAttraction.vue"
+import PassesView from "../views/PassesView.vue";
 import AdminView from '../views/AdminView.vue';
-import AdminAllBookings from "../views/adminAllBookings.vue";
-import BookingConfirmationView from '../views/BookingConfirmationView.vue';
-import BookView from '../views/BookView.vue';
 import EditBarCodeView from "../views/EditBarCodeView.vue";
 import GOPLandingPageView from "../views/GOPLandingPageView.vue";
 import LoginView from "../views/LoginView.vue";
 import PersonalBookingsView from "../views/PersonalBookingsView.vue";
 import ProfileView from "../views/ProfileView.vue";
 import ProfilePasswordView from "../views/ProfilePasswordView.vue";
-import SignupView from "../views/SignupView.vue";
 import AdminStaffsView from "../views/AdminStaffsView.vue";
 import StaffUpdateProfileView from "../views/StaffUpdateProfileView.vue";
 import SignupRedirectView from "../views/SignupRedirectView.vue";
-import StaffAddView from "../views/StaffAddView.vue";
 import CreateAttractionView from "../views/CreateAttractionView.vue";
+import BookView from '../views/BookView.vue'
+import BookingConfirmationView from '../views/BookingConfirmationView.vue'
+import Profile from '../views/ProfileView.vue'
+import ProfilePassword from '../views/ProfilePasswordView.vue'
+import GOPLandingPage from '../views/GOPLandingPageView.vue'
+import Admin from '../views/AdminView.vue'
+import EditBarCode from '../views/EditBarCodeView.vue'
+import SignUp from '../views/SignupView.vue'
+import SignupRedirect from '../views/SignupRedirectView.vue'
+import AdminAllBookings from '../views/adminAllBookings.vue'
+import SignupView from '../views/SignupView.vue';
+import StaffAddView from "../views/StaffAddView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: "/passes",
+      name: "PassesView",
+      component: PassesView,
+    },
+    {
+      path: "/editadmin",
+      name: "AdminView",
+      component: AdminView,
+    },
     {
       path: "/",
       name: "home",
@@ -36,14 +54,14 @@ const router = createRouter({
       component: AdminView
     },
     {
-      path: "/staffs/add",
-      name: "add staff",
-      component: StaffAddView
-    },
-    {
       path:"/Attract",
       name:"Attract",
       component: AttractionView
+    },
+    {
+      path: "/staffs/add",
+      name: "add staff",
+      component: StaffAddView
     },
     {
       path:'/Attract/:id',
