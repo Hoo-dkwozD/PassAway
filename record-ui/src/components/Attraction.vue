@@ -197,10 +197,15 @@ export default defineComponent({
     } catch (err: any) {
       if (err.response) {
         if (err.response.status == 401) {
-          // this.$router
-          //   .push({ name: "login" })
-          //   .then(() => this.$router.go(0));
-          console.log(err.response);
+          this.$router
+            .push({ name: "login" })
+            .then(() => this.$router.go(0));
+
+          return;
+        } else if (err.response.status == 403) {
+          this.$router
+            .push({ name: "home" })
+            .then(() => this.$router.go(0));
 
           return;
         } else {
@@ -252,6 +257,12 @@ export default defineComponent({
           } else {
             console.error(err.response.data.message);
           }
+        } else if (err.response.status == 403) {
+          this.$router
+            .push({ name: "home" })
+            .then(() => this.$router.go(0));
+
+          return;
         } else {
           console.error(err.message);
         }

@@ -425,28 +425,50 @@ export default defineComponent({
       return;
     }
 
-    const res = await axios.get(
-      import.meta.env.VITE_API_URL + `api/attraction/${this.$route.params.id}`,
-      {
-        headers: {'authorization': `${localStorage.getItem("token")}`},
-      }
-    );
-    const data = await res.data;
+    try {
+      const res = await axios.get(
+        import.meta.env.VITE_API_URL + `api/attraction/${this.$route.params.id}`,
+        {
+          headers: {'authorization': `${localStorage.getItem("token")}`},
+        }
+      );
+      const data = await res.data;
 
-    this.name = data.data.name;
-    this.desc = data.data.description;
-    this.add = data.data.address;
-    this.memid = data.data.membershipId;
-    this.expiryyr = parseInt(data.data.expiryDate.split("-")[0]);
-    this.expirymth = parseInt(data.data.expiryDate.split("-")[1]);
-    this.expiryday = parseInt(data.data.expiryDate.split("-")[2]);
-    this.benefits = data.data.benefits;
-    this.tnc = data.data.termsConditions;
-    this.passType = data.data.passType === "PHYSICAL" ? "0" : "1";
-    this.replacementFee = data.data.replacementFee;
-    this.numguests = data.data.numAccompanyingGuests;
-    this.maxpasses = data.data.maxPassesPerLoan;
-    this.maxloans = data.data.maxLoansPerMonth;
+      this.name = data.data.name;
+      this.desc = data.data.description;
+      this.add = data.data.address;
+      this.memid = data.data.membershipId;
+      this.expiryyr = parseInt(data.data.expiryDate.split("-")[0]);
+      this.expirymth = parseInt(data.data.expiryDate.split("-")[1]);
+      this.expiryday = parseInt(data.data.expiryDate.split("-")[2]);
+      this.benefits = data.data.benefits;
+      this.tnc = data.data.termsConditions;
+      this.passType = data.data.passType === "PHYSICAL" ? "0" : "1";
+      this.replacementFee = data.data.replacementFee;
+      this.numguests = data.data.numAccompanyingGuests;
+      this.maxpasses = data.data.maxPassesPerLoan;
+      this.maxloans = data.data.maxLoansPerMonth;
+      } catch (err: any) {
+        if (err.response) {
+          if (err.response.status === 401) {
+            this.$router
+              .push({ name: "login" })
+              .then(() => this.$router.go(0));
+
+            return;
+          } else if (err.response.status == 403) {
+            this.$router
+              .push({ name: "home" })
+              .then(() => this.$router.go(0));
+
+            return;
+          } else {
+            console.error(err.response.data.message);
+          }
+        } else {
+          console.log(err.message);
+        }
+      }
   },
   methods: {
     checkLogin(): LoginData | undefined {
@@ -508,6 +530,12 @@ export default defineComponent({
               this.$router
                 .push({ name: "login" })
                 .then(() => this.$router.go(0));
+            } else if (err.response.status == 403) {
+              this.$router
+                .push({ name: "home" })
+                .then(() => this.$router.go(0));
+
+              return;
             } else {
               console.log(err.response.data.message);
             }

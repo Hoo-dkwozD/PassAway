@@ -139,6 +139,12 @@ export default defineComponent({
                 .push({ name: "login" })
                 .then(() => this.$router.go(0));
               return;
+            } else if (err.response.status == 403) {
+              this.$router
+                .push({ name: "home" })
+                .then(() => this.$router.go(0));
+
+              return;
             } else {
               console.error(err.response.data.message);
             }
@@ -170,6 +176,12 @@ export default defineComponent({
               this.$router
                 .push({ name: "login" })
                 .then(() => this.$router.go(0));
+              return;
+            } else if (err.response.status == 403) {
+              this.$router
+                .push({ name: "home" })
+                .then(() => this.$router.go(0));
+
               return;
             } else {
               console.error(err.response.data.message);

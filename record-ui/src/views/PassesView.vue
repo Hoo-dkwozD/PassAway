@@ -1,31 +1,54 @@
-
 <template>
   <Navbar></Navbar>
   <div class="container w-80">
     <div class="row mt-3">
       <div class="col">
-        <select name="attractions" id="attractions" class="form-select text-center mb-3" @change="showPasses"
-          v-model="attId" placeholder="Select attraction">
+        <select
+          name="attractions"
+          id="attractions"
+          class="form-select text-center mb-3"
+          @change="showPasses"
+          v-model="attId"
+          placeholder="Select attraction"
+        >
           <option :value="0">All</option>
-          <option v-for="attraction, idx in allAttractions" :key="idx" :value="attraction['attractionId']">
-            {{ attraction['name'] }}
+          <option
+            v-for="(attraction, idx) in allAttractions"
+            :key="idx"
+            :value="attraction['attractionId']"
+          >
+            {{ attraction["name"] }}
           </option>
         </select>
 
-        <div v-if="showAdd" class="row d-flex flex-row justify-content-end pb-2">
-            <input 
-              class="btn btn-company-orange w-auto mx-3" 
-              type="button" 
-              value="Add Pass" 
-              data-bs-toggle="modal"
-              data-bs-target="#staticBackdrop"
+        <div
+          v-if="showAdd"
+          class="row d-flex flex-row justify-content-end pb-2"
+        >
+          <div class="input-group mb-3 w-auto">
+            <input
+              @change="changeFile"
+              type="file"
+              class="form-control"
+              accept="text/csv"
+              id="passCSV"
             />
-        </div>
-        <div v-else class="row d-flex flex-row justify-content-end pb-2">
-          <div class="input-group mb-3">
-            <input @change="changeFile" type="file" class="form-control" accept="text/csv" id="passCSV">
-            <button @click="uploadFile()" class="btn btn-outline-secondary" type="button" id="passCSVSubmit">Upload</button>
+            <button
+              @click="uploadFile()"
+              class="btn btn-outline-secondary"
+              type="button"
+              id="passCSVSubmit"
+            >
+              Upload
+            </button>
           </div>
+          <input
+            class="btn btn-company-orange w-auto mx-3 mb-3"
+            type="button"
+            value="Add Pass"
+            data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop"
+          />
         </div>
 
         <table class="table table-striped table-hover table-bordered table-sm">
@@ -38,13 +61,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="pass, idx in allPasses" :key="idx">
-              <td scope="row">{{ pass['name'] }}</td>
-              <td>{{ pass['passId'] }}</td>
-              <td>{{ pass['passType'] }}</td>
-              <td :class="{ 'lost': pass['lost'] }">{{ pass['lost'] ? "Yes" : "No" }}</td>
+            <tr v-for="(pass, idx) in allPasses" :key="idx">
+              <td scope="row">{{ pass["name"] }}</td>
+              <td>{{ pass["passId"] }}</td>
+              <td>{{ pass["passType"] }}</td>
+              <td :class="{ lost: pass['lost'] }">
+                {{ pass["lost"] ? "Yes" : "No" }}
+              </td>
             </tr>
-
           </tbody>
         </table>
       </div>
@@ -62,9 +86,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h3 class="modal-title fs-5" id="staticBackdropLabel">
-            Add Pass
-          </h3>
+          <h3 class="modal-title fs-5" id="staticBackdropLabel">Add Pass</h3>
           <button
             type="button"
             class="btn-close"
@@ -76,7 +98,13 @@
           <form>
             <div class="mb-3">
               <label for="exampleInputEmail1" class="form-label">Pass ID</label>
-              <input v-model="passIdToAdd" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+              <input
+                v-model="passIdToAdd"
+                type="text"
+                class="form-control"
+                id="exampleInputEmail1"
+                aria-describedby="emailHelp"
+              />
             </div>
           </form>
         </div>
@@ -100,7 +128,7 @@
 <script lang="ts">
 import axios from "axios";
 import { defineComponent } from "vue";
-import Navbar from '@/components/Navbar.vue';
+import Navbar from "@/components/Navbar.vue";
 
 // Typings
 interface LoginData {
@@ -109,31 +137,31 @@ interface LoginData {
 }
 
 interface Attraction {
-  attractionId: number,
-  name: string
+  attractionId: number;
+  name: string;
 }
 
 interface Pass {
-  passId: string,
-  name: string,
-  passType: string,
-  lost: boolean
+  passId: string;
+  name: string;
+  passType: string;
+  lost: boolean;
 }
 
 interface PassesViewData {
-  allAttractions: Attraction[],
-  allPasses: Pass[],
-  attId: number | null,
-  staffId: number | null,
-  role: string | null,
-  showAdd: boolean,
-  passIdToAdd: string | null,
-  uploadingFile: any | null
+  allAttractions: Attraction[];
+  allPasses: Pass[];
+  attId: number | null;
+  staffId: number | null;
+  role: string | null;
+  showAdd: boolean;
+  passIdToAdd: string | null;
+  uploadingFile: any | null;
 }
 
 export default defineComponent({
   components: {
-    Navbar
+    Navbar,
   },
   data(): PassesViewData {
     return {
@@ -144,7 +172,7 @@ export default defineComponent({
       role: null,
       showAdd: false,
       passIdToAdd: null,
-      uploadingFile: null
+      uploadingFile: null,
     };
   },
   methods: {
@@ -168,17 +196,63 @@ export default defineComponent({
       let res;
       if (this.attId == 0) {
         this.showAdd = false;
-        res = await axios.get(
-          import.meta.env.VITE_API_URL + `api/pass/list`
-        );
+
+        try {
+          res = await axios.get(
+            import.meta.env.VITE_API_URL + `api/pass/list`,
+            {
+              headers: {'authorization': `${localStorage.getItem("token")}`},
+            }
+          );
+
+          this.allPasses = await res.data.data;
+        } catch (err: any) {
+          if (err.response) {
+            if (err.response.status == 401) {
+              this.$router.push({ name: "login" }).then(() => this.$router.go(0));
+            } else if (err.response.status == 403) {
+              this.$router
+                .push({ name: "home" })
+                .then(() => this.$router.go(0));
+
+              return;
+            } else {
+              console.error(err.response.data.message);
+            }
+          } else {
+            console.error(err.message);
+          }
+        }
       } else {
-        res = await axios.get(
-          import.meta.env.VITE_API_URL + `api/pass/list-by-attraction?attractionId=${this.attId}`
-        );
+        try {
+          res = await axios.get(
+            import.meta.env.VITE_API_URL +
+              `api/pass/list-by-attraction?attractionId=${this.attId}`,
+            {
+              headers: {'authorization': `${localStorage.getItem("token")}`},
+            }
+          );
+          this.showAdd = true;
+
+          this.allPasses = await res.data.data;
+        } catch (err: any) {
+          if (err.response) {
+            if (err.response.status == 401) {
+              this.$router.push({ name: "login" }).then(() => this.$router.go(0));
+            } else if (err.response.status == 403) {
+              this.$router
+                .push({ name: "home" })
+                .then(() => this.$router.go(0));
+
+              return;
+            } else {
+              console.error(err.response.data.message);
+            }
+          } else {
+            console.error(err.message);
+          }
+        }
       }
-      this.allPasses = res.data.data;
-      this.showAdd = true;
-      // console.log(this.allPasses);
     },
     async addPass() {
       try {
@@ -186,7 +260,10 @@ export default defineComponent({
           import.meta.env.VITE_API_URL + "api/pass/add",
           {
             attractionId: this.attId,
-            passId: this.passIdToAdd
+            passId: this.passIdToAdd,
+          },
+          {
+            headers: {'authorization': `${localStorage.getItem("token")}`},
           }
         );
         const data = res.data;
@@ -198,6 +275,12 @@ export default defineComponent({
         if (err.response) {
           if (err.response.status == 401) {
             this.$router.push({ name: "login" }).then(() => this.$router.go(0));
+          } else if (err.response.status == 403) {
+            this.$router
+              .push({ name: "home" })
+              .then(() => this.$router.go(0));
+
+            return;
           } else {
             console.error(err.response.data.message);
           }
@@ -207,7 +290,9 @@ export default defineComponent({
       }
     },
     changeFile(e: Event) {
-      this.uploadingFile = e.target.files[0];
+      if (e.target) {
+        this.uploadingFile = e.target.files[0];
+      }
     },
     async uploadFile() {
       const reqData = new FormData();
@@ -221,20 +306,37 @@ export default defineComponent({
             reqData,
             {
               headers: {
-                'Content-Type': this.uploadingFile.type
-              }
+                "Content-Type": this.uploadingFile.type,
+                'authorization': `${localStorage.getItem("token")}`,
+              },
             }
           );
           const data = await res.data;
 
           if (data.code === 200) {
-            this.$router.push({ name: 'passes' }).then(() => this.$router.go(0));
+            this.$router
+              .push({ name: "passes" })
+              .then(() => this.$router.go(0));
           }
         } catch (err: any) {
-          console.error(err);
+          if (err.response) {
+            if (err.response.status == 401) {
+              this.$router.push({ name: "login" }).then(() => this.$router.go(0));
+            } else if (err.response.status == 403) {
+              this.$router
+                .push({ name: "home" })
+                .then(() => this.$router.go(0));
+
+              return;
+            } else {
+              console.error(err.response.data.message);
+            }
+          } else {
+            console.error(err.message);
+          }
         }
       }
-    }
+    },
   },
   async created() {
     const loginData: LoginData | undefined = this.checkLogin();
@@ -254,24 +356,35 @@ export default defineComponent({
 
     try {
       let res = await axios.get(
-        import.meta.env.VITE_API_URL + "api/pass/list"
+        import.meta.env.VITE_API_URL + "api/pass/list",
+        {
+          headers: {'authorization': `${localStorage.getItem("token")}`},
+        }
       );
-      this.allPasses = await res.data.data
+      this.allPasses = await res.data.data;
 
       res = await axios.get(
-        import.meta.env.VITE_API_URL + "api/attractions"
+        import.meta.env.VITE_API_URL + "api/attractions",
+        {
+          headers: {'authorization': `${localStorage.getItem("token")}`},
+        }
       );
       this.allAttractions = await res.data.data;
-      // console.log(this.allAttractions);
     } catch (err: any) {
       if (err.response) {
         if (err.response.status == 401) {
-          this.$router.push({ name: "Login" });
+          this.$router.push({ name: "login" }).then(() => this.$router.go(0));
+        } else if (err.response.status == 403) {
+          this.$router
+            .push({ name: "home" })
+            .then(() => this.$router.go(0));
+
+          return;
         } else {
           console.error(err.response.data.message);
         }
       } else {
-        console.error(err);
+        console.error(err.message);
       }
     }
   },

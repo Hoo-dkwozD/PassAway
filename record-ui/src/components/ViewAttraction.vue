@@ -385,6 +385,12 @@ export default defineComponent({
             if (err.response) {
                 if (err.response.status == 401) {
                     this.$router.push({ name: "login" }).then(() => this.$router.go(0));
+                } else if (err.response.status == 403) {
+                    this.$router
+                        .push({ name: "home" })
+                        .then(() => this.$router.go(0));
+
+                    return;
                 } else {
                     console.error(err.response.data.message);
                 }
