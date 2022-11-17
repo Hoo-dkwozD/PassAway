@@ -159,7 +159,7 @@
                   v-model="role"
                 />
                 <label class="form-check-label" for="inlineRadio1"
-                  >Admin</label
+                  >Borrower</label
                 >
               </div>
               <div class="form-check form-check-inline">
@@ -172,7 +172,7 @@
                   v-model="role"
                 />
                 <label class="form-check-label" for="inlineRadio2"
-                  >Borrower</label
+                  >Admin</label
                 >
               </div>
               <div class="form-check form-check-inline">

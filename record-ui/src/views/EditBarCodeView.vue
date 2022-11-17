@@ -168,6 +168,11 @@ export default defineComponent({
         try {
           const attrRes = await axios.get(
             import.meta.env.VITE_API_URL + `api/attractions`,
+            {
+              headers: {
+                "authorization": `${localStorage.getItem("token")}`,
+              },
+            }
           );
           this.attractions = await attrRes.data.data;
         } catch (err: any) {

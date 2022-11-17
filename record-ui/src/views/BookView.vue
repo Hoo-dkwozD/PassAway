@@ -180,7 +180,12 @@ export default defineComponent({
     this.checkLogin();
     try {
       const res = await axios.get(
-        import.meta.env.VITE_API_URL + "api/attractions"
+        import.meta.env.VITE_API_URL + "api/attractions",
+        {
+          headers: {
+            'authorization': `${localStorage.getItem("token")}`
+          }
+        }
       );
       for (const att of res.data.data) {
         this.allAttractions[att.attractionId] = att;
@@ -225,7 +230,12 @@ export default defineComponent({
       try {
         const res = await axios.get(
           import.meta.env.VITE_API_URL +
-            `api/loan/available-passes?aId=${this.attractionId}&yyyy=${year}&mm=${month}`
+            `api/loan/available-passes?aId=${this.attractionId}&yyyy=${year}&mm=${month}`,
+            {
+              headers: {
+                'authorization': `${localStorage.getItem("token")}`
+              }
+            }
         );
         const monthNumPassObj = res.data.data;
         this.availablePassesInfo = [];
@@ -263,7 +273,12 @@ export default defineComponent({
       try {
         const res = await axios.get(
           import.meta.env.VITE_API_URL +
-            `api/loan/available-passes?aId=${this.attractionId}&yyyy=${year}&mm=${month}`
+            `api/loan/available-passes?aId=${this.attractionId}&yyyy=${year}&mm=${month}`,
+          {
+            headers: {
+              'authorization': `${localStorage.getItem("token")}`
+            }
+          }
         );
         const monthNumPassObj = res.data.data;
         this.availablePassesInfo = [];
@@ -341,13 +356,13 @@ export default defineComponent({
         console.log(this.loanID);
 
         this.$router.push({
-          name: "bookings",
+          name: "personal bookings",
         });
         return res.data;
       } catch (err: any) {
         console.log(err);
         if (err.response.status == 401) {
-          this.$router.push({ name: "Login" });
+          this.$router.push({ name: "login" });
         }
         if (err.response.status == 500) {
           this.errorMsg = err.response.data + "<br>";
