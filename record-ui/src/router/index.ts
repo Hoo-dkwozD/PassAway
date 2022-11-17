@@ -45,14 +45,6 @@ import PersonalBookingsView from "@/views/PersonalBookingsView.vue";
 // Staffs
 import ProfileView from "@/views/ProfileView.vue";
 import ProfilePasswordView from "@/views/ProfilePasswordView.vue";
-import Profile from '../views/ProfileView.vue'
-import ProfilePassword from '../views/ProfilePasswordView.vue'
-import GOPLandingPage from '../views/GOPLandingPageView.vue'
-import Admin from '../views/AdminView.vue'
-import EditBarCode from '../views/EditBarCodeView.vue'
-import SignUp from '../views/SignupView.vue'
-import SignupRedirect from '../views/SignupRedirectView.vue'
-import StaffAddView from "../views/StaffAddView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

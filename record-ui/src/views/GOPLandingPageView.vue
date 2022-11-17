@@ -72,7 +72,7 @@ export default defineComponent({
         async markCollected(loan: Loan) {
             try {
                 const res = await axios.put(
-                    import.meta.env.VITE_API_URL + `api/loan/pass/collect`,
+                    import.meta.env.VITE_API_URL + `api/loan/collect`,
                     {
                         loanId: loan.loanId,
                         hasCollected: true,
@@ -91,7 +91,7 @@ export default defineComponent({
         async markReturned(loan: Loan) {
             try {
                 const res = await axios.put(
-                    import.meta.env.VITE_API_URL + `api/loan/pass/return`,
+                    import.meta.env.VITE_API_URL + `api/loan/return`,
                     {
                         loanId: loan.loanId,
                         hasCollected: true,
@@ -132,7 +132,7 @@ export default defineComponent({
                             </h1>
 
                             <div class="form-floating mx-auto mb-3 col-6">
-                                <input v-model="queryString" type="email" class="form-control" id="email">
+                                <input v-model="queryString" @keyup.enter="filterLoans()" type="email" class="form-control" id="email">
                                 <label for="email">Email address</label>
                             </div>
                             <div class="text-center">
@@ -153,7 +153,7 @@ export default defineComponent({
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(loan, idx) in displayLoans" :key="idx">
+                                            <tr v-for="loan, idx in displayLoans" :key="idx">
                                                 <td>{{ loan.staffName }}</td>
                                                 <td>{{ loan.staffEmail }}</td>
                                                 <td>{{ loan.passId }}</td>
@@ -161,11 +161,11 @@ export default defineComponent({
                                                 <td>{{ loan.attractionName }}</td>
                                                 <td>
                                                     <div class="btn-group" role="group" aria-label="Loan status">
-                                                        <input @change="markCollected(loan)" :checked="(!loan.lost) && (!loan.hasReturned) && loan.hasCollected" type="radio" class="btn-check" name="loanStatus" id="collected-btn" autocomplete="off">
-                                                        <label class="btn btn-outline-success" for="collected-btn">Collected</label>
+                                                        <input @change="markCollected(loan)" :checked="(!loan.lost) && (!loan.hasReturned) && loan.hasCollected" type="radio" class="btn-check" :name="`loanStatus` + idx" :id="`collected-btn` + idx" autocomplete="off">
+                                                        <label class="btn btn-outline-success" :for="`collected-btn` + idx">Collected</label>
 
-                                                        <input @change="markReturned(loan)" :checked="(!loan.lost) && loan.hasReturned" type="radio" class="btn-check" name="loanStatus" id="returned-btn" autocomplete="off">
-                                                        <label class="btn btn-outline-info" for="returned-btn">Returned</label>
+                                                        <input @change="markReturned(loan)" :checked="(!loan.lost) && loan.hasReturned" type="radio" class="btn-check" :name="`loanStatus` + idx" :id="`returned-btn` + idx" autocomplete="off">
+                                                        <label class="btn btn-outline-info" :for="`returned-btn` + idx">Returned</label>
 
                                                         <!-- <input @change="markLost(loan)" :checked="loan.lost" type="radio" class="btn-check" name="loanStatus" id="lost-btn" autocomplete="off">
                                                         <label class="btn btn-outline-danger" for="lost-btn">Lost</label> -->

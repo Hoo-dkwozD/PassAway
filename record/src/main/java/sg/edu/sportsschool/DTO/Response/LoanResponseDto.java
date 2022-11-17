@@ -34,6 +34,7 @@ public class LoanResponseDto {
         this.isLost = isLost;
         this.prevBorrowerName = prevBorrowerName;
         this.prevBorrowerContact = prevBorrowerContact;
+        this.passType = passType;
     }
 
     public Integer getLoanId() {
