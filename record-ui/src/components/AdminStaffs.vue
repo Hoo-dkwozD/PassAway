@@ -1,12 +1,11 @@
 <template>
-  <div class="container-fluid p-0 mx-0 position-relative w-100 d-flex flex-column">
-    <div class="vh-100">
+  <div class="container-fluid p-0 mx-0 position-relative w-100 h-100 d-flex flex-column">
+    <div class="h-100" :style="{ backgroundImage: `url(${currentBackground})` }">
       <div
-        class="imageDiv p-5 mb-5 row"
-        :style="{ backgroundImage: `url(${currentBackground})` }"
+        class="imageDiv p-5 row"
       >
-        <div>
-          <h1 class="text-center">{{ title }}</h1>
+        <div class="h-10">
+          <h1 class="text-center p-0">{{ title }}</h1>
         </div>
       <div class="d-flex px-0">
         <form>
@@ -30,124 +29,12 @@
             type="button"
             class="btn btn-secondary m-2"
             data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
+            data-bs-target="#staticBackdrop"
           >
             Add Staff
           </button>
           <div class="modal fade" id="myModal" role="dialog"></div>
         </div>
-        <div
-          class="modal fade"
-          id="exampleModal"
-          tabindex="-1"
-          aria-labelledby="exampleModalLabel"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h3 class="modal-title fs-5" id="exampleModalLabel">
-                  Add New Staff
-                </h3>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
-              </div>
-            </div>
-              <div class="modal-body">
-                <form>
-                  <div class="mb-3">
-                    <input
-                      type="text"
-                      class="form-control m-2"
-                      v-model="firstName"
-                      placeholder="First Name"
-                    />
-
-                    <input
-                      type="text"
-                      class="form-control m-2"
-                      v-model="lastName"
-                      placeholder="Last Name"
-                    />
-
-                    <input
-                      type="text"
-                      class="form-control m-2"
-                      v-model="inputEmail"
-                      placeholder="@sportsschool.edu.sg"
-                    />
-
-                    <input
-                      type="text"
-                      class="form-control m-2"
-                      v-model="contact"
-                      placeholder="Contact Number"
-                    />
-                    <div class="form-check form-check-inline">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        name="inlineRadioOptions"
-                        id="inlineRadio1"
-                        value="0"
-                        v-model="role"
-                      />
-                      <label class="form-check-label" for="inlineRadio1"
-                        >Admin</label
-                      >
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        name="inlineRadioOptions"
-                        id="inlineRadio2"
-                        value="1"
-                        v-model="role"
-                      />
-                      <label class="form-check-label" for="inlineRadio2"
-                        >Borrower</label
-                      >
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        name="inlineRadioOptions"
-                        id="inlineRadio2"
-                        value="2"
-                        v-model="role"
-                      />
-                      <label class="form-check-label" for="inlineRadio2"
-                        >GOP</label
-                      >
-                    </div>
-                  </div>
-                </form>
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-light btn-outline-danger"
-                  data-bs-dismiss="modal"
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-secondary btn-outline-warning"
-                  @click="addStaff()"
-                  data-bs-dismiss="modal"
-                >
-                  Add
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
         <table class="table table-bordered table-hover">
           <thead>
@@ -210,9 +97,123 @@
       </div>
     </div>
   </div>
+  <div
+    class="modal fade"
+    id="staticBackdrop"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title fs-5" id="exampleModalLabel">
+            Add New Staff
+          </h3>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <input
+                type="text"
+                class="form-control m-2"
+                v-model="firstName"
+                placeholder="First Name"
+              />
+
+              <input
+                type="text"
+                class="form-control m-2"
+                v-model="lastName"
+                placeholder="Last Name"
+              />
+
+              <input
+                type="text"
+                class="form-control m-2"
+                v-model="inputEmail"
+                placeholder="@sportsschool.edu.sg"
+              />
+
+              <input
+                type="text"
+                class="form-control m-2"
+                v-model="contact"
+                placeholder="Contact Number"
+              />
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="inlineRadioOptions"
+                  id="inlineRadio1"
+                  value="0"
+                  v-model="role"
+                />
+                <label class="form-check-label" for="inlineRadio1"
+                  >Admin</label
+                >
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="inlineRadioOptions"
+                  id="inlineRadio2"
+                  value="1"
+                  v-model="role"
+                />
+                <label class="form-check-label" for="inlineRadio2"
+                  >Borrower</label
+                >
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="inlineRadioOptions"
+                  id="inlineRadio2"
+                  value="2"
+                  v-model="role"
+                />
+                <label class="form-check-label" for="inlineRadio2"
+                  >GOP</label
+                >
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-light btn-outline-danger"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary btn-outline-warning"
+            @click="addStaff()"
+            data-bs-dismiss="modal"
+          >
+            Add
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
-    
-    <script lang="ts">
+
+<script lang="ts">
 import axios from "axios";
 import { defineComponent } from "vue";
 
@@ -220,7 +221,7 @@ import { defineComponent } from "vue";
 interface Data {
   title: string;
   currentBackground: string;
-  staffs: [];
+  staffs: any[];
   staffId: number;
   disableButton: boolean;
   file: string;
@@ -257,8 +258,8 @@ export default defineComponent({
   },
   async created() {
     const userInfo = this.checkLogin();
-    console.log(userInfo["role"]);
-    if (userInfo["role"] !== "ADMINISTRATOR") {
+
+    if (userInfo !== undefined && userInfo["role"] !== "ADMINISTRATOR") {
       this.$router.push({ name: "home" });
     }
     try {
@@ -266,7 +267,7 @@ export default defineComponent({
         import.meta.env.VITE_API_URL + "api/staff/" + this.staffId
       );
       this.email = staffDetails.data.data.email;
-    } catch (err) {
+    } catch (err: any) {
       if (err.response.status == 401) {
         this.$router.push({ name: "Login" });
       }
@@ -299,8 +300,7 @@ export default defineComponent({
         ]);
       }
       console.log(this.staffs[0]);
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
       if (err.response.status == 401) {
         this.$router.push({ name: "Login" });
       }
@@ -326,7 +326,7 @@ export default defineComponent({
       // flexSwitchCheckDefault
       this.isChecked = document.getElementById(
         "flexSwitchCheckDefault"
-      ).checked;
+      )?.checked;
       //change local instance of staffs array, 
       console.log(this.isChecked);
       // console.log(staff);
@@ -336,7 +336,7 @@ export default defineComponent({
             import.meta.env.VITE_API_URL + "api/staff/" + staff[0] + "/lock"
           );
           console.log("lock");
-        } catch (err) {
+        } catch (err: any) {
           if (err.response.status == 401) {
             this.$router.push({ name: "Login" });
           }
@@ -347,7 +347,7 @@ export default defineComponent({
             import.meta.env.VITE_API_URL + "api/staff/" + staff[0] + "/unlock"
           );
           console.log("unlock");
-        } catch (err) {
+        } catch (err: any) {
           if (err.response.status == 401) {
             this.$router.push({ name: "Login" });
           }
@@ -367,16 +367,18 @@ export default defineComponent({
           }
         );
         console.log(res);
-        this.$router.go();
-      } catch (err) {
+        this.$router.go(0);
+      } catch (err: any) {
         if (err.response.status == 401) {
           this.$router.push({ name: "Login" });
         }
       }
     },
-    handleFileUpload(e) {
-      this.file = e.target.files;
-      console.log(this.file);
+    handleFileUpload(e: Event) {
+      if (e.target) {
+        this.file = e.target.files;
+        console.log(this.file);
+      }
     },
     async submit() {
       try {
@@ -388,18 +390,31 @@ export default defineComponent({
           {
             headers: {
               "Content-Type": "multipart/form-data",
+              'authorization': `${localStorage.getItem("token")}`
             },
           }
         );
-      } catch (err) {
-        if (err.response.status == 401) {
-          this.$router.push({ name: "Login" });
+      } catch (err: any) {
+        if (err.response) {
+          if (err.response.status == 401) {
+            this.$router.push({ name: "login" }).then(() => this.$router.go(0));
+          } else if (err.response.status == 403) {
+            this.$router
+              .push({ name: "home" })
+              .then(() => this.$router.go(0));
+
+            return;
+          } else {
+            console.error(err.response.data.message);
+          }
+        } else {
+          console.error(err.message);
         }
       }
     },
     async editStaff(staffId: number) {
       this.$router.push({
-        name: "AdminUpdateStaff",
+        name: "admin update staff",
         params: { staffId: staffId },
       });
     },
@@ -410,9 +425,9 @@ export default defineComponent({
         const res = await axios.delete(
           import.meta.env.VITE_API_URL + "api/staff/" + staffId.toString()
         );
-        this.$router.go();
+        this.$router.go(0);
         console.log(res);
-      } catch (err) {
+      } catch (err: any) {
         if (err.response.status == 401) {
           this.$router.push({ name: "Login" });
         }

@@ -60,7 +60,7 @@ export default defineComponent({
       }
     },
     returnToStaffs() {
-      this.$router.push({ name: "AdminStaffs" });
+      this.$router.push({ name: "admin staffs" });
     },
     async updateProfile() {
       try {
