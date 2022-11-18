@@ -2,6 +2,8 @@ package sg.edu.sportsschool.DTO.Response;
 
 import java.sql.Date;
 
+import sg.edu.sportsschool.Helper.PassType;
+
 public class LoanResponseDto {
     private Integer loanId;
     private String staffName;
@@ -11,6 +13,7 @@ public class LoanResponseDto {
     private boolean hasCollected;
     private boolean hasReturned;
     private String passId;
+    private PassType passType;
     private boolean isLost;
     private String prevBorrowerName;
     private String prevBorrowerContact;
@@ -18,7 +21,7 @@ public class LoanResponseDto {
     public LoanResponseDto() {}
 
     public LoanResponseDto(Integer loanId, String staffName, String staffEmail, Date visitDate, String attractionName,
-            boolean hasCollected, boolean hasReturned, String passId, boolean isLost, String prevBorrowerName,
+            boolean hasCollected, boolean hasReturned, String passId, PassType passType, boolean isLost, String prevBorrowerName,
             String prevBorrowerContact) {
         this.loanId = loanId;
         this.staffName = staffName;
@@ -31,6 +34,7 @@ public class LoanResponseDto {
         this.isLost = isLost;
         this.prevBorrowerName = prevBorrowerName;
         this.prevBorrowerContact = prevBorrowerContact;
+        this.passType = passType;
     }
 
     public Integer getLoanId() {
@@ -95,6 +99,14 @@ public class LoanResponseDto {
 
     public void setPassId(String passId) {
         this.passId = passId;
+    }
+
+    public PassType getPassType() {
+        return passType;
+    }
+
+    public void setPassType(PassType passType) {
+        this.passType = passType;
     }
 
     public boolean isLost() {

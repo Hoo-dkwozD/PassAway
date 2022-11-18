@@ -6,10 +6,12 @@ public class SignInReponseDto {
 
     private Integer staffId;
     private StaffRole role;
+    private String token;
 
-    public SignInReponseDto(Integer staffId, StaffRole role) {
+    public SignInReponseDto(Integer staffId, StaffRole role, String token) {
         this.staffId = staffId;
         this.role = role;
+        this.token = token;
     }
 
     public Integer getStaffId() {
@@ -26,5 +28,13 @@ public class SignInReponseDto {
 
     public void setRole(StaffRole role) {
         this.role = role;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

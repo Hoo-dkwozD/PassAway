@@ -1,4 +1,7 @@
-use `record`;
+DROP DATABASE IF EXISTS `record`;
+CREATE DATABASE `record`;
+
+USE `record`;
 
 #Attraction
 INSERT INTO `record`.`attraction`(`attraction_id`, `address`,	`background_image`, `barcode_image`, `benefits`,	`cannot_book`,	`description`,	`expiry_date`,	`max_loans_per_month`,	`max_passes_per_loan`,	`membership_id`,	`name`,	`num_accompanying_guests`,	`pass_type`,	`replacement_fee`,	`terms_conditions`) VALUES 

@@ -1,5 +1,5 @@
 <template>
-  <NavBar></NavBar>
+  <Navbar></Navbar>
   <div class="container-fluid">
     <div
       class="imageDiv p-5 mb-5 row"
@@ -55,12 +55,12 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import axios from "axios";
-import NavBar from "../components/Navbar.vue";
+import Navbar from "../components/Navbar.vue";
 
 interface Data {
   title: string;
   currentBackground: string;
-  loans: [];
+  loans: any[];
   staffId: number;
   startDate: any;
   endDate: any;
@@ -73,7 +73,7 @@ interface LoginData {
 export default defineComponent({
   name: "AdminAllBookings",
   components: {
-    NavBar,
+    Navbar,
   },
   data(): Data {
     return {
@@ -90,7 +90,10 @@ export default defineComponent({
     this.checkLogin();
     try {
       const loanDetails = await axios.get(
-        import.meta.env.VITE_API_URL + "api/loan"
+        import.meta.env.VITE_API_URL + "api/loan",
+        {
+          headers: {'authorization': `${localStorage.getItem("token")}`},
+        }
       );
 
       for (const index in loanDetails.data.data) {
@@ -115,9 +118,21 @@ export default defineComponent({
         ]);
       }
       console.log(this.loans);
-    } catch (err) {
-      if (err.response.status == 401) {
-        this.$router.push({ name: "Login" });
+    } catch (err: any) {
+      if (err.response) {
+        if (err.response.status == 401) {
+          this.$router.push({ name: "login" }).then(() => this.$router.go(0));
+        } else if (err.response.status == 403) {
+          this.$router
+            .push({ name: "home" })
+            .then(() => this.$router.go(0));
+
+          return;
+        } else {
+          console.error(err.response.data.message);
+        }
+      } else {
+        console.error(err.message);
       }
     }
   },
@@ -138,6 +153,7 @@ export default defineComponent({
           },
           {
             responseType: "blob",
+            headers: {'authorization': `${localStorage.getItem("token")}`},
           }
         );
         console.log(res);
@@ -158,10 +174,21 @@ export default defineComponent({
         dl.setAttribute("download", "download.csv");
         dl.click();
         // Performing a download with click
-      } catch (err) {
-        console.log(err);
-        if (err.response.status == 401) {
-          this.$router.push({ name: "Login" });
+      } catch (err: any) {
+        if (err.response) {
+          if (err.response.status == 401) {
+            this.$router.push({ name: "login" }).then(() => this.$router.go(0));
+          } else if (err.response.status == 403) {
+            this.$router
+              .push({ name: "home" })
+              .then(() => this.$router.go(0));
+
+            return;
+          } else {
+            console.error(err.response.data.message);
+          }
+        } else {
+          console.error(err.message);
         }
       }
     },
@@ -171,7 +198,7 @@ export default defineComponent({
       console.log(role);
 
       if (staffIdStr === null || role === null) {
-        this.$router.push({ name: "Login" });
+        this.$router.push({ name: "login" });
       } else {
         this.staffId = parseInt(staffIdStr);
         if (role !== "ADMINISTRATOR") {

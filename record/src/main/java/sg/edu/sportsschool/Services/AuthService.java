@@ -25,7 +25,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -76,17 +75,18 @@ public class AuthService {
 
                 SignInReponseDto resDto = new SignInReponseDto(
                     targetStaff.getStaffId(), 
-                    targetStaff.getRole()
+                    targetStaff.getRole(),
+                    token
                 );
 
                 JSONWithData<SignInReponseDto> results = new JSONWithData<>(200, resDto);
                 ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.OK);
 
-                Cookie tokenCookie = new Cookie("token", token);
-                tokenCookie.setMaxAge(((int)loginHours) * 60 * 60);
-                tokenCookie.setHttpOnly(true);
-                tokenCookie.setPath("/");
-                servletResponse.addCookie(tokenCookie);
+                // Cookie tokenCookie = new Cookie("token", token);
+                // tokenCookie.setMaxAge(((int)loginHours) * 60 * 60);
+                // tokenCookie.setHttpOnly(true);
+                // tokenCookie.setPath("/");
+                // servletResponse.addCookie(tokenCookie);
 
                 return response;
             }
@@ -101,7 +101,7 @@ public class AuthService {
 
     // Non-REST main functionalities
 
-    public Staff authenticate(String jwtToken)  throws NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeySpecException {
+    public Staff authenticate(String jwtToken) throws NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeySpecException {
         Map<String, Object> keys = getKeys();
         RSAPrivateKey privateKey = (RSAPrivateKey)keys.get("private");
         RSAPublicKey publicKey = (RSAPublicKey)keys.get("public");

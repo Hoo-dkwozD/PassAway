@@ -14,6 +14,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -195,7 +196,8 @@ public class EmailService {
     }
 
     @Async
-    // @Scheduled(fixedRate = 8000) // uncomment to test (cron = "0 0 9 * * *") 9am
+    @Scheduled(cron = "0 0 9 * * *") // uncomment to test 
+    // 9am
     // everyday
     public void sendCollectionReminderEmail() {
         // Send reminder email for loans whose visit date is tomorrow
@@ -246,7 +248,7 @@ public class EmailService {
     }
 
     @Async
-    // @Scheduled(fixedRate = 8000) // uncomment to test (cron = "0 0 9 * * *") 9am
+    @Scheduled(cron = "0 0 9 * * *") // uncomment to test (cron = "0 0 9 * * *") 9am
     // everyday
     public void sendLoanOverdueReminderEmail() {
         Date overdueDate = new Date(System.currentTimeMillis());

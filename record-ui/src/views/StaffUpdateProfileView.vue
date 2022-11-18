@@ -60,7 +60,7 @@ export default defineComponent({
       }
     },
     returnToStaffs() {
-      this.$router.push({ name: "AdminStaffs" });
+      this.$router.push({ name: "admin staffs" });
     },
     async updateProfile() {
       try {
@@ -109,7 +109,7 @@ export default defineComponent({
         this.lastName = details.lastName;
         this.email = details.email;
         this.contactNumber = details.contactNumber;
-      } catch (err) {
+      } catch (err: any) {
         if (err.response.status === 401) {
           this.$router.push({ name: "Login" });
         }
@@ -142,7 +142,7 @@ export default defineComponent({
               <div class="p-5"></div>
               <router-link to="/">
                 <img
-                  src="../assets/SSSlogo.png"
+                  src="@/assets/SSSlogo.png"
                   class="img mx-auto image-style"
                 />
               </router-link>

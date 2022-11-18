@@ -185,9 +185,9 @@ export default defineComponent({
           photoURL,
         ];
       }
-    } catch (err) {
+    } catch (err: any) {
       if (err.response.status == 401) {
-        this.$router.push({ name: "Login" });
+        this.$router.push({ name: "login" });
       }
     }
   },
@@ -231,7 +231,7 @@ export default defineComponent({
       const role = localStorage.getItem("role");
 
       if (staffIdStr === null || role === null) {
-        this.$router.push({ name: "Login" });
+        this.$router.push({ name: "login" });
       } else {
         this.staffId = parseInt(staffIdStr);
 
@@ -273,10 +273,18 @@ export default defineComponent({
           },
         });
         return res.data;
-      } catch (err) {
-        console.log(err.response.data);
-        const errorMsg = err.response.data;
-        this.populateError(errorMsg);
+      } catch (err: any) {
+        if (err.response.status == 401) {
+          this.$router.push({ name: "login" });
+        }
+        if (err.response.status == 500) {
+          this.errorMsg = "Please check all input fields and ensure you have not exceed the maximum number of passes per month.";
+        } else if (err.response.status == 400) {
+          this.errorMsg = "You are not allowed to book pass, please check with the HR for access rights."
+        }
+        else {
+          this.errorMsg = "An error has occured. Please try again later.";
+        }
         this.makeToast(this.errorMsg);
         return {
           code: err,
@@ -294,6 +302,8 @@ export default defineComponent({
       } else if (msg.includes("insufficient available pass(es)")) {
         this.errorMsg =
           "There are insufficient available pass(es) for this attraction for the selected date.";
+      } else if (msg.includes("Unable to make anymore loans.")) {
+        this.errorMsg = "You have reached the maximum number of loans this month.";
       } else {
         this.errorMsg = "An error has occured. Please try again later.";
       }

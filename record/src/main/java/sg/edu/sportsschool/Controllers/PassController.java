@@ -1,18 +1,27 @@
 package sg.edu.sportsschool.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
+
 import sg.edu.sportsschool.DTO.Request.AddPassDto;
+import sg.edu.sportsschool.Entities.Staff;
+import sg.edu.sportsschool.Helper.StaffRole;
 import sg.edu.sportsschool.Helper.Json.JSONBody;
+import sg.edu.sportsschool.Helper.Json.JSONWithMessage;
+import sg.edu.sportsschool.Services.AuthService;
 import sg.edu.sportsschool.Services.PassService;
 
 @CrossOrigin
@@ -21,10 +30,12 @@ import sg.edu.sportsschool.Services.PassService;
 public class PassController {
 
     private PassService pService;
+    private AuthService authService;
 
     @Autowired
-    public PassController(PassService pService) {
+    public PassController(PassService pService, AuthService authService) {
         this.pService = pService;
+        this.authService = authService;
     }
 
     /**
@@ -74,8 +85,41 @@ public class PassController {
      * @apiDescription Gets the details of all passes.
      */
     @GetMapping(path = "/list")
-    public ResponseEntity<JSONBody> getAllPasses() {
-        return pService.getAllPasses();
+    public ResponseEntity<JSONBody> getAllPasses(@RequestHeader("Authorization") String token) {
+        if (token == null) {
+            JSONWithMessage results = new JSONWithMessage(401, "User is not logged in. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
+
+            return response;
+        }
+
+        try {
+            Staff user = authService.authenticate(token);
+
+            if (user == null) {
+                JSONWithMessage results = new JSONWithMessage(401, "User is unauthorized. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
+
+                return response;
+            } else if (user.getRole() != StaffRole.ADMINISTRATOR) {
+                JSONWithMessage results = new JSONWithMessage(403, "User is forbidden from access. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.FORBIDDEN);
+
+                return response;
+            } else {
+                return pService.getAllPasses();
+            }
+        } catch (JWTVerificationException e) {
+            JSONWithMessage results = new JSONWithMessage(401, "User is unauthorized. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
+
+            return response;
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server unable to verify user. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
+        }
     }
 
     /**
@@ -129,8 +173,41 @@ public class PassController {
      * @apiDescription Add a pass to an attraction.
      */
     @PostMapping(path = "/add")
-    public ResponseEntity<JSONBody> addPass(@RequestBody AddPassDto dto) {
-        return pService.addPass(dto);
+    public ResponseEntity<JSONBody> addPass(@RequestHeader("Authorization") String token, @RequestBody AddPassDto dto) {
+        if (token == null) {
+            JSONWithMessage results = new JSONWithMessage(401, "User is not logged in. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
+
+            return response;
+        }
+
+        try {
+            Staff user = authService.authenticate(token);
+
+            if (user == null) {
+                JSONWithMessage results = new JSONWithMessage(401, "User is unauthorized. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
+
+                return response;
+            } else if (user.getRole() != StaffRole.ADMINISTRATOR) {
+                JSONWithMessage results = new JSONWithMessage(403, "User is forbidden from access. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.FORBIDDEN);
+
+                return response;
+            } else {
+                return pService.addPass(dto);
+            }
+        } catch (JWTVerificationException e) {
+            JSONWithMessage results = new JSONWithMessage(401, "User is unauthorized. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
+
+            return response;
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server unable to verify user. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
+        }
     }
 
     /**
@@ -210,10 +287,43 @@ public class PassController {
      * 
      * @apiDescription Add passes to an attraction by csv file.
      */
-    @PostMapping(path = "/add-csv")
-    public ResponseEntity<JSONBody> addPassesByCsv(@RequestParam Integer attractionId,
+    @PostMapping(path = "/add-csv/{attractionId}")
+    public ResponseEntity<JSONBody> addPassesByCsv(@RequestHeader("Authorization") String token, @PathVariable Integer attractionId,
             @RequestParam("file") MultipartFile cardNumbersCSVFile) {
-        return pService.addPassesByCsv(attractionId, cardNumbersCSVFile);
+        if (token == null) {
+            JSONWithMessage results = new JSONWithMessage(401, "User is not logged in. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
+
+            return response;
+        }
+
+        try {
+            Staff user = authService.authenticate(token);
+
+            if (user == null) {
+                JSONWithMessage results = new JSONWithMessage(401, "User is unauthorized. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
+
+                return response;
+            } else if (user.getRole() != StaffRole.ADMINISTRATOR) {
+                JSONWithMessage results = new JSONWithMessage(403, "User is forbidden from access. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.FORBIDDEN);
+
+                return response;
+            } else {
+                return pService.addPassesByCsv(attractionId, cardNumbersCSVFile);
+            }
+        } catch (JWTVerificationException e) {
+            JSONWithMessage results = new JSONWithMessage(401, "User is unauthorized. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
+
+            return response;
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server unable to verify user. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
+        }
     }
 
     /**
@@ -284,10 +394,40 @@ public class PassController {
      * @apiDescription List passes of an attraction.
      */
     @GetMapping(path = "/list-by-attraction")
-    public ResponseEntity<JSONBody> getPassesByAttraction(@RequestParam Integer attractionId) {
-        return pService.getPassesByAttraction(attractionId);
+    public ResponseEntity<JSONBody> getPassesByAttraction(@RequestHeader("Authorization") String token, @RequestParam Integer attractionId) {
+        if (token == null) {
+            JSONWithMessage results = new JSONWithMessage(401, "User is not logged in. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
+
+            return response;
+        }
+
+        try {
+            Staff user = authService.authenticate(token);
+
+            if (user == null) {
+                JSONWithMessage results = new JSONWithMessage(401, "User is unauthorized. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
+
+                return response;
+            } else if (user.getRole() != StaffRole.ADMINISTRATOR) {
+                JSONWithMessage results = new JSONWithMessage(403, "User is forbidden from access. ");
+                ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.FORBIDDEN);
+
+                return response;
+            } else {
+                return pService.getPassesByAttraction(attractionId);
+            }
+        } catch (JWTVerificationException e) {
+            JSONWithMessage results = new JSONWithMessage(401, "User is unauthorized. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.UNAUTHORIZED);
+
+            return response;
+        } catch (Exception e) {
+            JSONWithMessage results = new JSONWithMessage(500, "Server unable to verify user. ");
+            ResponseEntity<JSONBody> response = new ResponseEntity<JSONBody>(results, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return response;
+        }
     }
-
-    
-
 }

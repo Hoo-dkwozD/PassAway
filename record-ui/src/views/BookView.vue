@@ -1,25 +1,43 @@
 <template>
   <NavBar></NavBar>
-  <div class="container-fluid p-0 mx-0 position-relative w-100 d-flex flex-column" id="top">
-    <div id="sectionheader" class="mx-0 bg-light">
-      
-        <h1 class="">{{ title }}</h1>
-        <h3 class="" v-if="attractionDetails['name']">
-          You are entitled to {{ attractionDetails['maxLoansPerMonth'] }} passes a month. {{}}
+  <div
+    class="container-fluid p-0 mx-0 position-relative w-100 d-flex flex-column"
+    id="top"
+  >
+    <div
+      id="sectionheader"
+      class="mx-0 bg-light vh-100"
+      :style="{ backgroundImage: `url(${currentBackground})` }"
+    >
+      <div class="row mt-5">
+        <h1 class="title px-0 w-auto">{{ title }}</h1>
+        <h3 v-if="attractionDetails['name']" class="text-start px-0" style="margin-left: 100px;">
+          You are entitled to {{ attractionDetails["maxLoansPerMonth"] }} passes a
+          month. 
         </h3>
-        <h3 class="" v-if="attractionDetails['name']">
-          Each pass entitles you to {{ attractionDetails['numAccompanyingGuests'] }} accompanying
-          guests to {{ attractionDetails['name'] }}
+        <h3 v-if="attractionDetails['name']" class="text-start px-0" style="margin-left: 100px;">
+          Each pass entitles you to
+          {{ attractionDetails["numAccompanyingGuests"] }} accompanying guests to
+          {{ attractionDetails["name"] }}
         </h3>
-      
-
-      <div class="bookingdetails">
+      </div>
+      <div class="bookingdetails px-2 mx-5">
         <div class="dropdown" id="group-location">
-          <select v-model="attractionId" class="form-select shadow"
-            @change="updateAttrDetails(); populateNumPasses();">
+          <select
+            v-model="attractionId"
+            class="form-select shadow"
+            @change="() => {
+              updateAttrDetails();
+              populateNumPasses();
+            }"
+          >
             <option disabled value="">Attractions</option>
-            <option v-for="(value, name, idx) in allAttractions" :key="idx" :value="value['attractionId']">
-              {{ value['name'] }}
+            <option
+              v-for="value, idx in allAttractions"
+              :key="idx"
+              :value="value['attractionId']"
+            >
+              {{ value["name"] }}
             </option>
           </select>
         </div>
@@ -27,15 +45,27 @@
         <div id="group-calendar">
           <div>
             <div class="position-absolute">
-              <button id="calendar-details" class="form-select shadow" @click="showCalendar = !showCalendar">
+              <button
+                id="calendar-details"
+                class="form-select shadow"
+                @click="showCalendar = !showCalendar"
+              >
                 {{
-                    dateSelected != null
-                      ? dateSelected.toDateString()
-                      : "No date selected"
+                  dateSelected != null
+                    ? dateSelected.toDateString()
+                    : "No date selected"
                 }}
               </button>
               <div v-if="showCalendar" class="position-absolute">
-                <v-date-picker v-model="dateSelected" :attributes="attributes" @dayclick="showCalendar = false" :min-date="new Date()" :max-date="maxDate" :disabled-dates="disabledDates" @update:fromPage="populateNumPassesPage"/>
+                <v-date-picker
+                  v-model="dateSelected"
+                  :attributes="attributes"
+                  @dayclick="showCalendar = false"
+                  :min-date="new Date()"
+                  :max-date="maxDate"
+                  :disabled-dates="disabledDates"
+                  @update:fromPage="populateNumPassesPage"
+                />
               </div>
             </div>
           </div>
@@ -44,14 +74,22 @@
         <div class="dropdown" id="group-date">
           <select v-model="numPassesSelected" class="form-select shadow">
             <option disabled value="">Passes</option>
-            <option v-for="pass in attractionDetails['maxPassesPerLoan']" :key="pass" :value="pass">
+            <option
+              v-for="pass in attractionDetails['maxPassesPerLoan']"
+              :key="pass"
+              :value="pass"
+            >
               {{ pass }}
             </option>
           </select>
         </div>
 
         <div id="group-submit">
-          <button type="submit" class="btn btn-submit btn-md" @click="addLoan()">
+          <button
+            type="submit"
+            class="btn btn-submit btn-md"
+            @click="addLoan()"
+          >
             Book Now
           </button>
         </div>
@@ -63,7 +101,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import axios from "axios";
-import NavBar from '../components/Navbar.vue';
+import NavBar from "../components/Navbar.vue";
 import "v-calendar/dist/style.css";
 type availablePassesInfo = {
   description: string;
@@ -103,13 +141,13 @@ interface LoginData {
 
 export default defineComponent({
   components: {
-    NavBar
+    NavBar,
   },
   data(): Data {
     return {
       addedMMYYYY: {},
       disabledDates: [],
-      maxDate: new Date().setMonth((new Date().getMonth() + 8)),
+      maxDate: new Date().setMonth(new Date().getMonth() + 8),
       allAttractions: {},
       attractionDetails: {},
       attractionId: 0,
@@ -124,7 +162,7 @@ export default defineComponent({
       numberofPasses: [],
       showCalendar: false,
       currentBackground:
-        "https://www.sportsschool.edu.sg/qql/slot/u262/2021/News%20and%20Publications/News/2021/MAR21/What%20Makes%20Us%20Athlete-Friendly/Athlete-friendly%20environment%20at%20Singapore%20Sports%20School%20helps%20nurture%20champions.jpg",
+        "https://img.freepik.com/free-vector/white-desktop-background-modern-minimal-design-vector_53876-140226.jpg?w=1800&t=st=1668366952~exp=1668367552~hmac=a23687ccfe071f6c28017a514a3380e222e62d36894545fc6ff4f9ad24033935",
       loanID: 0,
       errorMsg: "",
       staffId: 0,
@@ -142,19 +180,22 @@ export default defineComponent({
     this.checkLogin();
     try {
       const res = await axios.get(
-        import.meta.env.VITE_API_URL + "api/attractions"
+        import.meta.env.VITE_API_URL + "api/attractions",
+        {
+          headers: {
+            'authorization': `${localStorage.getItem("token")}`
+          }
+        }
       );
       for (const att of res.data.data) {
         this.allAttractions[att.attractionId] = att;
       }
       // console.log(this.allAttractions);
-    }
-    catch (err) {
+    } catch (err: any) {
       if (err.response.status == 401) {
         this.$router.push({ name: "Login" });
       }
     }
-
   },
   computed: {
     attributes() {
@@ -175,39 +216,43 @@ export default defineComponent({
   },
   methods: {
     updateAttrDetails() {
-      this.attractionDetails = this.allAttractions[this.attractionId]
+      this.attractionDetails = this.allAttractions[this.attractionId];
       // console.log(this.attractionDetails);
     },
     async populateNumPasses(): Promise<any> {
       this.addedMMYYYY = {};
       const month = this.dateSelected.getMonth() + 1;
       const year = this.dateSelected.getFullYear();
-      let monthStr: string = (month < 10) ? `0${month}` : `${month}`;
+      let monthStr: string = month < 10 ? `0${month}` : `${month}`;
       let yearStr: string = year + "";
       let mmYYYY: string = monthStr + yearStr;
 
       try {
         const res = await axios.get(
-          import.meta.env.VITE_API_URL + `api/loan/available-passes?aId=${this.attractionId}&yyyy=${year}&mm=${month}`
+          import.meta.env.VITE_API_URL +
+            `api/loan/available-passes?aId=${this.attractionId}&yyyy=${year}&mm=${month}`,
+            {
+              headers: {
+                'authorization': `${localStorage.getItem("token")}`
+              }
+            }
         );
         const monthNumPassObj = res.data.data;
+        this.availablePassesInfo = [];
         for (const monthStr in monthNumPassObj) {
           const numAvailPasses = monthNumPassObj[monthStr];
           if (numAvailPasses == 0) {
             this.disabledDates.push(new Date(monthStr));
-          }
-          else {
+          } else {
             this.availablePassesInfo.push({
               description: `${numAvailPasses} Passes left`,
               date: new Date(monthStr),
-              color: (numAvailPasses < 10) ? "red" : "green",
+              color: numAvailPasses < 10 ? "red" : "green",
             });
           }
-          
         }
         this.addedMMYYYY[mmYYYY] = true;
-      }
-      catch (err) {
+      } catch (err: any) {
         // console.log(err)
         if (err.response.status == 401) {
           this.$router.push({ name: "Login" });
@@ -218,7 +263,7 @@ export default defineComponent({
       // console.log(page);
       const month = page.month;
       const year = page.year;
-      let monthStr: string = (month < 10) ? `0${month}` : `${month}`;
+      let monthStr: string = month < 10 ? `0${month}` : `${month}`;
       let yearStr: string = year + "";
       let mmYYYY: string = monthStr + yearStr;
       if (this.addedMMYYYY[mmYYYY]) {
@@ -227,27 +272,31 @@ export default defineComponent({
 
       try {
         const res = await axios.get(
-          import.meta.env.VITE_API_URL + `api/loan/available-passes?aId=${this.attractionId}&yyyy=${year}&mm=${month}`
+          import.meta.env.VITE_API_URL +
+            `api/loan/available-passes?aId=${this.attractionId}&yyyy=${year}&mm=${month}`,
+          {
+            headers: {
+              'authorization': `${localStorage.getItem("token")}`
+            }
+          }
         );
         const monthNumPassObj = res.data.data;
+        this.availablePassesInfo = [];
         for (const monthStr in monthNumPassObj) {
-          
           const numAvailPasses = monthNumPassObj[monthStr];
           if (numAvailPasses == 0) {
             this.disabledDates.push(new Date(monthStr));
-          }
-          else {
+          } else {
             this.availablePassesInfo.push({
               description: `${numAvailPasses} Passes left`,
               date: new Date(monthStr),
-              color: (numAvailPasses < 10) ? "red" : "green",
+              color: numAvailPasses < 10 ? "red" : "green",
             });
           }
         }
         this.addedMMYYYY[mmYYYY] = true;
         // console.log(res.data.data);
-      }
-      catch (err) {
+      } catch (err: any) {
         // console.log(err)
         if (err.response.status == 401) {
           this.$router.push({ name: "Login" });
@@ -290,7 +339,7 @@ export default defineComponent({
       const day: number = this.dateSelected.getDate();
       const month: number = this.dateSelected.getMonth() + 1;
       const year: number = this.dateSelected.getFullYear();
-      console.log(numPassesSelected, typeof(numPassesSelected));
+      console.log(numPassesSelected, typeof numPassesSelected);
       try {
         const res = await axios.post(
           import.meta.env.VITE_API_URL + "api/loan/add",
@@ -307,23 +356,20 @@ export default defineComponent({
         console.log(this.loanID);
 
         this.$router.push({
-          name: "booking confirmation",
-          params: {
-            loanID: this.loanID,
-          },
+          name: "personal bookings",
         });
         return res.data;
-      } catch (err) {
-        console.log(err)
+      } catch (err: any) {
+        console.log(err);
         if (err.response.status == 401) {
-          this.$router.push({ name: "Login" });
+          this.$router.push({ name: "login" });
         }
         if (err.response.status == 500) {
           this.errorMsg = err.response.data + "<br>";
         } else if (err.response.status == 400) {
-          this.errorMsg = "You are not allowed to book pass, please check with the HR for access rights.<br>"
-        }
-        else {
+          this.errorMsg =
+            "You are not allowed to book pass, please check with the HR for access rights.<br>";
+        } else {
           this.errorMsg = "An error has occured. Please try again later.<br>";
         }
         this.makeToast(this.errorMsg);
@@ -347,7 +393,7 @@ export default defineComponent({
       const html = document.querySelector("#sectionheader") as HTMLElement;
       html.appendChild(toast);
 
-      toast = document.querySelector("#hjvvhj") as HTMLElement;;
+      toast = document.querySelector("#hjvvhj") as HTMLElement;
 
       toast = new bootstrap.Toast(toast);
       toast.show();
@@ -387,7 +433,6 @@ body {
   /* margin-left: 150px; */
   border-radius: 30px;
   box-shadow: 0px 12px 14px;
-  padding: 5px;
   padding-top: 15px;
   background-color: white;
   border: 1px none;
@@ -476,7 +521,6 @@ body {
   letter-spacing: 0;
   line-height: 24px;
   color: white !important;
-  ;
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   padding-left: 20px;
 }
