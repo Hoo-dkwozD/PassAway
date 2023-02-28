@@ -1,12 +1,19 @@
 # PassAway
 
-_logo here_
+Problem Statement 
 
-_video demo here_
+Create a system to facilitate the booking of corporate passes for staff in Singapore Sports School
 
-## Introduction
+## Features 
 
-_Intro to be written here_
+Booking 
+Users have the autonomy to make a booking for their preferred tourist attraction 
+
+Administration 
+Users have the autonomy to make amendements to borrowed corporate passses and view the statistics of passes borrowed 
+
+Pass Management 
+The system is able to perform validations on borrowed, lost and returned passes 
 
 ## Requirements
 
@@ -45,9 +52,6 @@ The application can also be started without a Docker context by starting each pa
 
 The app should be accessible at [http://localhost/](http://localhost/) with the back-end itself accessible at [http://localhost:8000/](http://localhost:8000/). 
 
-## Tested by
-
-_Release testers listed here_
 
 ## Project Structure
 
